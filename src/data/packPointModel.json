@@ -14,6 +14,16 @@
   "partnerMarginMultiplier": 1.18,
   "blendedRtoRate": 0.178,
   "densityFloorMakers": 40,
+  "storage": {
+    "_source": "deck PP-4; shown on the Warehouse page, not in the per-order cost stack (team answer, 21 Oct 2026)",
+    "freeDays": 30,
+    "perUnitPerDayAfter": 0.29
+  },
+  "costStackInPackPointMode": {
+    "_source": "team answer, 21 Oct 2026: packaging removed (the node packs, it's inside the fee); Pack Point fee added (GST included); shipping + fixed, returns buffer and GST unchanged",
+    "removes": ["packaging"],
+    "adds": "packPointFee"
+  },
   "staffByPoolSize": {
     "_source": "deck table: packers + handlers + supervisor (no rule given for handlers, so only these sizes are supported)",
     "20": { "packers": 1, "handlers": 1, "supervisors": 1 },

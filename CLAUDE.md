@@ -51,6 +51,8 @@ docs/          phase write-ups and comparison images
 
 ## Conventions
 
+- Routes mirror the real panel URLs (`/panel/v3/new/<area>/{sid}/…`) with the fake supplier code **`demo`**. The full list is in `docs/phase-0/PHASE-0.md` §4 and `src/app/paths.ts`.
+- Demo calendar: D0 = 24 Oct 2026 (`src/data/calendar.json`). Launch live D21–D25 = 14–18 Nov; restock starts D31 = 24 Nov.
 - Tokens use the panel's own names (`primary-text`, `secondary-bg`, `brand-primary-bg`, `success-bg`…), so markup from `reference/html/` ports class-for-class.
 - Sizes follow the panel's scale: 10/11/12/13/15/17/19/21px. Body text is 13px, buttons and card titles 15px, page titles 21px.
 - C2M inserts carry a `data-c2m="<doc-id>"` attribute (e.g. `data-c2m="LB-6"`) so reviewers can find every addition.

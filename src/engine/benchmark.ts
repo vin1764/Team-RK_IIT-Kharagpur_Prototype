@@ -17,7 +17,7 @@ export type PricePosition = 'low' | 'mid' | 'high';
 
 /**
  * B = 25th-percentile price buyers paid (nearest rank, ascending) over qualifying orders:
- * above the quality floor, more than `minDeliveredOrders`, maker's own orders excluded.
+ * above the quality floor, at least `minDeliveredOrders` delivered (30), maker's own orders excluded.
  * Throws if the 25th-percentile order falls inside a price range.
  */
 export function benchmarkB(comparables: Comparable[], minDeliveredOrders: number): number {

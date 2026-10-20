@@ -1,0 +1,20 @@
+{
+  "_source": "D0 date: team answer, 21 Oct 2026. Launch days: deck order book. Jump days: plan §6.",
+  "d0": "2026-10-24",
+  "launch": {
+    "commitmentsCloseDay": 7,
+    "stockAtNodeDay": 18,
+    "liveFromDay": 21,
+    "liveToDay": 25
+  },
+  "jumps": {
+    "onboarding": 1,
+    "listing": 3,
+    "commit": 5,
+    "liveLaunch": 23,
+    "restock": 31,
+    "priceEdit": 40,
+    "packPointLot": 50
+  },
+  "maxDay": 90
+}

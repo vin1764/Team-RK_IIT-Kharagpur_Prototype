@@ -1,6 +1,6 @@
 # Phase 0: setup and gate
 
-Status: **waiting for approval before Phase 1.**
+Status: **approved 21 Oct 2026.** Answers to Q1, Q3, Q7 and Q16 are folded in below; Phase 1 is under way.
 
 ## 0. Urgent: personal data in a public repo
 
@@ -132,9 +132,9 @@ The values come from the panel's own CSS variables in `reference/html/meesho-hom
 
 ## 4. Routes
 
-The real panel URLs aren't in the snapshots; only `/panel/v3/new/root/login` and `/panel/v3/new/payouts/` appear. The paths below follow that pattern and are **assumed until you paste the real ones** (Q16).
+Real panel URLs from the team (21 Oct 2026). `{sid}` is always the fake supplier code **`demo`**. Rows marked *ours* are paths we chose, following the same pattern.
 
-**Onboarding (outside the panel)**
+**Onboarding (outside the panel; paths are ours)**
 
 | Route | Page | Reference | C2M |
 | --- | --- | --- | --- |
@@ -151,37 +151,36 @@ The real panel URLs aren't in the snapshots; only `/panel/v3/new/root/login` and
 - No screenshot of the **GSTIN** variant of step 1 (Jasmeet and Samar use GSTIN), or of the entry form before the fetch.
 - No screenshot of the pickup address **entry form**.
 
-I'll adapt the layouts above unless you can capture these.
-
 **Panel** (all under `/panel/v3/new/`, inside the shell: sidebar, Notices/Support, e-signature banner)
 
 | Route | Page | Reference | C2M |
 | --- | --- | --- | --- |
-| `home` | Home | `home.png`, `home-2.png` (upload step); `meesho-home.html` (QC-error state) | LB-3, LW-6, coach card |
-| `notices` | Notices | `notices-1..4.png`, `meesho-notices.html` | (Factory Launch notice, P2) |
-| `orders` | Orders | `meesho-orders.html` (empty only) | — |
-| `returns` | Returns | `meesho-returns.html` (empty only) | — |
-| `pricing/manage-pricing` | Manage Pricing | `meesho-manage-pricing.html` (empty only); new tab: doc p.7 | PI-2, PI-3 |
-| `pricing/reduce-rto-returns` | Reduce RTO & Returns | `meesho-reduce-rto-returns.html` | — |
-| `claims` | Claims | `meesho-claims.html` | — |
-| `inventory` | Inventory | `meesho-inventory.html` (empty only) | GL-2, GL-5, GL-6 ⚠ doc mock-up is blank |
-| `catalog-uploads` | Catalog Uploads | `catalog-uploads.png`, `meesho-catalog-uploads.html` | LB-3 (3rd option) |
-| `catalog-uploads/single/category` | Add Single Catalog: category | `catalog-select-category*.png`, `catalog-image-modal.png`, snapshot | LB-4 |
-| `catalog-uploads/single/details` | Add Single Catalog: details + price table | `catalog-product-details-1..3.png`, `catalog-other-attributes.png`, `catalog-price-table*.png`; doc pp.14–15 | LB-4, LB-5, LB-6, LB-8, LB-10 |
-| `catalog-uploads/bulk/category` | Bulk Catalog Upload | `bulk-upload-*.png`, snapshot | — |
-| `image-bulk-upload` | Image Bulk Upload | `meesho-image-bulk-upload.html` | — |
-| `quality` | Quality | `meesho-quality.html` (no-score state) | LW-8 |
-| `payments` | Payments | `meesho-payments.html` (empty only) | — |
-| `warehouse` | Warehouse | `meesho-warehouse.html`; Pack Point: doc p.20 | PP-3, PP-4, PP-5 |
-| `warehouse/pack-point/providers` | Providers near you | doc p.20 mock-up only | PP-10 (P2) |
-| `influencer-marketing` | Influencer Marketing | snapshot | — |
-| `promotions` | Promotions (Sale Events / Deals / Flash Events) | `meesho-promotions.html` | LW-2 tab |
-| `promotions/sale-opt-in` | Sale Opt-in | `meesho-sale-opt-in.html` | LW-2 tab |
-| `promotions/factory-launch/:id` | Order book + Commit | ⚠ **none**; doc mock-up is blank | LW-3, LW-4, LW-5 |
-| `promotions/factory-launch/:id/live` | Live launch view | ⚠ **none**; doc mock-up is blank | LW-7 |
-| `promotions/offer-opt-in` | Offer Opt-in | `meesho-offer-opt-in.html` | — |
-| `instant-cash` | Instant Cash | snapshot | — |
-| `business-dashboard` | Business Dashboard | `meesho-business-dashboard.html` (zero state) | GL-3, GL-4 ⚠ doc mock-up is blank |
+| `growth/demo/home` | Home | `home.png`, `home-2.png` (upload step); `meesho-home.html` (QC-error state) | LB-3, LW-6, coach card |
+| `growth/demo/notices` *(ours; not captured)* | Notices | `notices-1..4.png`, `meesho-notices.html` | (Factory Launch notice, P2) |
+| `fulfillment/demo/orders/pending` (other tabs: `/orders/:tab`, *ours*) | Orders | `meesho-orders.html` (empty only) | — |
+| `fulfillment/demo/returns/overview` | Returns | `meesho-returns.html` (empty only) | — |
+| `fulfillment/demo/claims` | Claims | `meesho-claims.html` | — |
+| `fulfillment/demo/warehouse` | Warehouse | `meesho-warehouse.html`; Pack Point: doc p.20 | PP-3, PP-4, PP-5 |
+| `fulfillment/demo/warehouse/pack-point/providers` *(ours)* | Providers near you | doc p.20 mock-up only | PP-10 (P2) |
+| `services/demo/ipp/allproducts` | Manage Pricing | `meesho-manage-pricing.html` (empty only) | — |
+| `services/demo/ipp/price-position` *(ours)* | Manage Pricing → Price position tab | doc p.7 | PI-2, PI-3 |
+| `services/demo/ipp/reduce-rto-and-returns/discounts-applied` (and `/add-discount`, *ours*) | Reduce RTO & Returns | `meesho-reduce-rto-returns.html` | — |
+| `services/demo/inventory` | Inventory | `meesho-inventory.html` (empty only) | GL-2, GL-5, GL-6 ⚠ doc mock-up is blank |
+| `cataloging/demo/catalogs/bulk`, `/catalogs/single` | Catalog Uploads (Bulk / Single tabs) | `catalog-uploads.png`, `meesho-catalog-uploads.html` | LB-3 (3rd option) |
+| `cataloging/demo/catalogs/single/select-category` | Add Single Catalog: category | `catalog-select-category*.png`, `catalog-image-modal.png`, snapshot | LB-4 |
+| `cataloging/demo/catalogs/single/add-product-details` *(ours)* | Add Single Catalog: details + price table | `catalog-product-details-1..3.png`, `catalog-other-attributes.png`, `catalog-price-table*.png`; doc pp.14–15 | LB-4, LB-5, LB-6, LB-8, LB-10 |
+| `cataloging/demo/catalogs/bulk/add` | Bulk Catalog Upload | `bulk-upload-*.png`, snapshot | — |
+| `cataloging/demo/images-bulk-upload` | Image Bulk Upload | `meesho-image-bulk-upload.html` | — |
+| `cataloging/demo/product-optimiser` | Quality | `meesho-quality.html` (no-score state) | LW-8 |
+| `payouts/demo/payments` | Payments | `meesho-payments.html` (empty only) | — |
+| `livecommerce/demo/influencer-marketing` | Influencer Marketing | snapshot | — |
+| `promotions/demo/list?tab=SALE&status=UPCOMING` | Promotions (Sale Events / Deals / Flash Events) | `meesho-promotions.html` | — |
+| `promotions/demo/list?tab=FACTORY_LAUNCH` | **Factory Launch tab** | ⚠ **none**; doc mock-up is blank | LW-2, LW-3, LW-4, LW-5 |
+| `promotions/demo/factory-launch/:id/live` *(ours)* | Live launch view | ⚠ **none**; doc mock-up is blank | LW-7 |
+| `promotions/demo/sale/list?tab=SALE&status=UPCOMING` | Sale Opt-in | `meesho-sale-opt-in.html` | LW-2 tab |
+| `promotions/demo/offer/list?tab=DEAL` | Offer Opt-in | `meesho-offer-opt-in.html` | — |
+| `finance/demo/home` | Instant Cash | snapshot | — |
+| `insights/demo/business-dashboard` | Business Dashboard | `meesho-business-dashboard.html` (zero state) | GL-3, GL-4 ⚠ doc mock-up is blank |
 
 ⚠ Other gaps:
 
@@ -191,16 +190,16 @@ I'll adapt the layouts above unless you can capture these.
 
 ## 5. Engine
 
-All §8 functions are written as typed signatures in `src/engine/` with tests carrying the hero numbers. Bodies throw `NotImplemented` until Phase 3, so `npm test` currently shows **46 red, 2 green (the B guard), 3 to-do**.
+All §8 functions are written as typed signatures in `src/engine/` with tests carrying the hero numbers. Bodies throw `NotImplemented` until Phase 3, so `npm test` currently shows **50 red, 3 green (the B guard and the N = 30 seed check), 2 to-do**.
 
-To check the tests themselves, I ran them against a throwaway implementation in the scratchpad (not committed): **48/48 passed**, so every hero number in §8/§8b is consistent with the formulas.
+To check the tests themselves, I ran them against a throwaway implementation in the scratchpad (not committed): **53/53 passed** (after folding in the 21 Oct answers), so every hero number in §8/§8b is consistent with the formulas.
 
 | Function | File | Hero test |
 | --- | --- | --- |
-| `costStack(type, makingCost, marginPct, mode)` + `takeHomeAt` | `costStack.ts` | fees 6/32/8/7 → break-even ₹133; 17.5% × ₹80 = ₹14; list ₹147 |
+| `costStack(type, makingCost, marginPct, mode, makersPooled = 40)` + `takeHomeAt` | `costStack.ts` | self-ship: fees 6/32/8/7 → break-even ₹133; 17.5% × ₹80 = ₹14; list ₹147. Pack Point: −₹6 packaging, +₹30 fee → break-even ₹157, list ₹171 (doesn't qualify, so Jasmeet self-ships) |
 | `slots(type)` | `demand.ts` | 300÷60 = 450÷90 = 5 |
 | `priceCheck(price, breakEven, B)` | `benchmark.ts` | ₹147 qualifies, ₹165 `aboveCap`, ₹133 and ₹160 both qualify, ₹132 `belowCost` |
-| `benchmarkB(comparables, N)` *(engine-only)* | `benchmark.ts` | 250th of 1,000 orders → ₹160; deck rows A/B/C excluded |
+| `benchmarkB(comparables, N)` *(engine-only)* | `benchmark.ts` | N = 30; 250th of 1,000 orders → ₹160; deck rows A/B/C excluded |
 | `pricePosition(price, comparables, N)` | `benchmark.ts` | ₹147 → low, ₹165 → mid |
 | `priceDrop(price, B)` *(ops-only)* | `benchmark.ts` | ₹13 = 8.1% of B, meets ≥ 8% |
 | `demandForType(type)` | `demand.ts` | 300–450/wk, ₹150–170, High, 600 committed |
@@ -212,9 +211,10 @@ To check the tests themselves, I ran them against a throwaway implementation in 
 | `coachFix(funnel, bands)` | `coach.ts` | 2,400 views, 38 clicks → 1.6% vs 4.2% → change the main photo; trigger never returned |
 | `eligibility(maker)` | `eligibility.ts` | Jasmeet eligible; reseller not (seller type, GST nature, Udyam); no Udyam → pending; Enrolment ID → not factory-track |
 | `packPointFee(makers)` | `packPoint.ts` | built bottom-up from the deck's cost model: 20→₹44, 40→₹30, 60→₹26, 80→₹23; opens at 40 |
+| `dayToDate(day)` | `calendar.ts` | D0 = 24 Oct 2026; D21–25 = 14–18 Nov; D31 = 24 Nov |
 | `qualifyingPriceExists`, `checkListingPrice`, `listingPricePosition` | `ui.ts` | UI-safe wrappers: same results, B computed inside |
 
-**Where a threshold is missing**, the tests don't invent one; they check the plan's result holds across the whole range the plan allows. For example, N (minimum delivered orders) is tested at both 6 and 199, and the coach's CTR cut-off at both 1.6% and 4.2%. The seed file keeps `minDeliveredOrders: null` until you give it.
+**Where a threshold is missing**, the tests don't invent one; they check the plan's result holds across the whole range the plan allows. For example, the coach's CTR cut-off is tested at both 1.6% and 4.2%. N was handled the same way until the team set it to 30.
 
 ## 6. Where the sources disagree
 
@@ -229,17 +229,17 @@ The plan wins in each case below, as instructed; these are flagged so the deck o
 
 ## 7. Questions
 
-**None of these block Phase 1** (shell + existing pages). Only the repo-privacy decision in §0 is urgent.
+**None of these block Phase 1** (shell + existing pages). Only the repo-privacy decision in §0 is urgent. Open questions will be raised as they become blocking.
 
 | # | Needed by | Question |
 | --- | --- | --- |
-| Q1 | Phase 4 | Which calendar date is D0? The restock example (start 24 Nov at D31) implies **D0 = 24 Oct 2026**, which puts the launch live 14–18 Nov. OK? |
+| Q1 | ✅ answered | D0 = 24 Oct 2026, so the launch is live 14–18 Nov and restock starts D31 = 24 Nov. |
 | Q2 | Phase 4–5 | How many units does Jasmeet commit at D5? 84 on hand at D31 doesn't fit 150 (see §6.5). |
-| Q3 | Phase 3 | Pack Point cost stack: in `packPoint` mode, which fees change? Does ₹30 replace part of the ₹32 shipping + fixed fee, or add to it? Does packaging (₹6) still apply? |
-| Q4 | Phase 6 | Samar's product, making cost, margin and pickup city (Rajkot?). The plan only fixes his lot (150 received, every unit weighed). |
+| Q3 | ✅ answered | Pack Point drops packaging ₹6 and adds the ₹30 fee (GST included, at 40 makers); ₹32 / ₹8 / ₹7 unchanged. Bottle break-even ₹157, which is why Jasmeet self-ships. Storage shows only on the Warehouse page. Samar's footwear is the Pack Point demo. |
+| Q4 | Phase 6 | Samar's footwear: product, making cost, margin and pickup city (Rajkot?). The plan only fixes his lot (150 received, every unit weighed). |
 | Q5 | Phase 5 | Lunch box and sipper metrics for "Keep" and "Stop": sell-through, weeks below p25, margin and returns, or just the labels to show? |
 | Q6 | Phase 3 | OK to define "Make more" as "restock should start today", and "start by" as today plus whole days until on-hand reaches the reorder point? |
-| Q7 | Phase 3 | B's minimum delivered orders, N (any value from 6 to 199 gives B = ₹160). |
+| Q7 | ✅ answered | N = 30: a listing needs at least 30 delivered orders to count toward B. |
 | Q8 | Phase 3 | Price-position thirds: by share of comparable orders priced below yours (my proposal: 147 → 0% low, 165 → 50% mid), or by listing count? |
 | Q9 | Phase 4 | Order book: how many of the 5 slots are taken, for the "slots left" card? Is 600 committed "crowded"? (The rule compares units with a weekly gap, so I need the horizon.) |
 | Q10 | Phase 5 | Coach thresholds: is 4.2% the similar-listing median or the p25 cut-off? And what views floor counts as "impressions normal"? |
@@ -248,7 +248,7 @@ The plan wins in each case below, as instructed; these are flagged so the deck o
 | Q13 | Phase 5 | Business Dashboard tiles beyond 2,400 views and 38 clicks: orders, conversion, sales, return %? |
 | Q14 | Phase 4 | Quality listing score "Building": show order and return counts, or only the label? |
 | Q15 | Phase 3 | Hindi copy for the bot screens and coach card: should I draft it for your review, or will you supply it? |
-| Q16 | Phase 1 | Real panel URLs: paste a few from the address bar (Home, Inventory, Manage Pricing) and I'll mirror them. |
+| Q16 | ✅ answered | Real panel URLs, with `{sid}` = `demo`; see §4. |
 | Q17 | Phase 2 | Can you capture Business Details with a **GSTIN**, and the pickup address entry form? Otherwise I'll adapt the existing layouts. |
 | Q18 | Phase 3 | GST ₹7: fixed per type, or 5% of price (₹7.35 at ₹147)? It changes "take-home at every price" on the cost check. |
 | Q19 | Phase 3 | Is there a first-lot cap ("capped at the standard first-lot limit", deck)? 150 is under any cap you'd pick, but the engine needs the number. |

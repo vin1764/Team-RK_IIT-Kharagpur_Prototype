@@ -2,17 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { benchmarkB, priceCheck, priceDrop, pricePosition, type Comparable } from './benchmark';
 import productTypes from '../data/productTypes.json';
 
-const bottle = productTypes['steel-bottle-1l'].benchmark.comparables as Comparable[];
-
-// N ("more than N delivered orders") is missing from the plan (Q7).
-// The deck's excluded row has 6 orders and the smallest qualifying row has 200,
-// so every N from 6 to 199 must give the same answer. Test both ends.
-const N_RANGE = [6, 199];
+const seed = productTypes['steel-bottle-1l'].benchmark;
+const bottle = seed.comparables as Comparable[];
+const N = seed.minDeliveredOrders; // 30, team answer 21 Oct 2026
 
 // plan §8b Benchmark B (hidden)
 describe('benchmarkB — 1 L steel bottle', () => {
-  it.each(N_RANGE)('B = ₹160: the 250th of 1,000 qualifying orders (N = %i)', (n) => {
-    expect(benchmarkB(bottle, n)).toBe(160);
+  it('counts listings with at least 30 delivered orders', () => expect(N).toBe(30));
+
+  it('B = ₹160: the 250th of 1,000 qualifying orders', () => {
+    expect(benchmarkB(bottle, N)).toBe(160);
   });
 
   // Deck appendix rows A, B, C: each must be excluded for its own reason.
@@ -22,8 +21,8 @@ describe('benchmarkB — 1 L steel bottle', () => {
     { id: 'C', price: { from: 155, to: 155 }, deliveredOrders: 120, aboveQualityFloor: true, ownedByMaker: true },
   ];
 
-  it.each(N_RANGE)('ignores below-floor, too-few-orders and own listings (N = %i)', (n) => {
-    expect(benchmarkB([...deckExclusions, ...bottle], n)).toBe(160);
+  it('ignores below-floor, too-few-orders (6 < 30) and own listings', () => {
+    expect(benchmarkB([...deckExclusions, ...bottle], N)).toBe(160);
   });
 });
 
@@ -40,8 +39,8 @@ describe('priceCheck — break-even ₹133, B ₹160', () => {
 
 // plan §8 pricePosition
 describe('pricePosition — thirds of like-for-like listings', () => {
-  it.each(N_RANGE)('₹147 → low (N = %i)', (n) => expect(pricePosition(147, bottle, n)).toBe('low'));
-  it.each(N_RANGE)('₹165 → mid (N = %i)', (n) => expect(pricePosition(165, bottle, n)).toBe('mid'));
+  it('₹147 → low', () => expect(pricePosition(147, bottle, N)).toBe('low'));
+  it('₹165 → mid', () => expect(pricePosition(165, bottle, N)).toBe('mid'));
 });
 
 // plan §8b Hero's price drop
