@@ -34,7 +34,7 @@ const MIER_AS_FIGTREE = ['Book', 400, 'Demi', 600, 'Bold', 700]
   .reduce((a, v, i, arr) => (i % 2 ? a : [...a, [v, arr[i + 1]]]), [])
   .map(([n, w]) => `@font-face{font-family:'Mier ${n}';src:url(${font(w)});font-weight:100 900}`)
   .join('');
-const HIDE_OURS = '[data-concept-strip],[data-demo-controls]{display:none!important}';
+const HIDE_OURS = ':root{--concept-strip-h:0px!important}[data-concept-strip],[data-demo-controls]{display:none!important}';
 
 const server = await createServer({ root: ROOT, logLevel: 'error', server: { port: 5199, strictPort: false } });
 await server.listen();

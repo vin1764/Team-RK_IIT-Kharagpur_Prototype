@@ -1,6 +1,5 @@
 import { useState, type ReactNode } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import { CONCEPT_STRIP_HEIGHT } from './ConceptStrip';
 import { ESignBanner } from './ESignBanner';
 import { Sidebar } from './Sidebar';
 
@@ -13,12 +12,12 @@ import { Sidebar } from './Sidebar';
 export function PanelShell() {
   const [drawer, setDrawer] = useState(false);
   const { pathname } = useLocation();
-  const top = CONCEPT_STRIP_HEIGHT;
+  const top = 'var(--concept-strip-h)';
   return (
-    <div className="flex min-h-[calc(100vh-20px)]">
+    <div className="flex min-h-[calc(100vh-var(--concept-strip-h))]">
       <aside
         className="sidebar w-56 shrink-0 z-app-bar"
-        style={{ position: 'sticky', top, height: `calc(100vh - ${top}px)` }}
+        style={{ position: 'sticky', top, height: `calc(100vh - ${top})` }}
       >
         <Sidebar />
       </aside>
@@ -51,5 +50,5 @@ export function PanelShell() {
 
 /** Full-width pages without the sidebar (catalog flows). */
 export function BareShell({ children }: { children?: ReactNode }) {
-  return <div className="min-h-[calc(100vh-20px)] bg-secondary-bg">{children ?? <Outlet />}</div>;
+  return <div className="min-h-[calc(100vh-var(--concept-strip-h))] bg-secondary-bg">{children ?? <Outlet />}</div>;
 }

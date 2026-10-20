@@ -3,6 +3,7 @@
 @import './tokens.css';
 
 @layer base {
+  :root { --concept-strip-h: 20px; }
   body {
     margin: 0;
     font-family: var(--font-body);

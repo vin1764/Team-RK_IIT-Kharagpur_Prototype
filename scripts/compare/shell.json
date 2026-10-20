@@ -1,4 +1,7 @@
 [
-  { "name": "home", "route": "/panel/v3/new/growth/demo/home", "ref": "home.png" },
-  { "name": "home-snapshot", "route": "/panel/v3/new/growth/demo/home?state=qc", "ref": "meesho-home.html" }
+  { "name": "shell-home", "route": "/panel/v3/new/growth/demo/home", "ref": "home.png", "oursCss": "#mainWrapper > :not([data-esign-banner]){visibility:hidden}" },
+  { "name": "sidebar-home", "route": "/panel/v3/new/growth/demo/home", "ref": "meesho-home.html", "oursCss": "main{visibility:hidden}", "refCss": "main{visibility:hidden}" },
+  { "name": "sidebar-pricing", "route": "/panel/v3/new/services/demo/ipp/allproducts", "ref": "meesho-manage-pricing.html", "oursCss": "main{visibility:hidden}", "refCss": "main{visibility:hidden}" },
+  { "name": "sidebar-promotions", "route": "/panel/v3/new/promotions/demo/sale/list?tab=SALE&status=UPCOMING", "ref": "meesho-sale-opt-in.html", "oursCss": "main{visibility:hidden}", "refCss": "main{visibility:hidden}" },
+  { "name": "sidebar-notices", "route": "/panel/v3/new/growth/demo/notices", "ref": "meesho-notices.html", "oursCss": "main{visibility:hidden}", "refCss": "main{visibility:hidden}" }
 ]
