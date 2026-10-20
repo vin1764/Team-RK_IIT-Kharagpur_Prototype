@@ -74,7 +74,7 @@ function AutomaticChecks({ persona, businessType }: { persona: PersonaRecord; bu
             </Pill>
             <p className="m-0 mt-2 text-lg leading-5 font-body text-primary-text">{C2M.stillSells}</p>
             <p className="m-0 mt-1 text-lg leading-5 font-body text-secondary-text">{C2M.why}</p>
-            <ul className="m-0 mt-0.5 pl-5 text-lg leading-5 font-body text-secondary-text">
+            <ul className="m-0 mt-0.5 list-disc pl-5 text-lg leading-5 font-body text-secondary-text">
               {result.failedChecks.map((c) => (
                 <li key={c} data-failed-check={c}>
                   {C2M.failed(c, udyamActivity)}

@@ -39,7 +39,6 @@ export const C2M = {
   packPointBody: 'Partner packs, ships and takes returns', // doc
   packPointOpening: (city: string, makers: number) => `${city} · Opens at ${makers} makers · Join the waitlist`, // prompt
   packPointNone: (pincode: string) => `Not available near ${pincode} yet · Join the waitlist`, // prompt
-  waitlistJoined: 'You’re on the waitlist; ship from your factory until it opens', // ours
   changeLater: 'Can be changed per product later', // doc
   sameAsRegistered: 'Same as registered address', // prompt
   useDemoBank: 'Use demo bank details', // ours (prototype helper)

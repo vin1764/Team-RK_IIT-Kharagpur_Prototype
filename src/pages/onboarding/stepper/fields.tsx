@@ -17,8 +17,8 @@ function Outline({ label, floating, focused, error, children, className }: { lab
       <span
         className={cx(
           'pointer-events-none absolute font-body transition-all duration-150 whitespace-nowrap',
-          floating ? 'left-2 px-1 -top-[9px] bg-secondary-bg text-base leading-4' : 'left-4 px-0 top-1/2 -translate-y-1/2 text-xl leading-5',
-          floating ? (error ? 'text-error-text' : focused ? 'text-brand-primary-text' : 'text-secondary-text') : 'text-tertiary-text',
+          floating ? 'left-2 px-1 -top-[7px] bg-secondary-bg text-sm leading-[14px]' : 'left-4 px-0 top-1/2 -translate-y-1/2 text-xl leading-5',
+          error ? 'text-error-text' : floating && focused ? 'text-brand-primary-text' : 'text-tertiary-text',
         )}
       >
         {label}
@@ -88,7 +88,14 @@ export function SelectField<T extends string>({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [up, setUp] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const toggle = () => {
+    // Opens upward when there's no room below, as in onb-business-type-dropdown.png.
+    const r = ref.current?.getBoundingClientRect();
+    if (r) setUp(window.innerHeight - r.bottom < 250 && r.top > window.innerHeight - r.bottom);
+    setOpen(!open);
+  };
   useEffect(() => {
     if (!open) return;
     const close = (e: MouseEvent) => {
@@ -99,9 +106,11 @@ export function SelectField<T extends string>({
   }, [open]);
   return (
     <div ref={ref} className={cx('relative', className)}>
-      <button type="button" onClick={() => setOpen(!open)} className="block w-full bg-transparent border-0 p-0 text-left cursor-pointer" aria-haspopup="listbox" aria-expanded={open}>
+      <button type="button" onClick={toggle} className="block w-full bg-transparent border-0 p-0 text-left cursor-pointer" aria-haspopup="listbox" aria-expanded={open}>
         <Outline label={label} floating={open || value !== null} focused={open}>
-          <span className="flex h-full items-center pl-4 pr-10 text-xl font-body text-primary-text truncate">{value ?? ''}</span>
+          <span className="flex h-full items-center pl-4 pr-10 text-lg font-body text-primary-text">
+            <span className="truncate">{value ?? ''}</span>
+          </span>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden className={cx('absolute right-3 top-1/2 -translate-y-1/2 text-secondary-text', !open && 'rotate-180')}>
             <path d="M7 14l5-5 5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -110,7 +119,11 @@ export function SelectField<T extends string>({
       {open && (
         <ul
           role="listbox"
-          className="absolute inset-x-0 top-full z-modal m-0 mt-1 max-h-[238px] list-none overflow-y-auto rounded border border-solid border-secondary-border bg-white p-0 shadow-[0_2px_6px_rgba(0,0,0,0.12)] [&::-webkit-scrollbar]:w-[9px] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#8B8B8B] [&::-webkit-scrollbar-track]:bg-white"
+          className={cx(
+            'absolute inset-x-0 z-modal m-0 max-h-[238px] list-none overflow-y-auto rounded border border-solid border-secondary-border bg-white p-0 shadow-[0_2px_6px_rgba(0,0,0,0.12)]',
+            '[&::-webkit-scrollbar]:w-[9px] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[#8B8B8B] [&::-webkit-scrollbar-track]:bg-white',
+            up ? 'bottom-full mb-1' : 'top-full mt-1',
+          )}
         >
           {options.map((o) => (
             <li
@@ -121,9 +134,9 @@ export function SelectField<T extends string>({
                 onChange(o);
                 setOpen(false);
               }}
-              className={cx('flex cursor-pointer items-center gap-2 px-3.5 py-[7px] text-xl leading-[21px] font-body text-primary-text hover:bg-brand-secondary-bg', o === value && 'bg-brand-secondary-bg')}
+              className={cx('flex cursor-pointer items-center gap-2 px-3 py-[7px] text-lg leading-[21px] font-body text-primary-text hover:bg-brand-secondary-bg', o === value && 'bg-brand-secondary-bg')}
             >
-              <span>{o}</span>
+              <span className="min-w-0 flex-1">{o}</span>
               {badge?.(o)}
             </li>
           ))}

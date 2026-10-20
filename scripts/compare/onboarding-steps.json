@@ -1,6 +1,6 @@
 [
   { "name": "onb-business-details", "route": "/onboarding/business-details?persona=jasmeet&state=fetched", "ref": "onb-business-details.png", "oursCss": "[data-onb-left]{width:657.6px!important}" },
-  { "name": "onb-business-type-dropdown", "route": "/onboarding/business-details?persona=jasmeet&state=checked", "ref": "onb-business-type-dropdown.png", "oursCss": "[data-onb-left]{width:497.6px!important}:root{--onb-shift:20.8px}", "steps": [{ "click": "I have a manufacturing unit and sell directly" }, { "wait": 300 }] },
+  { "name": "onb-business-type-dropdown", "route": "/onboarding/business-details?persona=jasmeet&state=checked", "ref": "onb-business-type-dropdown.png", "oursCss": "[data-onb-left]{width:497.6px!important}:root{--onb-shift:20.8px}", "steps": [{ "click": "I have a manufacturing unit and sell directly" }, { "wait": 300 }], "scroll": 103 },
   { "name": "onb-pickup", "route": "/onboarding/pickup-address?persona=jasmeet&state=saved", "ref": "onb-pickup.png", "oursCss": "[data-onb-left]{width:618.4px!important}:root{--onb-shift:20px}" },
   { "name": "onb-bank", "route": "/onboarding/bank-details?persona=jasmeet", "ref": "onb-bank.png", "oursCss": "[data-onb-left]{width:579.2px!important}:root{--onb-shift:4px}" },
   { "name": "onb-bank-filled", "route": "/onboarding/bank-details?persona=jasmeet&state=filled", "ref": "onb-bank-filled.png", "oursCss": "[data-onb-left]{width:599.2px!important}:root{--onb-shift:3.2px}" },

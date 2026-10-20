@@ -103,29 +103,28 @@ function Faq({ items }: { items: Aside['faqs'] }) {
 
 function AsideColumn({ aside }: { aside: Aside }) {
   return (
-    <aside
-      data-onb-right
-      className="sticky top-[var(--concept-strip-h)] h-[calc(100vh-var(--concept-strip-h)+var(--onb-shift,0px))] min-w-0 flex-1 overflow-hidden bg-[#F0F1FB] pl-[63px] pr-6"
-    >
-      <div className="relative h-full w-full max-w-[560px] pt-[118px]">
-        <div className="flex items-center gap-4 border-0 border-b border-solid border-tertiary-border pb-9">
-          <img src={aside.icon} alt="" width="40" height="40" className="size-10 shrink-0 rounded-full" />
-          <p className="m-0 text-xl leading-5 font-heading text-primary-text">{aside.headline}</p>
-        </div>
-        <h2 className="m-0 mt-[19px] text-3xl leading-6 font-heading text-tertiary-text">Frequently Asked Questions</h2>
-        <Faq key={aside.headline} items={aside.faqs} />
-        <div className="mt-10 flex items-center gap-3">
-          <img src={`${IMG}/faq-headset.png`} alt="" width="36" height="36" className="size-9 shrink-0 rounded-full" />
-          <div>
-            <p className="m-0 text-xl leading-5 font-heading text-primary-text">Need more assistance?</p>
-            <p className="m-0 mt-0.5 text-base leading-5 font-body text-secondary-text">
-              Call us on <span className="text-lg font-button">{SUPPORT_PHONE}</span>
-            </p>
+    <div data-onb-right className="min-w-0 flex-1 bg-[#F0F1FB]">
+      <aside className="sticky top-[var(--concept-strip-h)] h-[calc(100vh-var(--concept-strip-h)+var(--onb-shift,0px))] overflow-hidden pl-[63px] pr-6">
+        <div className="relative h-full w-full max-w-[560px] pt-[118px]">
+          <div className="flex items-center gap-4 border-0 border-b border-solid border-tertiary-border pb-9">
+            <img src={aside.icon} alt="" width="40" height="40" className="size-10 shrink-0 rounded-full" />
+            <p className="m-0 text-xl leading-5 font-heading text-primary-text">{aside.headline}</p>
           </div>
+          <h2 className="m-0 mt-[19px] text-3xl leading-6 font-heading text-tertiary-text">Frequently Asked Questions</h2>
+          <Faq key={aside.headline} items={aside.faqs} />
+          <div className="mt-10 flex items-center gap-3">
+            <img src={`${IMG}/faq-headset.png`} alt="" width="36" height="36" className="size-9 shrink-0 rounded-full" />
+            <div>
+              <p className="m-0 text-xl leading-5 font-heading text-primary-text">Need more assistance?</p>
+              <p className="m-0 mt-0.5 text-base leading-5 font-body text-secondary-text">
+                Call us on <span className="text-lg font-button">{SUPPORT_PHONE}</span>
+              </p>
+            </div>
+          </div>
+          <img src={`${IMG}/shop.png`} alt="" width="132" height="89" className="pointer-events-none absolute bottom-0 right-0 w-[132px]" />
         </div>
-        <img src={`${IMG}/shop.png`} alt="" width="132" height="89" className="pointer-events-none absolute bottom-0 right-0 w-[132px]" />
-      </div>
-    </aside>
+      </aside>
+    </div>
   );
 }
 
