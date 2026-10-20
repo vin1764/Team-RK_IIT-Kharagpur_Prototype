@@ -26,6 +26,8 @@ interface DraftState {
   values: Record<string, string>;
   /** Price rows keyed by size. */
   prices: Record<string, PriceRow>;
+  /** Extra (non-front) images per product id, added from "Uploaded Images". */
+  extraImages: Record<string, DraftImage[]>;
   /** Field ids pre-filled by the bot (Phase 3); empty in Phase 1. */
   botFilled: string[];
   setCategoryPath: (p: string[]) => void;
@@ -33,10 +35,11 @@ interface DraftState {
   setValue: (id: string, v: string) => void;
   setValues: (v: Record<string, string>) => void;
   setPrice: (size: string, row: Partial<PriceRow>) => void;
+  setExtraImages: (productId: string, imgs: DraftImage[]) => void;
   reset: () => void;
 }
 
-const INITIAL = { categoryPath: [] as string[], images: [] as DraftImage[], values: {}, prices: {}, botFilled: [] as string[] };
+const INITIAL = { categoryPath: [] as string[], images: [] as DraftImage[], values: {}, prices: {}, extraImages: {}, botFilled: [] as string[] };
 
 let seq = 0;
 /** Deterministic ids (no Math.random / Date.now). */
@@ -52,8 +55,10 @@ export const useDraft = create<DraftState>((set) => ({
   setValue: (id, v) => set((s) => ({ values: { ...s.values, [id]: v } })),
   setValues: (v) => set((s) => ({ values: { ...s.values, ...v } })),
   setPrice: (size, row) => set((s) => ({ prices: { ...s.prices, [size]: { ...EMPTY_PRICE_ROW, ...s.prices[size], ...row } } })),
+  setExtraImages: (productId, imgs) => set((s) => ({ extraImages: { ...s.extraImages, [productId]: imgs } })),
   reset: () => {
-    useDraft.getState().images.forEach((i) => i.url.startsWith('blob:') && URL.revokeObjectURL(i.url));
+    const s = useDraft.getState();
+    [...s.images, ...Object.values(s.extraImages).flat()].forEach((i) => i.url.startsWith('blob:') && URL.revokeObjectURL(i.url));
     set({ ...INITIAL });
   },
 }));

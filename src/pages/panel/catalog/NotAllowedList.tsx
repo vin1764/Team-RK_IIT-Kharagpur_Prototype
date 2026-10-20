@@ -23,7 +23,7 @@ export function NotAllowedList({ layout, colon = false }: { layout: 'grid' | 'co
       </p>
       <div className={layout === 'grid' ? 'grid grid-cols-[11.875rem_1fr] items-center gap-y-4' : 'flex flex-col'}>
         {NOT_ALLOWED.map((label, i) => (
-          <div key={label} className={`flex items-center ${layout === 'grid' ? '' : 'mb-3'}`}>
+          <div key={label} className={`flex items-center ${layout === 'grid' ? '' : 'mb-4'}`}>
             <img
               src={`/brand/ms/supplier-new/invalid-image-${i + 1}.png`}
               alt={label}

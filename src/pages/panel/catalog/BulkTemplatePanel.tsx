@@ -1,6 +1,6 @@
 // Right-hand panel of Bulk Catalog Upload once a leaf is picked (bulk-upload-category*.png):
 // upload a filled template, or generate a prefilled one from front images, or download an empty one.
-import { useState, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { notInPrototype, toast } from '../../../components/Toast';
 import { Breadcrumb, SampleImage } from './CategoryPreview';
 import { useFilePicker } from './ImageTiles';
@@ -47,9 +47,8 @@ function PrefilledPopover({ onClose }: { onClose: () => void }) {
   );
 }
 
-export function BulkTemplatePanel({ path, onGenerate }: { path: string[]; onGenerate: () => void }) {
+export function BulkTemplatePanel({ path, onGenerate, coach, onCoachClose }: { path: string[]; onGenerate: () => void; coach: boolean; onCoachClose: () => void }) {
   const leaf = path[path.length - 1]!;
-  const [coach, setCoach] = useState(true);
   const upload = useFilePicker((files) => files?.[0] && toast(`${files[0].name} selected · template upload isn't part of this prototype`), XLSX, false);
   return (
     <div className="relative ml-6.5 bg-primary-bg pb-12" data-testid="bulkTemplatePanel">
@@ -58,8 +57,10 @@ export function BulkTemplatePanel({ path, onGenerate }: { path: string[]; onGene
         <Breadcrumb path={path} />
       </div>
       <div className="flex flex-col items-center px-9">
-        <SampleImage path={path} className="mt-9" />
-        <p className="m-0 mt-8 font-body text-lg leading-5 text-primary-text">Already have your {leaf} template filled ?</p>
+        <div className="flex h-[15.625rem] items-center justify-center">
+          <SampleImage path={path} />
+        </div>
+        <p className="m-0 font-body text-lg leading-5 text-primary-text">Already have your {leaf} template filled ?</p>
         <button
           type="button"
           onClick={upload.open}
@@ -72,14 +73,14 @@ export function BulkTemplatePanel({ path, onGenerate }: { path: string[]; onGene
         <div className="mt-8 h-px w-full bg-tertiary-bg" />
         <p className="m-0 mt-6 font-body text-lg leading-5 text-primary-text">Don't have {leaf} template?</p>
         <div className="relative mt-3 w-[calc(100%+0.5rem)]">
-          {coach && <PrefilledPopover onClose={() => setCoach(false)} />}
+          {coach && <PrefilledPopover onClose={onCoachClose} />}
           <button
             type="button"
             onClick={onGenerate}
-            className="block w-full cursor-pointer rounded-lg border border-solid border-tertiary-border bg-white px-3.5 py-3 text-left"
+            className="block w-full cursor-pointer rounded-lg border border-solid border-tertiary-border bg-white px-3 py-3 text-left"
           >
-            <span className="flex items-center gap-2">
-              <span className="font-heading text-xl leading-5 text-primary-text">Generate Prefilled Template</span>
+            <span className="flex items-center gap-2 whitespace-nowrap">
+              <span className="font-heading text-xl leading-5 tracking-[-0.2px] text-primary-text">Generate Prefilled Template</span>
               <PinkTag>RECOMMENDED</PinkTag>
             </span>
             <span className="mt-1 block font-body text-base leading-4 text-secondary-text">Upload product front images and generate your prefilled template</span>

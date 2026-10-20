@@ -70,5 +70,237 @@
     "name": "bulk-category-snapshot",
     "route": "/panel/v3/new/cataloging/demo/catalogs/bulk/add",
     "ref": "meesho-catalog-bulk-category.html"
+  },
+  {
+    "name": "bulk-saree-pin",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/bulk/add",
+    "ref": "bulk-upload-category.png",
+    "scroll": 103,
+    "oursCss": ":root{--concept-strip-h:0px} html{zoom:0.75} .layout-main-dt-responsive{width:auto!important} [role=dialog]>div{max-height:none!important} #mainWrapper{margin-left:36px!important}",
+    "steps": [
+      {
+        "click": "Women Fashion",
+        "exact": true
+      },
+      {
+        "click": "Accessories",
+        "exact": true
+      },
+      {
+        "click": "Fashion Accessories",
+        "exact": true
+      },
+      {
+        "click": "Saree Pin",
+        "exact": true
+      },
+      {
+        "wait": 300
+      }
+    ]
+  },
+  {
+    "name": "bulk-water-bottles",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/bulk/add",
+    "ref": "bulk-upload-category-water-bottles.png",
+    "scroll": 46,
+    "oursCss": ":root{--concept-strip-h:0px} html{zoom:0.75} .layout-main-dt-responsive{width:auto!important} [role=dialog]>div{max-height:none!important} #mainWrapper{margin-left:29px!important}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "wait": 300
+      }
+    ]
+  },
+  {
+    "name": "bulk-image-modal",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/bulk/add",
+    "ref": "bulk-upload-image-modal.png",
+    "scroll": 58,
+    "oursCss": ":root{--concept-strip-h:0px} html{zoom:0.75} .layout-main-dt-responsive{width:auto!important} [role=dialog]>div{max-height:none!important} #mainWrapper{margin-left:16px!important}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "wait": 300
+      },
+      {
+        "click": "Generate Prefilled Template"
+      },
+      {
+        "wait": 300
+      }
+    ],
+    "width": 937,
+    "height": 677
+  },
+  {
+    "name": "details-1",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category",
+    "ref": "catalog-product-details-1.png",
+    "oursCss": ":root{--concept-strip-h:0px} #mainWrapper{margin-left:62px!important}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "click": "Add Product Images"
+      },
+      {
+        "click": "Continue",
+        "exact": true
+      },
+      {
+        "wait": 400
+      }
+    ]
+  },
+  {
+    "name": "details-2",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category",
+    "ref": "catalog-product-details-2.png",
+    "scroll": 120,
+    "oursCss": ":root{--concept-strip-h:0px} html{zoom:0.75} .layout-main-dt-responsive{width:auto!important} [role=dialog]>div{max-height:none!important} #mainWrapper{margin-left:4px!important} [data-testid=addProductDetails] span{white-space:normal} [data-testid=addProductDetails] > div span span:last-child{white-space:nowrap}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "click": "Add Product Images"
+      },
+      {
+        "click": "Continue",
+        "exact": true
+      },
+      {
+        "wait": 400
+      }
+    ]
+  },
+  {
+    "name": "details-3",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category",
+    "ref": "catalog-product-details-3.png",
+    "scroll": 647,
+    "oursCss": ":root{--concept-strip-h:0px} html{zoom:0.75} .layout-main-dt-responsive{width:auto!important} [role=dialog]>div{max-height:none!important} #mainWrapper{margin-left:47px!important} [data-testid=addProductDetails] span{white-space:normal} [data-testid=addProductDetails] > div span span:last-child{white-space:nowrap}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "click": "Add Product Images"
+      },
+      {
+        "click": "Continue",
+        "exact": true
+      },
+      {
+        "wait": 400
+      }
+    ]
+  },
+  {
+    "name": "details-other-attributes",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category",
+    "ref": "catalog-other-attributes.png",
+    "width": 1000,
+    "scroll": 1262,
+    "oursCss": ":root{--concept-strip-h:0px} html{zoom:0.75} .layout-main-dt-responsive{width:auto!important} [role=dialog]>div{max-height:none!important} #mainWrapper{margin-left:83px!important} [data-testid=addProductDetails] span{white-space:normal} [data-testid=addProductDetails] > div span span:last-child{white-space:nowrap}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "click": "Add Product Images"
+      },
+      {
+        "click": "Continue",
+        "exact": true
+      },
+      {
+        "wait": 400
+      }
+    ]
   }
 ]

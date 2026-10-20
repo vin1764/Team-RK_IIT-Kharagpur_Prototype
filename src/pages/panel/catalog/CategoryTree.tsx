@@ -51,7 +51,7 @@ export function CategoryTree({
       {cols.map((nodes, depth) => (
         <div key={depth}>
           <div className="relative w-50">
-            <div className={`block overflow-y-scroll ${depth === 0 ? 'max-h-100' : 'max-h-75'}`}>
+            <div className={`block overflow-y-scroll [overflow-anchor:none] ${depth === 0 ? 'max-h-100' : 'max-h-75'}`}>
               {/* Before anything is picked the panel highlights "Your Categories" (snapshot); the
                   screenshots taken after a pick no longer show the row. */}
               {depth === 0 && path.length === 0 && (
