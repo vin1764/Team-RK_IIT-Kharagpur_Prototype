@@ -1,0 +1,4 @@
+[
+  { "name": "single-category-snapshot", "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category", "ref": "meesho-catalog-add-single-category.html" },
+  { "name": "bulk-category-snapshot", "route": "/panel/v3/new/cataloging/demo/catalogs/bulk/add", "ref": "meesho-catalog-bulk-category.html" }
+]

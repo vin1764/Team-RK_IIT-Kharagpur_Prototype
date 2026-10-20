@@ -1,0 +1,13 @@
+[
+  { "name": "home", "route": "/panel/v3/new/growth/demo/home", "ref": "home.png" },
+  { "name": "home-qc", "route": "/panel/v3/new/growth/demo/home?state=qc", "ref": "meesho-home.html" },
+  {
+    "name": "notices",
+    "route": "/panel/v3/new/growth/demo/notices",
+    "ref": "notices-1.png",
+    "scroll": 4,
+    "oursCss": "body{margin-right:12.8px!important} main.layout-main-dt-responsive{width:calc(100vw - 14rem - 12.8px)!important}"
+  },
+  { "name": "notices-snapshot", "route": "/panel/v3/new/growth/demo/notices", "ref": "meesho-notices.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}" },
+  { "name": "notices-full", "route": "/panel/v3/new/growth/demo/notices", "ref": "meesho-notices.html", "fullPage": true, "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}" }
+]

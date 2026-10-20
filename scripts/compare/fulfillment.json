@@ -1,0 +1,7 @@
+[
+  { "name": "orders", "route": "/panel/v3/new/fulfillment/demo/orders/pending", "ref": "meesho-orders.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}", "oursCss": ":root{--concept-strip-h:0px}" },
+  { "name": "returns", "route": "/panel/v3/new/fulfillment/demo/returns/overview", "ref": "meesho-returns.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}", "oursCss": ":root{--concept-strip-h:0px}" },
+  { "name": "claims", "route": "/panel/v3/new/fulfillment/demo/claims", "ref": "meesho-claims.html", "fullPage": true, "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}", "oursCss": ":root{--concept-strip-h:0px}" },
+  { "name": "warehouse", "route": "/panel/v3/new/fulfillment/demo/warehouse", "ref": "meesho-warehouse.html", "fullPage": true, "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}", "oursCss": ":root{--concept-strip-h:0px}" },
+  { "name": "payments", "route": "/panel/v3/new/payouts/demo/payments", "ref": "meesho-payments.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}", "oursCss": ":root{--concept-strip-h:0px}" }
+]

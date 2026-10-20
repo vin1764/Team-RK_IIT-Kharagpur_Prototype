@@ -1,0 +1,225 @@
+{
+  "_source": "reference/html/meesho-catalog-add-single-category.html (level 1, 'Your Categories'); deeper branches only as far as visible in reference/screens catalog-select-category*.png and bulk-upload-category*.png. Nodes without 'children' were not captured. Level-4 nodes are leaves. 'Glassware &...' (cut off in catalog-select-category.png) is left out.",
+  "tree": [
+    {
+      "name": "Men Fashion"
+    },
+    {
+      "name": "Women Fashion",
+      "children": [
+        {
+          "name": "Ethnic Wear"
+        },
+        {
+          "name": "Western Wear"
+        },
+        {
+          "name": "Accessories",
+          "children": [
+            {
+              "name": "Jewellery"
+            },
+            {
+              "name": "Belts"
+            },
+            {
+              "name": "Fashion Accessories",
+              "children": [
+                {
+                  "name": "Bindis"
+                },
+                {
+                  "name": "Hijab Pin"
+                },
+                {
+                  "name": "Saree Pin",
+                  "sample": {
+                    "src": "/brand/local/catalog/sample-saree-pin.png",
+                    "w": 207,
+                    "h": 182
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Caps & Hats"
+            },
+            {
+              "name": "Hair Accessories"
+            },
+            {
+              "name": "Scarves, Stoles & Gloves"
+            }
+          ]
+        },
+        {
+          "name": "Footwear"
+        },
+        {
+          "name": "Inner & Sleepwear"
+        },
+        {
+          "name": "Sports & Activewear"
+        },
+        {
+          "name": "Women Ethnic Wear"
+        }
+      ]
+    },
+    {
+      "name": "Home & Living"
+    },
+    {
+      "name": "Kids & Toys"
+    },
+    {
+      "name": "Personal Care & Wellness"
+    },
+    {
+      "name": "Mobiles & Tablets"
+    },
+    {
+      "name": "Consumer Electronics"
+    },
+    {
+      "name": "Appliances"
+    },
+    {
+      "name": "Automotive"
+    },
+    {
+      "name": "Beauty & Personal Care"
+    },
+    {
+      "name": "Kitchen Utility"
+    },
+    {
+      "name": "Home Utility"
+    },
+    {
+      "name": "Kids"
+    },
+    {
+      "name": "Grocery"
+    },
+    {
+      "name": "Women"
+    },
+    {
+      "name": "Home & Kitchen",
+      "children": [
+        {
+          "name": "Daily Needs"
+        },
+        {
+          "name": "Home Cleaning & Improvement"
+        },
+        {
+          "name": "Kitchen & Dining",
+          "children": [
+            {
+              "name": "Cookware"
+            },
+            {
+              "name": "Kitchen Storage",
+              "children": [
+                {
+                  "name": "Tissue Papers"
+                },
+                {
+                  "name": "Water Bottles",
+                  "sample": {
+                    "src": "/brand/local/catalog/sample-water-bottles.png",
+                    "w": 190,
+                    "h": 235
+                  }
+                },
+                {
+                  "name": "Thermos & Vacuum Flasks"
+                },
+                {
+                  "name": "Lunch Boxes"
+                },
+                {
+                  "name": "Jars & Containers"
+                },
+                {
+                  "name": "Bread Bins"
+                }
+              ]
+            },
+            {
+              "name": "Dinnerware"
+            },
+            {
+              "name": "Gas Stoves"
+            },
+            {
+              "name": "Kitchen Tools"
+            },
+            {
+              "name": "Bakeware"
+            },
+            {
+              "name": "Baking Tools"
+            }
+          ]
+        },
+        {
+          "name": "Gardening"
+        },
+        {
+          "name": "Home & Kitchen Appliances"
+        },
+        {
+          "name": "Home Furnishings"
+        }
+      ]
+    },
+    {
+      "name": "Health & Wellness"
+    },
+    {
+      "name": "Beauty & Makeup"
+    },
+    {
+      "name": "Personal Care"
+    },
+    {
+      "name": "Men'S Grooming"
+    },
+    {
+      "name": "Craft & Office Supplies"
+    },
+    {
+      "name": "Sports & Fitness"
+    },
+    {
+      "name": "Automotive Accessories"
+    },
+    {
+      "name": "Pet Supplies"
+    },
+    {
+      "name": "Office Supplies & Stationery"
+    },
+    {
+      "name": "Industrial & Scientific Products"
+    },
+    {
+      "name": "Musical Instruments"
+    },
+    {
+      "name": "Books"
+    },
+    {
+      "name": "Eye Utility"
+    },
+    {
+      "name": "Bags, Luggage & Travel Accessories"
+    },
+    {
+      "name": "Mens Personal Care & Grooming"
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+[
+  { "name": "promotions", "route": "/panel/v3/new/promotions/demo/list?tab=SALE&status=UPCOMING", "ref": "meesho-promotions.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}" },
+  { "name": "sale-opt-in", "route": "/panel/v3/new/promotions/demo/sale/list?tab=SALE&status=UPCOMING", "ref": "meesho-sale-opt-in.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}" },
+  { "name": "offer-opt-in", "route": "/panel/v3/new/promotions/demo/offer/list?tab=DEAL", "ref": "meesho-offer-opt-in.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}" },
+  { "name": "influencer-marketing", "route": "/panel/v3/new/livecommerce/demo/influencer-marketing", "ref": "meesho-influencer-marketing.html", "fullPage": true, "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}" },
+  { "name": "instant-cash", "route": "/panel/v3/new/finance/demo/home", "ref": "meesho-instant-cash.html", "refCss": "#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}" }
+]

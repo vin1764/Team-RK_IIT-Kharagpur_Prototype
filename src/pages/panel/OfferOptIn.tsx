@@ -1,4 +1,8 @@
-// Placeholder — replaced in Phase 1 by a faithful replica.
+// Promotions - Offers (reference/html/meesho-offer-opt-in.html): Deals (NEW) with the
+// Mega Offers / Daily Deals carousel and the empty deal list.
+import { PromotionsLayout } from './promotions/PromotionsLayout';
+import { OFFER_OPT_IN_TABS } from './promotions/tabs';
+
 export default function OfferOptIn() {
-  return <div className="m-3 rounded bg-white p-4 text-xl font-heading">OfferOptIn</div>;
+  return <PromotionsLayout title="Promotions - Offers" tabs={OFFER_OPT_IN_TABS} />;
 }

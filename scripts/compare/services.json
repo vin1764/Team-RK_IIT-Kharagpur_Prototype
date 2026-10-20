@@ -1,0 +1,30 @@
+[
+  {
+    "name": "manage-pricing",
+    "route": "/panel/v3/new/services/demo/ipp/allproducts",
+    "ref": "meesho-manage-pricing.html",
+    "refCss": "@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2);font-weight:400}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2);font-weight:500 560}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2);font-weight:600}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-700-normal.woff2);font-weight:700}#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}",
+    "oursCss": ":root{--concept-strip-h:0px!important}"
+  },
+  {
+    "name": "reduce-rto",
+    "route": "/panel/v3/new/services/demo/ipp/reduce-rto-and-returns/discounts-applied",
+    "ref": "meesho-reduce-rto-returns.html",
+    "refCss": "@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2);font-weight:400}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2);font-weight:500 560}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2);font-weight:600}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-700-normal.woff2);font-weight:700}#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}",
+    "oursCss": ":root{--concept-strip-h:0px!important}"
+  },
+  {
+    "name": "inventory",
+    "route": "/panel/v3/new/services/demo/inventory",
+    "ref": "meesho-inventory.html",
+    "refCss": "@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2);font-weight:400}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2);font-weight:500 560}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2);font-weight:600}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-700-normal.woff2);font-weight:700}#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}",
+    "oursCss": ":root{--concept-strip-h:0px!important}"
+  },
+  {
+    "name": "business-dashboard",
+    "route": "/panel/v3/new/insights/demo/business-dashboard",
+    "ref": "meesho-business-dashboard.html",
+    "refCss": "@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2);font-weight:400}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2);font-weight:500 560}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2);font-weight:600}@font-face{font-family:'DM Sans';src:url(file:///home/user/Team-RK_IIT-Kharagpur_Prototype/node_modules/@fontsource/dm-sans/files/dm-sans-latin-700-normal.woff2);font-weight:700}#claude-agent-glow-border,#claude-phantom-cursor{display:none!important}",
+    "oursCss": ":root{--concept-strip-h:0px!important}"
+  }
+]
