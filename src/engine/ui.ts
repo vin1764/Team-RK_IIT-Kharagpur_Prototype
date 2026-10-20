@@ -1,30 +1,57 @@
 // The only engine entry point UI code may import.
 // Nothing exported here returns or accepts Benchmark B.
 
-import { NotImplemented, type ProductTypeId } from './types';
-import type { PricePosition, PriceStatus } from './benchmark';
+import data from '../data/productTypes.json';
+import { benchmarkB, priceCheck, pricePosition, type Comparable, type PricePosition, type PriceStatus } from './benchmark';
+import { MissingPlanValue, type ProductTypeId } from './types';
 
-export { costStack, takeHomeAt } from './costStack';
-export { demandForType, likelyShare, slots, suggestedLot, switchSuggestions } from './demand';
+export { costStack, takeHomeAt, typeFees, type CostStack, type Fees } from './costStack';
+export { demandForType, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions } from './demand';
 export { restock } from './restock';
 export { verdict } from './verdict';
 export { coachFix } from './coach';
-export { eligibility, BUSINESS_TYPES } from './eligibility';
+export {
+  eligibility,
+  BUSINESS_TYPES,
+  MANUFACTURER_TYPES,
+  GST_FACTORY_NATURE,
+  type BusinessType,
+  type Eligibility,
+  type EligibilityCheck,
+  type MakerRecords,
+} from './eligibility';
 export { packPointFee } from './packPoint';
 export { dayToDate, dayLabel, formatDate } from './calendar';
-export type { PricePosition, PriceStatus };
+export type { PricePosition, PriceStatus, ProductTypeId };
+
+interface BenchmarkSeed {
+  minDeliveredOrders: number;
+  comparables: Comparable[];
+}
+
+function seed(type: ProductTypeId): BenchmarkSeed {
+  const b = (data as unknown as Record<string, { benchmark?: BenchmarkSeed }>)[type]?.benchmark;
+  if (!b) throw new MissingPlanValue(`benchmark comparables for ${type}`);
+  return b;
+}
+
+const B = (type: ProductTypeId) => {
+  const s = seed(type);
+  return benchmarkB(s.comparables, s.minDeliveredOrders);
+};
 
 /** Cost check (FO-5): "a qualifying price exists" ⇔ breakEven ≤ B. */
 export function qualifyingPriceExists(type: ProductTypeId, breakEven: number): boolean {
-  throw new NotImplemented('qualifyingPriceExists');
+  return breakEven <= B(type);
 }
 
 /** Bot Price screen, launch commit and price-hold (LB-6, LW-5, PI-3): status only, B computed inside. */
 export function checkListingPrice(type: ProductTypeId, price: number, breakEven: number): PriceStatus {
-  throw new NotImplemented('checkListingPrice');
+  return priceCheck(price, breakEven, B(type));
 }
 
 /** Manage Pricing → Price position (PI-2): third only. */
 export function listingPricePosition(type: ProductTypeId, price: number): PricePosition {
-  throw new NotImplemented('listingPricePosition');
+  const s = seed(type);
+  return pricePosition(price, s.comparables, s.minDeliveredOrders);
 }
