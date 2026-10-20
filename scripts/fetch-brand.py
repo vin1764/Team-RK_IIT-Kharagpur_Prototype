@@ -7,7 +7,7 @@ IMG = ('.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif')
 HOST = {'images.meeshosupplyassets.com': 'msa', 'images.meesho.com': 'mimg', 'static.meeshosupply.com': 'ms', 'static-assets.meesho.com': 'msta'}
 urls = set()
 for f in os.listdir(REF):
-    t = open(os.path.join(REF, f), encoding='utf-8').read()
+    t = html.unescape(open(os.path.join(REF, f), encoding='utf-8').read())
     for u in re.findall(r'''(?:src|poster)=["'](https?://[^"']+)["']''', t) + re.findall(r'''url\(["']?(https?://[^)"']+)''', t):
         u = html.unescape(u)
         if u.split('/')[2] in HOST and u.split('?')[0].lower().endswith(IMG): urls.add(u)

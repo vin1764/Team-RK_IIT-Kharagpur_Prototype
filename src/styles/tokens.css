@@ -180,6 +180,8 @@
 
   --font-weight-medium: 560;
 
+  /* The panel's text-* utilities set only font-size; line-height is inherited. */
+  --text-*: initial;
   --text-xs: var(--font-size-xs);
   --text-sm: var(--font-size-sm);
   --text-base: var(--font-size-base);
@@ -234,6 +236,8 @@
   --animate-fade-in: fade-in 0.15s ease-out;
 
   /* Letter spacing used by the crystal pages (snapshots resolve to -0.1px) */
+  --background-color-discovery-base: var(--discovery-500);
+  --text-color-neutral-inverse: var(--white);
   --tracking-zero: 0;
   --tracking-free: -0.1px;
   --tracking-breathable: -0.2px;

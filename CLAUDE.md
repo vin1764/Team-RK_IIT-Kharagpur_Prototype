@@ -48,6 +48,9 @@ docs/          phase write-ups and comparison images
 
 - `npm test` runs all engine tests (Vitest).
 - `npm run typecheck` runs `tsc --noEmit`.
+- `npm run dev` starts the app; `npm run build` type-checks and builds.
+- `npm run compare [names…]` renders routes beside their reference at 125% into `docs/compare/` (entries in `scripts/compare/*.json`). Use it for every page change.
+- `python3 -I scripts/html2jsx.py <snapshot> [--tag div --from "text"]` ports snapshot markup to JSX with local image paths.
 
 ## Conventions
 

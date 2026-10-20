@@ -4,6 +4,8 @@
 
 @layer base {
   :root { --concept-strip-h: 20px; }
+  /* Every panel page sets this on all elements (--letter-spacing-free). */
+  * { letter-spacing: -0.1px; }
   body {
     margin: 0;
     font-family: var(--font-body);

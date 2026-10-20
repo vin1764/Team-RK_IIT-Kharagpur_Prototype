@@ -44,7 +44,7 @@ export function withDemoParams(search: string, s: Pick<DemoState, 'persona' | 'd
 
 export const useDemo = create<DemoState>((set) => ({
   ...fromUrl(),
-  controlsOpen: true,
+  controlsOpen: false,
   setPersona: (persona) => set({ persona }),
   setDay: (day) => set({ day: Math.max(0, Math.min(calendar.maxDay, Math.round(day))) }),
   setLang: (lang) => set({ lang }),
