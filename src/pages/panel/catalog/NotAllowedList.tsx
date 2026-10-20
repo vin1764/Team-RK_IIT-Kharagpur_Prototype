@@ -17,13 +17,13 @@ export const NOT_ALLOWED = [
 export function NotAllowedList({ layout, colon = false }: { layout: 'grid' | 'column'; colon?: boolean }) {
   return (
     <div>
-      <p className="m-0 mb-3.5 flex items-center gap-2 font-body text-lg leading-5 text-error-text">
+      <p className="m-0 mb-3.25 flex items-center gap-2 font-body text-lg leading-5 text-error-text">
         <img src="/brand/ms/supplier-new/invalid-icon-red.svg" alt="" width="16" height="16" className="block size-4" />
         Image types which are not allowed{colon ? ':' : ''}
       </p>
-      <div className={layout === 'grid' ? 'grid grid-cols-[11.875rem_1fr]' : 'flex flex-col'}>
+      <div className={layout === 'grid' ? 'grid grid-cols-[11.875rem_1fr] items-center gap-y-4' : 'flex flex-col'}>
         {NOT_ALLOWED.map((label, i) => (
-          <div key={label} className={`flex items-center ${layout === 'grid' ? 'min-h-16 py-1' : 'mb-3'}`}>
+          <div key={label} className={`flex items-center ${layout === 'grid' ? '' : 'mb-3'}`}>
             <img
               src={`/brand/ms/supplier-new/invalid-image-${i + 1}.png`}
               alt={label}

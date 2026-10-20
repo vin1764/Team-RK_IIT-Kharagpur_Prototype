@@ -34,7 +34,7 @@ export function ProductsModal({ initial, onCancel, onContinue }: { initial: Draf
               <p className="m-0 font-body text-base leading-4 text-primary-text">You can add minimum 1 and maximum 9 products to create a catalog</p>
             </div>
             <div className="mt-1 h-32 overflow-y-scroll pt-3 pl-px">
-              <ImageTiles images={images} onChange={setImages} addLabel="Add Product" />
+              <ImageTiles images={images} onChange={setImages} addLabel={<span className="text-base leading-5">Add Product</span>} />
             </div>
           </div>
           <div className="ml-6 flex-1">

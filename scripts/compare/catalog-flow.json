@@ -1,4 +1,74 @@
 [
-  { "name": "single-category-snapshot", "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category", "ref": "meesho-catalog-add-single-category.html" },
-  { "name": "bulk-category-snapshot", "route": "/panel/v3/new/cataloging/demo/catalogs/bulk/add", "ref": "meesho-catalog-bulk-category.html" }
+  {
+    "name": "single-category-snapshot",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category",
+    "ref": "meesho-catalog-add-single-category.html"
+  },
+  {
+    "name": "single-category-water-bottles",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category",
+    "ref": "catalog-select-category-water-bottles.png",
+    "width": 1518,
+    "scroll": 84,
+    "oursCss": ":root{--concept-strip-h:0px}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "wait": 300
+      }
+    ]
+  },
+  {
+    "name": "single-image-modal",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category",
+    "ref": "catalog-image-modal.png",
+    "width": 1329,
+    "scroll": 84,
+    "oursCss": ":root{--concept-strip-h:0px}",
+    "steps": [
+      {
+        "click": "Home & Kitchen",
+        "exact": true
+      },
+      {
+        "click": "Kitchen & Dining",
+        "exact": true
+      },
+      {
+        "click": "Kitchen Storage",
+        "exact": true
+      },
+      {
+        "click": "Water Bottles",
+        "exact": true
+      },
+      {
+        "click": "Add Product Images"
+      },
+      {
+        "wait": 300
+      }
+    ],
+    "height": 684
+  },
+  {
+    "name": "bulk-category-snapshot",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/bulk/add",
+    "ref": "meesho-catalog-bulk-category.html"
+  }
 ]
