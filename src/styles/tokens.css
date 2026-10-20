@@ -233,6 +233,13 @@
 
   --animate-fade-in: fade-in 0.15s ease-out;
 
+  /* Letter spacing used by the crystal pages (snapshots resolve to -0.1px) */
+  --tracking-zero: 0;
+  --tracking-free: -0.1px;
+  --tracking-breathable: -0.2px;
+  --tracking-relaxed: -0.5px;
+  --tracking-compact: -1px;
+
   /* Newer "crystal" tokens (text-neutral-primary, bg-brand-light, rounded-6…) */
   --color-overlay-bg: var(--overlay-bg);
   --text-color-brand-primary: var(--brand-600);

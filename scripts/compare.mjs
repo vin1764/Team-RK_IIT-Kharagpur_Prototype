@@ -34,6 +34,11 @@ const MIER_AS_FIGTREE = ['Book', 400, 'Demi', 600, 'Bold', 700]
   .reduce((a, v, i, arr) => (i % 2 ? a : [...a, [v, arr[i + 1]]]), [])
   .map(([n, w]) => `@font-face{font-family:'Mier ${n}';src:url(${font(w)});font-weight:100 900}`)
   .join('');
+// The snapshots load Meesho's DM Sans from their server; use the same local files we ship.
+const dm = (w) => pathToFileURL(resolve(ROOT, `node_modules/@fontsource/dm-sans/files/dm-sans-latin-${w}-normal.woff2`)).href;
+const DM_SANS_LOCAL = [[400, '400'], [500, '500 560'], [600, '600'], [700, '700']]
+  .map(([w, range]) => `@font-face{font-family:'DM Sans';src:url(${dm(w)});font-weight:${range}}`)
+  .join('');
 const HIDE_OURS = ':root{--concept-strip-h:0px!important}[data-concept-strip],[data-demo-controls]{display:none!important}';
 
 const server = await createServer({ root: ROOT, logLevel: 'error', server: { port: 5199, strictPort: false } });
@@ -56,7 +61,7 @@ try {
     if (!isShot) {
       const p = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1.25 });
       await p.goto(pathToFileURL(resolve(ROOT, 'reference/html', e.ref)).href, { waitUntil: 'load', timeout: 60000 }).catch(() => {});
-      await p.addStyleTag({ content: MIER_AS_FIGTREE + (e.refCss ?? '') });
+      await p.addStyleTag({ content: MIER_AS_FIGTREE + DM_SANS_LOCAL + (e.refCss ?? '') });
       await p.evaluate(() => document.fonts.ready);
       await p.waitForTimeout(600);
       if (e.refScroll) await p.evaluate((y) => window.scrollTo(0, y), e.refScroll);

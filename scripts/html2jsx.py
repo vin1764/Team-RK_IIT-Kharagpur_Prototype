@@ -33,7 +33,7 @@ BOOL = {'disabled', 'readonly', 'required', 'checked', 'autofocus', 'multiple', 
 
 
 PREFIXES = ('growth-', 'cataloging-', 'fulfillment-', 'services-', 'lcom-', 'payouts-', 'promotions-', 'insights-')
-SIZE = r'(xs|sm|base|lg|xl|[2-9]xl)'
+SIZE = r'(xs|sm|base|lg|xl|[2-9]xl|(body|heading|display)-[a-z]+)'
 
 
 def group(cls):
