@@ -25,7 +25,14 @@ import ReduceRto from '../pages/panel/ReduceRto';
 import Returns from '../pages/panel/Returns';
 import SaleOptIn from '../pages/panel/SaleOptIn';
 import Warehouse from '../pages/panel/Warehouse';
-import { paths, SID } from './paths';
+import Outreach from '../pages/onboarding/Outreach';
+import Signup from '../pages/onboarding/Signup';
+import CostCheck from '../pages/onboarding/CostCheck';
+import BusinessDetails from '../pages/onboarding/BusinessDetails';
+import PickupAddress from '../pages/onboarding/PickupAddress';
+import BankDetails from '../pages/onboarding/BankDetails';
+import SupplierDetails from '../pages/onboarding/SupplierDetails';
+import { onboarding, paths, SID } from './paths';
 
 const P = '/panel/v3/new';
 
@@ -61,6 +68,14 @@ export function App() {
           <Route path={`${P}/cataloging/${SID}/catalogs/single/add-product-details`} element={<AddSingleDetails />} />
           <Route path={`${P}/cataloging/${SID}/catalogs/bulk/add`} element={<BulkCatalogUpload />} />
         </Route>
+        {/* Onboarding: full-page layouts of their own (no panel shell) */}
+        <Route path={onboarding.outreach} element={<Outreach />} />
+        <Route path={onboarding.signup} element={<Signup />} />
+        <Route path={onboarding.costCheck} element={<CostCheck />} />
+        <Route path={onboarding.businessDetails} element={<BusinessDetails />} />
+        <Route path={onboarding.pickupAddress} element={<PickupAddress />} />
+        <Route path={onboarding.bankDetails} element={<BankDetails />} />
+        <Route path={onboarding.supplierDetails} element={<SupplierDetails />} />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>
       <DemoControls />

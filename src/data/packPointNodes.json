@@ -1,0 +1,7 @@
+{
+  "_source": "doc PP-4 mock-up: Rajkot live; Moradabad opening at 40 makers",
+  "nodes": [
+    { "city": "Rajkot", "status": "live", "makersPooled": 40 },
+    { "city": "Moradabad", "status": "opening", "opensAtMakers": 40 }
+  ]
+}

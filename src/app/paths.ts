@@ -37,5 +37,17 @@ export const paths = {
   businessDashboard: `${P}/insights/${SID}/business-dashboard`,
 } as const;
 
+// Onboarding (outside the panel; paths are ours — the live ones weren't captured)
+export const onboarding = {
+  outreach: '/outreach',
+  signup: '/signup',
+  signupFromOutreach: '/signup?ref=outreach',
+  costCheck: '/cost-check',
+  businessDetails: '/onboarding/business-details',
+  pickupAddress: '/onboarding/pickup-address',
+  bankDetails: '/onboarding/bank-details',
+  supplierDetails: '/onboarding/supplier-details',
+} as const;
+
 /** Path without its query string, for matching the current location. */
 export const pathOnly = (p: string) => p.split('?')[0]!;
