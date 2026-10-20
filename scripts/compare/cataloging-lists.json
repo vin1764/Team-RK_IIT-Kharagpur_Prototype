@@ -1,0 +1,24 @@
+[
+  {
+    "name": "catalog-uploads",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/bulk",
+    "ref": "catalog-uploads.png",
+    "oursCss": "html{zoom:0.75}aside.sidebar,[class*='xl:hidden']{display:none!important}main.layout-main-dt-responsive{width:100%!important;padding-top:0!important}",
+    "scroll": 33
+  },
+  {
+    "name": "catalog-uploads-snapshot",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/bulk?state=qc",
+    "ref": "meesho-catalog-uploads.html"
+  },
+  {
+    "name": "quality",
+    "route": "/panel/v3/new/cataloging/demo/product-optimiser",
+    "ref": "meesho-quality.html"
+  },
+  {
+    "name": "image-bulk-upload",
+    "route": "/panel/v3/new/cataloging/demo/images-bulk-upload",
+    "ref": "meesho-image-bulk-upload.html"
+  }
+]
