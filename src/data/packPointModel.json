@@ -1,0 +1,24 @@
+{
+  "_source": "deck appendix 'Cluster Pack Point · Cost breakdown' and its assumptions; plan §8b",
+  "ordersPerMakerPerMonth": 150,
+  "workingDaysPerMonth": 26,
+  "unitsOnHandPerMaker": 50,
+  "unitsPerSqFt": 3,
+  "fixedOpsAreaSqFt": 500,
+  "rentPerSqFt": 15,
+  "salaries": { "packer": 14000, "handler": 14000, "supervisor": 22000 },
+  "ordersPerPackerPerDay": 180,
+  "consumablesPerOrder": 5,
+  "equipment": { "cost": 250000, "months": 36 },
+  "utilitiesPerMonth": 8000,
+  "partnerMarginMultiplier": 1.18,
+  "blendedRtoRate": 0.178,
+  "densityFloorMakers": 40,
+  "staffByPoolSize": {
+    "_source": "deck table: packers + handlers + supervisor (no rule given for handlers, so only these sizes are supported)",
+    "20": { "packers": 1, "handlers": 1, "supervisors": 1 },
+    "40": { "packers": 2, "handlers": 1, "supervisors": 1 },
+    "60": { "packers": 2, "handlers": 2, "supervisors": 1 },
+    "80": { "packers": 3, "handlers": 2, "supervisors": 1 }
+  }
+}

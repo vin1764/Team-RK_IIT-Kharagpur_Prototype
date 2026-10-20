@@ -1,0 +1,55 @@
+{
+  "_note": "Every number here comes from maker-app-build-plan.md (plan), the C2M solution doc (doc) or the Round-2 deck (deck). null = missing, asked in docs/phase-0/PHASE-0.md §7.",
+  "steel-bottle-1l": {
+    "name": "1 L steel water bottle",
+    "line": "steel-kitchenware",
+    "categoryPath": ["Home & Kitchen", "Kitchen & Dining", "Kitchen Storage", "Water Bottles"],
+    "fees": {
+      "_source": "plan §8 / doc LB-6",
+      "packaging": 6,
+      "shippingAndFixed": 32,
+      "returnsBuffer": 8,
+      "gst": 7
+    },
+    "demand": {
+      "_source": "plan §8 demandForType / doc FO-4, LB-5",
+      "gapPerWeek": { "low": 300, "high": 450 },
+      "priceBand": { "low": 150, "high": 170 },
+      "confidence": "High",
+      "committedUnits": 600
+    },
+    "likelyShare": { "_source": "plan §8 likelyShare", "share": 0.2 },
+    "typical": { "_source": "doc price-table mock-up (min run 100, lead 5 days)", "minRun": 100, "leadTimeDays": 5 },
+    "benchmark": {
+      "_source": "plan §8b: ₹150 × 200, ₹160 × 300, ₹165–190 × 500 qualifying orders",
+      "minDeliveredOrders": null,
+      "comparables": [
+        { "id": "D", "price": { "from": 150, "to": 150 }, "deliveredOrders": 200, "aboveQualityFloor": true, "ownedByMaker": false },
+        { "id": "E", "price": { "from": 160, "to": 160 }, "deliveredOrders": 300, "aboveQualityFloor": true, "ownedByMaker": false },
+        { "id": "F–J", "price": { "from": 165, "to": 190 }, "deliveredOrders": 500, "aboveQualityFloor": true, "ownedByMaker": false }
+      ]
+    }
+  },
+  "steel-casserole-1-5l": {
+    "name": "1.5 L steel casserole",
+    "line": "steel-kitchenware",
+    "demand": {
+      "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~200/wk, High)",
+      "gapPerWeek": { "low": 200, "high": 200, "approx": true },
+      "priceBand": null,
+      "confidence": "High",
+      "committedUnits": 0
+    }
+  },
+  "steel-flask-500ml": {
+    "name": "500 ml steel flask",
+    "line": "steel-kitchenware",
+    "demand": {
+      "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~120/wk, Medium)",
+      "gapPerWeek": { "low": 120, "high": 120, "approx": true },
+      "priceBand": null,
+      "confidence": "Medium",
+      "committedUnits": 0
+    }
+  }
+}
