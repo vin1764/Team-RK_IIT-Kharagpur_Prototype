@@ -10,3 +10,10 @@ describe('dayToDate', () => {
   });
   it('restock starts D31 = 24 Nov', () => expect(dayToDate(31)).toBe('2026-11-24'));
 });
+
+describe('dayLabel', () => {
+  it('D31 → 24 Nov 2026', async () => {
+    const { dayLabel } = await import('./calendar');
+    expect(dayLabel(31)).toBe('24 Nov 2026');
+  });
+});

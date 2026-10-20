@@ -11,7 +11,7 @@ export { verdict } from './verdict';
 export { coachFix } from './coach';
 export { eligibility, BUSINESS_TYPES } from './eligibility';
 export { packPointFee } from './packPoint';
-export { dayToDate } from './calendar';
+export { dayToDate, dayLabel, formatDate } from './calendar';
 export type { PricePosition, PriceStatus };
 
 /** Cost check (FO-5): "a qualifying price exists" ⇔ breakEven ≤ B. */
