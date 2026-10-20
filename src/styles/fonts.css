@@ -1,0 +1,56 @@
+/*
+ * Mier (Meesho's licensed font) comes as three families: Book, Demi and Bold.
+ * Each "Panel *" family below points at one Figtree weight, so markup ported
+ * from the snapshots (font-body / font-button / font-heading) renders the
+ * same weight whatever font-weight class sits next to it, as it does with Mier.
+ * To swap the look-alike, change the three url()s here and --font-sans in tokens.css.
+ */
+@font-face {
+  font-family: 'Panel Book';
+  src: url('../../node_modules/@fontsource/figtree/files/figtree-latin-400-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Panel Demi';
+  src: url('../../node_modules/@fontsource/figtree/files/figtree-latin-600-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Panel Bold';
+  src: url('../../node_modules/@fontsource/figtree/files/figtree-latin-700-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: block;
+}
+
+/* The panel also loads DM Sans (pills, some newer widgets). It's a free font, so we ship it as-is. */
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: block;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2') format('woff2');
+  font-weight: 500 560;
+  font-display: block;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: block;
+}
+@font-face {
+  font-family: 'DM Sans';
+  src: url('../../node_modules/@fontsource/dm-sans/files/dm-sans-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: block;
+}
+
+/* Plain Figtree, for anything that asks for --font-sans with a weight. */
+@font-face { font-family: 'Figtree'; src: url('../../node_modules/@fontsource/figtree/files/figtree-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: 'Figtree'; src: url('../../node_modules/@fontsource/figtree/files/figtree-latin-600-normal.woff2') format('woff2'); font-weight: 500 600; font-display: block; }
+@font-face { font-family: 'Figtree'; src: url('../../node_modules/@fontsource/figtree/files/figtree-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-display: block; }

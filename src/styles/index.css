@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+@import './fonts.css';
+@import './tokens.css';
+
+@layer base {
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background-color: var(--secondary-bg);
+    color: var(--primary-text);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Panel layout rules copied from the snapshot (non-utility classes). */
+.sidebar { display: none; }
+@media (width >= 1280px) {
+  .sidebar { display: block; }
+  .sidebar-content-desktop { width: 14rem; }
+  .layout-main-dt-responsive[data-show-sidebar='true'] { width: calc(100vw - 14rem); }
+}
+@media (width < 1280px) {
+  .layout-main-dt-responsive { width: 100vw; }
+}

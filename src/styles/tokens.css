@@ -1,0 +1,307 @@
+/*
+ * The Supplier Hub's own design tokens, copied from the live panel's CSS
+ * (reference/html/meesho-home.html, 21 Oct 2026). Names match the panel so
+ * snapshot markup ports class-for-class: bg-primary-text, text-brand-primary-text,
+ * bg-success-bg, font-heading, text-lg (= 13px) and so on.
+ */
+:root {
+  --white: rgb(255, 255, 255);
+  --black: rgb(0, 0, 0);
+  --primary-text: rgb(39, 40, 41);
+  --secondary-text: rgb(90, 94, 102);
+  --tertiary-text: rgb(142, 150, 163);
+  --primary-bg: rgb(255, 255, 255);
+  --secondary-bg: rgb(242, 245, 250);
+  --tertiary-bg: rgb(230, 235, 242);
+  --primary-border: rgb(142, 150, 163);
+  --secondary-border: rgb(195, 201, 212);
+  --tertiary-border: rgb(230, 235, 242);
+  --brand-primary-text: rgb(60, 41, 183);
+  --brand-primary-bg: rgb(60, 41, 183);
+  --brand-primary-border: rgb(60, 41, 183);
+  --brand-secondary-text: rgb(60, 41, 183);
+  --brand-secondary-bg: rgb(237, 234, 255);
+  --brand-secondary-border: rgb(204, 195, 255);
+  --brand-foreground-text: rgb(255, 255, 255);
+  --success-text: rgb(67, 169, 44);
+  --success-bg: rgb(231, 251, 224);
+  --success-border: rgb(194, 234, 180);
+  --error-text: rgb(244, 66, 64);
+  --error-bg: rgb(255, 238, 237);
+  --error-border: rgb(255, 203, 201);
+  --warning-text: rgb(236, 118, 0);
+  --warning-bg: rgb(255, 237, 222);
+  --warning-border: rgb(255, 210, 171);
+  --info-text: rgb(247, 190, 0);
+  --info-bg: rgb(255, 247, 214);
+  --info-border: rgb(255, 219, 76);
+  --overlay-bg: rgba(0, 0, 0, 0.5);
+  --tooltip-bg: rgb(39, 40, 41);
+  --light-blue: rgb(110, 157, 238);
+  --light-purple: rgb(203, 145, 232);
+  --light-yellow: rgb(232, 211, 129);
+  --light-pink: rgb(254, 239, 245);
+  --pink: rgb(249, 145, 198);
+  --dark-pink: rgb(244, 51, 151);
+
+  --font-size-xs: 0.625rem;   /* 10 */
+  --font-size-sm: 0.6875rem;  /* 11 */
+  --font-size-base: 0.75rem;  /* 12 */
+  --font-size-lg: 0.8125rem;  /* 13 */
+  --font-size-xl: 0.9375rem;  /* 15 */
+  --font-size-2xl: 1.0625rem; /* 17 */
+  --font-size-3xl: 1.1875rem; /* 19 */
+  --font-size-4xl: 1.3125rem; /* 21 */
+
+  --z-index-table-header: 3;
+  --z-index-mobile-stepper: 1000;
+  --z-index-speed-dial: 1050;
+  --z-index-app-bar: 1100;
+  --z-index-drawer: 1200;
+  --z-index-modal: 1300;
+  --z-index-snackbar: 1400;
+  --z-index-tooltip: 1500;
+
+  --weight-regular: 400;
+  --weight-medium: 560;
+  --weight-bold: 700;
+
+  /* Full "crystal" scale from the live panel */
+  --brand-100: rgb(238, 234, 255);
+  --brand-200: rgb(213, 206, 245);
+  --brand-300: rgb(182, 169, 235);
+  --brand-400: rgb(133, 110, 224);
+  --brand-500: rgb(103, 78, 204);
+  --brand-600: rgb(76, 49, 185);
+  --brand-700: rgb(57, 37, 138);
+  --brand-800: rgb(43, 29, 102);
+  --brand-900: rgb(28, 18, 67);
+  --success-100: rgb(229, 245, 232);
+  --success-200: rgb(199, 230, 204);
+  --success-300: rgb(158, 209, 166);
+  --success-400: rgb(111, 190, 124);
+  --success-500: rgb(70, 164, 86);
+  --success-600: rgb(53, 130, 66);
+  --success-700: rgb(39, 98, 49);
+  --success-800: rgb(28, 64, 34);
+  --success-900: rgb(17, 39, 21);
+  --danger-100: rgb(248, 232, 231);
+  --danger-200: rgb(237, 204, 201);
+  --danger-300: rgb(226, 166, 162);
+  --danger-400: rgb(218, 130, 124);
+  --danger-500: rgb(214, 90, 81);
+  --danger-600: rgb(192, 58, 48);
+  --danger-700: rgb(156, 36, 28);
+  --danger-800: rgb(91, 26, 21);
+  --danger-900: rgb(52, 17, 14);
+  --warning-100: rgb(255, 235, 220);
+  --warning-200: rgb(249, 218, 195);
+  --warning-300: rgb(247, 204, 171);
+  --warning-400: rgb(241, 170, 116);
+  --warning-500: rgb(233, 119, 32);
+  --warning-600: rgb(204, 100, 20);
+  --warning-700: rgb(167, 82, 17);
+  --warning-800: rgb(111, 55, 11);
+  --warning-900: rgb(60, 30, 6);
+  --neutral-100: rgb(244, 244, 245);
+  --neutral-200: rgb(214, 214, 219);
+  --neutral-300: rgb(183, 183, 194);
+  --neutral-400: rgb(153, 153, 168);
+  --neutral-500: rgb(123, 123, 142);
+  --neutral-600: rgb(96, 96, 113);
+  --neutral-700: rgb(69, 69, 84);
+  --neutral-800: rgb(46, 46, 56);
+  --neutral-900: rgb(28, 28, 34);
+  --progress-100: rgb(250, 244, 224);
+  --progress-200: rgb(244, 231, 189);
+  --progress-300: rgb(236, 213, 141);
+  --progress-400: rgb(229, 195, 93);
+  --progress-500: rgb(221, 177, 44);
+  --progress-600: rgb(180, 142, 29);
+  --progress-700: rgb(132, 104, 21);
+  --progress-800: rgb(88, 69, 14);
+  --progress-900: rgb(53, 42, 9);
+  --discovery-100: rgb(247, 228, 240);
+  --discovery-200: rgb(237, 196, 224);
+  --discovery-300: rgb(225, 153, 201);
+  --discovery-400: rgb(212, 110, 178);
+  --discovery-500: rgb(199, 67, 155);
+  --discovery-600: rgb(161, 48, 123);
+  --discovery-700: rgb(118, 35, 90);
+  --discovery-800: rgb(79, 23, 60);
+  --discovery-900: rgb(47, 14, 36);
+  --information-100: rgb(229, 238, 246);
+  --information-200: rgb(199, 218, 234);
+  --information-300: rgb(149, 186, 218);
+  --information-400: rgb(102, 156, 204);
+  --information-500: rgb(56, 121, 178);
+  --information-600: rgb(48, 108, 161);
+  --information-700: rgb(34, 79, 119);
+  --information-800: rgb(24, 53, 78);
+  --information-900: rgb(16, 32, 45);
+  --overlay-default-48: rgba(28, 28, 34, 0.48);
+  --overlay-light-32: rgba(28, 28, 34, 0.32);
+  --r-0: 0;
+  --r-2: 0.125rem;
+  --r-4: 0.25rem;
+  --r-6: 0.375rem;
+  --r-8: 0.5rem;
+  --r-12: 0.75rem;
+  --r-16: 1rem;
+  --r-full: 9999px;
+  --size-11: 0.6875rem;
+  --size-12: 0.75rem;
+  --size-14: 0.875rem;
+  --size-16: 1rem;
+  --size-18: 1.125rem;
+  --size-20: 1.25rem;
+  --size-24: 1.5rem;
+  --size-32: 2rem;
+  --line-height-16: 1rem;
+  --line-height-20: 1.25rem;
+  --line-height-24: 1.5rem;
+  --line-height-28: 1.75rem;
+  --line-height-32: 2rem;
+  --line-height-40: 2.5rem;
+  --letter-spacing-zero: 0;
+  --letter-spacing-free: -0.1px;
+  --letter-spacing-breathable: -0.2px;
+  --letter-spacing-relaxed: -0.5px;
+  --letter-spacing-compact: -1px;
+}
+
+@theme {
+  /* The one-line font swap: everything without a panel family falls back here. */
+  --font-sans: 'Figtree', 'Panel Book', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Panel Bold', var(--font-sans);
+  --font-body: 'Panel Book', var(--font-sans);
+  --font-button: 'Panel Demi', var(--font-sans);
+  --font-default: 'DM Sans', var(--font-sans);
+
+  --font-weight-medium: 560;
+
+  --text-xs: var(--font-size-xs);
+  --text-sm: var(--font-size-sm);
+  --text-base: var(--font-size-base);
+  --text-lg: var(--font-size-lg);
+  --text-xl: var(--font-size-xl);
+  --text-2xl: var(--font-size-2xl);
+  --text-3xl: var(--font-size-3xl);
+  --text-4xl: var(--font-size-4xl);
+
+  --radius-xs: 0.125rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+
+  --color-white: var(--white);
+  --color-black: var(--black);
+  --color-primary-text: var(--primary-text);
+  --color-secondary-text: var(--secondary-text);
+  --color-tertiary-text: var(--tertiary-text);
+  --color-primary-bg: var(--primary-bg);
+  --color-secondary-bg: var(--secondary-bg);
+  --color-tertiary-bg: var(--tertiary-bg);
+  --color-primary-border: var(--primary-border);
+  --color-secondary-border: var(--secondary-border);
+  --color-tertiary-border: var(--tertiary-border);
+  --color-brand-primary-text: var(--brand-primary-text);
+  --color-brand-primary-bg: var(--brand-primary-bg);
+  --color-brand-secondary-bg: var(--brand-secondary-bg);
+  --color-brand-primary-border: var(--brand-primary-border);
+  --color-brand-secondary-border: var(--brand-secondary-border);
+  --color-brand-foreground-text: var(--brand-foreground-text);
+  --color-success-text: var(--success-text);
+  --color-success-bg: var(--success-bg);
+  --color-success-border: var(--success-border);
+  --color-error-text: var(--error-text);
+  --color-error-bg: var(--error-bg);
+  --color-error-border: var(--error-border);
+  --color-warning-text: var(--warning-text);
+  --color-warning-bg: var(--warning-bg);
+  --color-warning-border: var(--warning-border);
+  --color-info-text: var(--info-text);
+  --color-info-bg: var(--info-bg);
+  --color-info-border: var(--info-border);
+  --color-overlay-bg: var(--overlay-bg);
+  --color-tooltip-bg: var(--tooltip-bg);
+  --color-light-blue: var(--light-blue);
+  --color-pink: var(--pink);
+  --color-dark-pink: var(--dark-pink);
+
+  --animate-fade-in: fade-in 0.15s ease-out;
+
+  /* Newer "crystal" tokens (text-neutral-primary, bg-brand-light, rounded-6…) */
+  --color-overlay-bg: var(--overlay-bg);
+  --text-color-brand-primary: var(--brand-600);
+  --text-color-brand-inverse: var(--white);
+  --text-color-neutral-primary: var(--neutral-700);
+  --text-color-neutral-secondary: var(--neutral-500);
+  --text-color-neutral-tertiary: var(--neutral-400);
+  --text-color-neutral-disabled: var(--neutral-300);
+  --text-color-success-secondary: var(--success-700);
+  --text-color-danger-secondary: var(--danger-700);
+  --text-color-warning-secondary: var(--warning-700);
+  --text-color-information-secondary: var(--information-700);
+  --background-color-brand-base: var(--brand-600);
+  --background-color-brand-light: var(--brand-100);
+  --background-color-brand-hover: var(--brand-700);
+  --background-color-brand-pressed: var(--brand-800);
+  --background-color-brand-disabled: var(--brand-200);
+  --background-color-neutral-page: var(--neutral-100);
+  --background-color-neutral-base: var(--white);
+  --background-color-neutral-dark: var(--neutral-900);
+  --background-color-neutral-hover: var(--neutral-200);
+  --background-color-neutral-pressed: var(--neutral-300);
+  --background-color-neutral-disabled: var(--neutral-400);
+  --background-color-success-light: var(--success-100);
+  --background-color-success-base: var(--success-500);
+  --background-color-danger-light: var(--danger-100);
+  --background-color-danger-base: var(--danger-500);
+  --background-color-warning-light: var(--warning-100);
+  --background-color-information-light: var(--information-100);
+  --background-color-information-base: var(--information-500);
+  --outline-color-brand-base: var(--brand-600);
+  --border-color-brand-base: var(--brand-600);
+  --border-color-brand-light: var(--brand-200);
+  --border-color-neutral-light: var(--neutral-200);
+  --border-color-neutral-dark: var(--neutral-400);
+  --border-color-warning-light: var(--warning-200);
+  --border-color-danger-light: var(--danger-200);
+  --border-color-danger-dark: var(--danger-400);
+  --border-color-success-light: var(--success-200);
+  --border-color-information-light: var(--information-200);
+  --color-overlay-default: var(--overlay-default-48);
+  --color-overlay-light: var(--overlay-light-32);
+  --color-brand-disabled: var(--brand-200);
+  --text-display-large: var(--size-32);
+  --text-heading-large: var(--size-24);
+  --text-heading-medium: var(--size-20);
+  --text-heading-small: var(--size-16);
+  --text-body-xlarge: var(--size-20);
+  --text-body-large: var(--size-16);
+  --text-body-medium: var(--size-14);
+  --text-body-small: var(--size-12);
+  --text-body-xsmall: var(--size-11);
+  --font-weight-regular: var(--weight-regular);
+  --radius-0: var(--r-0);
+  --radius-2: var(--r-2);
+  --radius-4: var(--r-4);
+  --radius-6: var(--r-6);
+  --radius-8: var(--r-8);
+  --radius-12: var(--r-12);
+  --radius-16: var(--r-16);
+  --radius-full: var(--r-full);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@utility z-app-bar { z-index: var(--z-index-app-bar); }
+@utility z-modal { z-index: var(--z-index-modal); }
+@utility z-snackbar { z-index: var(--z-index-snackbar); }
+@utility z-tooltip { z-index: var(--z-index-tooltip); }
