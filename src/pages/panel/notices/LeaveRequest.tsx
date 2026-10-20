@@ -82,6 +82,7 @@ function ReasonSelect({ value, onChange }: { value: string; onChange: (v: string
   const id = useId();
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
+  const button = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (!open) return;
     const close = (e: MouseEvent) => !root.current?.contains(e.target as Node) && setOpen(false);
@@ -96,6 +97,7 @@ function ReasonSelect({ value, onChange }: { value: string; onChange: (v: string
         <input type="hidden" id={id} value={value} readOnly />
         <div className="group text-sm flex relative font-normal leading-5 items-center rounded-sm box-border gap-2.5 p-0 m-0 text-primary-text w-full max-w-full [&>button]:w-full">
           <button
+            ref={button}
             type="button"
             className={`peer flex-1 bg-transparent border-none text-lg [font-family:inherit] outline-none min-h-[2.75rem] px-4 z-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-secondary-bg placeholder:text-secondary-border focus:z-1 relative font-normal leading-5 flex justify-between items-center rounded-md m-0 cursor-pointer transition-[border-color] duration-200 ease-in-out overflow-hidden text-ellipsis whitespace-nowrap ${filled ? 'text-primary-text' : 'text-transparent group-focus-within:text-secondary-border'}`}
             aria-haspopup="listbox"
@@ -119,7 +121,10 @@ function ReasonSelect({ value, onChange }: { value: string; onChange: (v: string
           <label
             className={`${LABEL_BASE} cursor-pointer ${filled ? 'px-1 bg-transparent -translate-y-5 translate-x-2 text-sm' : 'px-4'} ${LABEL_FLOAT_FOCUS}`}
             htmlFor={id}
-            onClick={() => setOpen((o) => !o)}
+            onClick={() => {
+              button.current?.focus();
+              setOpen((o) => !o);
+            }}
           >
             {label}
           </label>

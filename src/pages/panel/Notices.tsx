@@ -8,8 +8,9 @@ function NoticeCard({ title, date, body }: Notice) {
       <h3 className="m-0 p-0 text-primary-text font-bold font-heading text-2xl leading-6 mb-1">{title}</h3>
       <p className="m-0 p-0 font-normal font-body text-base leading-4 text-secondary-text">{date}</p>
       {/* leading-[1.5]: the panel's text-xl sets only font-size, so the body inherits html's 1.5.
+          Bare <p>s get the panel's global `p { margin-block: 1em }`.
           Bold runs use the Bold face: the live panel fakes bold on Mier Book, our Book face has no bold. */}
-      <div className="mt-4 text-primary-text text-xl leading-[1.5] [&_div>img]:w-full [&_div>img]:h-auto [&_div>img]:mt-2 [&_strong]:font-heading [&_h1]:font-heading">
+      <div className="mt-4 text-primary-text text-xl leading-[1.5] [&_p]:my-[1em] [&_div>img]:w-full [&_div>img]:h-auto [&_div>img]:mt-2 [&_strong]:font-heading [&_h1]:font-heading">
         {body}
       </div>
     </div>
