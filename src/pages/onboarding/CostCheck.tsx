@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { onboarding } from '../../app/paths';
 import { Button, Card } from '../../components/ui';
-import { costStack, demandForType, qualifyingPriceExists, takeHomeAt, type ProductTypeId } from '../../engine/ui';
+import { costStack, demandForType, gstAt, qualifyingPriceExists, takeHomeAt, type ProductTypeId } from '../../engine/ui';
 import { useDemo } from '../../store/demo';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import { Field } from './signup/Field';
@@ -54,7 +54,8 @@ function CostCheckPage() {
       { label: 'Packaging', value: f.packaging ?? 0 },
       { label: 'Shipping + fixed fee', value: f.shippingAndFixed },
       { label: 'Returns & refusal buffer', value: f.returnsBuffer },
-      { label: 'GST', value: f.gst },
+      // Q18: GST is 5% of the selling price, included in it, so this row follows the slider.
+      { label: `GST (${Math.round(stack.gstRate * 100)}% of ₹${price})`, value: gstAt(price, stack) },
     ] };
   }
 

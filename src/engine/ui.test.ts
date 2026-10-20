@@ -13,8 +13,8 @@ describe('ui facade — 1 L steel bottle', () => {
     expect(checkListingPrice('steel-bottle-1l', 165, 133)).toBe('aboveCap');
     expect(listingPricePosition('steel-bottle-1l', 165)).toBe('mid');
   });
-  it('via Pack Point, ₹171 (break-even ₹157) does not qualify, so Jasmeet self-ships', () => {
-    expect(checkListingPrice('steel-bottle-1l', 171, 157)).toBe('aboveCap');
+  it('via Pack Point, ₹173 (break-even ₹158) does not qualify, so Jasmeet self-ships', () => {
+    expect(checkListingPrice('steel-bottle-1l', 173, 158)).toBe('aboveCap');
   });
   it('₹147 sits in the lowest third', () => {
     expect(listingPricePosition('steel-bottle-1l', 147)).toBe('low');

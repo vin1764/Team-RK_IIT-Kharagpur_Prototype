@@ -243,12 +243,12 @@ The plan wins in each case below, as instructed; these are flagged so the deck o
 | Q8 | Phase 3 | Price-position thirds: by share of comparable orders priced below yours (my proposal: 147 → 0% low, 165 → 50% mid), or by listing count? |
 | Q9 | Phase 4 | Order book: how many of the 5 slots are taken, for the "slots left" card? Is 600 committed "crowded"? (The rule compares units with a weekly gap, so I need the horizon.) |
 | Q10 | Phase 5 | Coach thresholds: is 4.2% the similar-listing median or the p25 cut-off? And what views floor counts as "impressions normal"? |
-| Q11 | Phase 2 | Which business types pass the seller-type check: just the two "manufacturing unit" options, or also "handcrafted products at home"? |
+| Q11 | ✅ answered | Only the two "I have a manufacturing unit…" options pass; every other type sells normally but isn't eligible for Factory Launch. Was: Which business types pass the seller-type check: just the two "manufacturing unit" options, or also "handcrafted products at home"? |
 | Q12 | Phase 4 | Live launch view: orders on D21, D22, D24, D25 (D23 = 11 is given), and units sold of the lot. |
 | Q13 | Phase 5 | Business Dashboard tiles beyond 2,400 views and 38 clicks: orders, conversion, sales, return %? |
 | Q14 | Phase 4 | Quality listing score "Building": show order and return counts, or only the label? |
-| Q15 | Phase 3 | Hindi copy for the bot screens and coach card: should I draft it for your review, or will you supply it? |
+| Q15 | ✅ answered | Claude drafts the Hindi copy; the team reviews it. Was: Hindi copy for the bot screens and coach card: should I draft it for your review, or will you supply it? |
 | Q16 | ✅ answered | Real panel URLs, with `{sid}` = `demo`; see §4. |
-| Q17 | Phase 2 | Can you capture Business Details with a **GSTIN**, and the pickup address entry form? Otherwise I'll adapt the existing layouts. |
-| Q18 | Phase 3 | GST ₹7: fixed per type, or 5% of price (₹7.35 at ₹147)? It changes "take-home at every price" on the cost check. |
-| Q19 | Phase 3 | Is there a first-lot cap ("capped at the standard first-lot limit", deck)? 150 is under any cap you'd pick, but the engine needs the number. |
+| Q17 | ✅ answered | Adapt existing layouts; Jasmeet sees the GSTIN version with fake values. Was: Can you capture Business Details with a **GSTIN**, and the pickup address entry form? Otherwise I'll adapt the existing layouts. |
+| Q18 | ✅ answered | GST = 5% of the selling price, included in it (HSN 7323): GST = price × 5/105; break-even ⌈126 × 1.05⌉ = ₹133, list (126+14) × 1.05 = ₹147, Pack Point break-even ₹158. Was: GST ₹7: fixed per type, or 5% of price (₹7.35 at ₹147)? It changes "take-home at every price" on the cost check. |
+| Q19 | ✅ answered | No first-lot cap; each maker's own minimum run, soft warning if they commit below it. Was: Is there a first-lot cap ("capped at the standard first-lot limit", deck)? 150 is under any cap you'd pick, but the engine needs the number. |

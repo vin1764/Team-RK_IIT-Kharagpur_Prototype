@@ -19,7 +19,7 @@ export interface SuggestedLot {
   /** run-rate = midpoint of the rounded daily range */
   dailyRunRate: number;
   days: 14;
-  /** run-rate × 14, rounded to nearest 10, never below the type's minimum run */
+  /** run-rate × 14, rounded to nearest 10. No cap and no floor (Q19): the maker's own minimum run only triggers a soft warning in the UI. */
   units: number;
   atCost: number;
 }
@@ -83,12 +83,15 @@ export function slots(type: ProductTypeId): number {
 
 /** First lot ≈ 14 days of expected sales, in units. */
 export function suggestedLot(type: ProductTypeId, makingCost: number): SuggestedLot {
-  const t = record(type);
-  if (!t.typical) throw new MissingPlanValue(`minimum run for ${type}`);
   const day = likelyShare(type).ordersPerDay;
   const dailyRunRate = (day.low + day.high) / 2;
-  const units = Math.max(t.typical.minRun, Math.round((dailyRunRate * 14) / 10) * 10);
+  const units = Math.round((dailyRunRate * 14) / 10) * 10;
   return { dailyRunRate, days: 14, units, atCost: units * makingCost };
+}
+
+/** Typical minimum run and lead time for a type — placeholder hints only (the maker enters their own). */
+export function typicalForType(type: ProductTypeId): { minRun: number; leadTimeDays: number } | null {
+  return record(type).typical ?? null;
 }
 
 /** "What to make instead": open-gap types on the same line, excluding `current`, largest gap first. */

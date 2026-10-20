@@ -3,31 +3,76 @@
   "steel-bottle-1l": {
     "name": "1 L steel water bottle",
     "line": "steel-kitchenware",
-    "categoryPath": ["Home & Kitchen", "Kitchen & Dining", "Kitchen Storage", "Water Bottles"],
+    "categoryPath": [
+      "Home & Kitchen",
+      "Kitchen & Dining",
+      "Kitchen Storage",
+      "Water Bottles"
+    ],
     "fees": {
-      "_source": "plan §8 / doc LB-6",
+      "_source": "plan §8 / doc LB-6; GST is output GST at 5% of the selling price, included in it (team answer Q18: HSN 7323, 5% from 22 Sep 2025)",
       "packaging": 6,
       "shippingAndFixed": 32,
       "returnsBuffer": 8,
-      "gst": 7
+      "gstRate": 0.05
     },
     "demand": {
       "_source": "plan §8 demandForType / doc FO-4, LB-5",
-      "gapPerWeek": { "low": 300, "high": 450 },
-      "priceBand": { "low": 150, "high": 170 },
+      "gapPerWeek": {
+        "low": 300,
+        "high": 450
+      },
+      "priceBand": {
+        "low": 150,
+        "high": 170
+      },
       "confidence": "High",
       "committedUnits": 600
     },
-    "likelyShare": { "_source": "plan §8 likelyShare", "share": 0.2 },
-    "typical": { "_source": "doc price-table mock-up (min run 100, lead 5 days)", "minRun": 100, "leadTimeDays": 5 },
+    "likelyShare": {
+      "_source": "plan §8 likelyShare",
+      "share": 0.2
+    },
+    "typical": {
+      "_source": "doc price-table mock-up (min run 100, lead 5 days). Placeholder hints only: each maker enters their own minimum run (Q19).",
+      "minRun": 100,
+      "leadTimeDays": 5
+    },
     "benchmark": {
       "_source": "plan §8b: ₹150 × 200, ₹160 × 300, ₹165–190 × 500 qualifying orders",
       "minDeliveredOrders": 30,
       "_minDeliveredOrdersSource": "team answer, 21 Oct 2026: a listing needs at least 30 delivered orders to count toward B",
       "comparables": [
-        { "id": "D", "price": { "from": 150, "to": 150 }, "deliveredOrders": 200, "aboveQualityFloor": true, "ownedByMaker": false },
-        { "id": "E", "price": { "from": 160, "to": 160 }, "deliveredOrders": 300, "aboveQualityFloor": true, "ownedByMaker": false },
-        { "id": "F–J", "price": { "from": 165, "to": 190 }, "deliveredOrders": 500, "aboveQualityFloor": true, "ownedByMaker": false }
+        {
+          "id": "D",
+          "price": {
+            "from": 150,
+            "to": 150
+          },
+          "deliveredOrders": 200,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        },
+        {
+          "id": "E",
+          "price": {
+            "from": 160,
+            "to": 160
+          },
+          "deliveredOrders": 300,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        },
+        {
+          "id": "F–J",
+          "price": {
+            "from": 165,
+            "to": 190
+          },
+          "deliveredOrders": 500,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        }
       ]
     }
   },
@@ -36,7 +81,11 @@
     "line": "steel-kitchenware",
     "demand": {
       "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~200/wk, High)",
-      "gapPerWeek": { "low": 200, "high": 200, "approx": true },
+      "gapPerWeek": {
+        "low": 200,
+        "high": 200,
+        "approx": true
+      },
       "priceBand": null,
       "confidence": "High",
       "committedUnits": 0
@@ -47,7 +96,11 @@
     "line": "steel-kitchenware",
     "demand": {
       "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~120/wk, Medium)",
-      "gapPerWeek": { "low": 120, "high": 120, "approx": true },
+      "gapPerWeek": {
+        "low": 120,
+        "high": 120,
+        "approx": true
+      },
       "priceBand": null,
       "confidence": "Medium",
       "committedUnits": 0

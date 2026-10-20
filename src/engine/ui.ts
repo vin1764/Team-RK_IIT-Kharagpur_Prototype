@@ -5,8 +5,8 @@ import data from '../data/productTypes.json';
 import { benchmarkB, priceCheck, pricePosition, type Comparable, type PricePosition, type PriceStatus } from './benchmark';
 import { MissingPlanValue, type ProductTypeId } from './types';
 
-export { costStack, takeHomeAt, typeFees, type CostStack, type Fees } from './costStack';
-export { demandForType, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions } from './demand';
+export { costStack, gstAt, takeHomeAt, typeFees, type CostStack, type Fees } from './costStack';
+export { demandForType, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions, typicalForType } from './demand';
 export { restock } from './restock';
 export { verdict } from './verdict';
 export { coachFix } from './coach';
