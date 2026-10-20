@@ -1,0 +1,4 @@
+[
+  { "name": "home", "route": "/panel/v3/new/growth/demo/home", "ref": "home.png" },
+  { "name": "home-snapshot", "route": "/panel/v3/new/growth/demo/home?state=qc", "ref": "meesho-home.html" }
+]
