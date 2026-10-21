@@ -1,11 +1,12 @@
 import { useState, type ReactNode } from 'react';
 import { Outlet, useLocation } from 'react-router';
-import { ESignBanner } from './ESignBanner';
 import { Sidebar } from './Sidebar';
 
 /**
  * The seller panel frame: dark sidebar (14rem) + main column (max 1216px, centred),
- * with the e-signature banner on top of every page, as in the screenshots.
+ * Pages start directly under the concept strip. The reference screenshots show a red
+ * "Your E-Signature is missing!" banner on top; it is left out on purpose (team decision:
+ * our makers have completed e-signature).
  * Pages render inside <Outlet />. Full-width flows (Add Single Catalog, Bulk upload)
  * use <BareShell> instead, as the live panel hides the sidebar there.
  */
@@ -40,7 +41,6 @@ export function PanelShell() {
 
       <main data-show-sidebar="true" className="grow min-w-0 layout-main-dt-responsive pt-12 xl:pt-0" key={pathname}>
         <div className="relative max-w-304 min-h-full mx-auto" id="mainWrapper">
-          <ESignBanner />
           <Outlet />
         </div>
       </main>

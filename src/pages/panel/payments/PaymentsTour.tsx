@@ -14,7 +14,7 @@ export function PaymentsTour({ target, onDone }: { target: RefObject<HTMLElement
   const [cardH, setCardH] = useState(120);
 
   // Follow the target every frame: it moves on scroll, resize and when content above it
-  // (e.g. the e-signature banner) changes height. State only updates when something moved.
+  // changes height. State only updates when something moved.
   useLayoutEffect(() => {
     let raf = 0;
     const measure = () => {

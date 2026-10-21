@@ -13,8 +13,7 @@ export function MegaComboPopover({ anchor }: { anchor: RefObject<HTMLElement | n
 
   useLayoutEffect(() => {
     if (!open) return;
-    // Follow the anchor every frame: scrolling, fonts/images loading and banners
-    // above it (e-signature) all move the Deals tab.
+    // Follow the anchor every frame: scrolling and fonts/images loading move the Deals tab.
     let raf = 0;
     const place = () => {
       const r = anchor.current?.getBoundingClientRect();

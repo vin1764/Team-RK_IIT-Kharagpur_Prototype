@@ -6,8 +6,9 @@
 // Writes docs/compare/<name>.png (reference left, ours right, diff heat-map below)
 // and prints a % of differing pixels. Reference = a screenshot (reference/screens) or an
 // HTML snapshot (reference/html) rendered with Mier mapped to Figtree, so fonts match.
-// The concept strip and demo controls are hidden in our render; the e-signature banner is
-// hidden too when the reference is an HTML snapshot (the snapshots were captured without it).
+// The concept strip and demo controls are hidden in our render. Screenshot references still
+// show the red e-signature banner, which we left out on purpose (team decision), so those
+// compares differ by that strip and the content below it sits higher in ours.
 import { chromium } from 'playwright';
 import { createServer } from 'vite';
 import { execFileSync } from 'node:child_process';
@@ -70,7 +71,7 @@ try {
     }
     const p = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1.25 });
     await p.goto(base + e.route, { waitUntil: 'networkidle' });
-    await p.addStyleTag({ content: HIDE_OURS + (isShot ? '' : '[data-esign-banner]{display:none!important}') + (e.oursCss ?? '') });
+    await p.addStyleTag({ content: HIDE_OURS + (e.oursCss ?? '') });
     await p.evaluate(() => document.fonts.ready);
     for (const step of e.steps ?? []) {
       if (step.click) await p.getByText(step.click, { exact: step.exact ?? false }).first().click();
