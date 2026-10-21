@@ -39,7 +39,7 @@
       "leadTimeDays": 5
     },
     "benchmark": {
-      "_source": "plan §8b: ₹150 × 200, ₹160 × 300, ₹165–190 × 500 qualifying orders",
+      "_source": "plan §8b: ₹150 × 200, ₹160 × 300; the ₹165–190 orders split per team (Phase 6 review): ₹165 × 150, ₹170 × 100, ₹175 × 100, ₹180 × 80, ₹190 × 70. Total 1,000.",
       "minDeliveredOrders": 30,
       "_minDeliveredOrdersSource": "team answer, 21 Oct 2026: a listing needs at least 30 delivered orders to count toward B",
       "comparables": [
@@ -64,12 +64,52 @@
           "ownedByMaker": false
         },
         {
-          "id": "F–J",
+          "id": "F",
           "price": {
             "from": 165,
+            "to": 165
+          },
+          "deliveredOrders": 150,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        },
+        {
+          "id": "G",
+          "price": {
+            "from": 170,
+            "to": 170
+          },
+          "deliveredOrders": 100,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        },
+        {
+          "id": "H",
+          "price": {
+            "from": 175,
+            "to": 175
+          },
+          "deliveredOrders": 100,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        },
+        {
+          "id": "I",
+          "price": {
+            "from": 180,
+            "to": 180
+          },
+          "deliveredOrders": 80,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        },
+        {
+          "id": "J",
+          "price": {
+            "from": 190,
             "to": 190
           },
-          "deliveredOrders": 500,
+          "deliveredOrders": 70,
           "aboveQualityFloor": true,
           "ownedByMaker": false
         }
@@ -123,11 +163,18 @@
       "returnsBuffer": 20,
       "gstRate": 0.05
     },
-    "demand": null,
-    "likelyOrdersPerDay": {
-      "_source": "team Q4: likely orders 5–8 a day",
-      "low": 5,
-      "high": 8
+    "demand": {
+      "_source": "team (Phase 6 review): 175–280 orders a week unserved at ₹350–400, confidence Medium, 0 committed",
+      "gapPerWeek": {
+        "low": 175,
+        "high": 280
+      },
+      "priceBand": {
+        "low": 350,
+        "high": 400
+      },
+      "confidence": "Medium",
+      "committedUnits": 0
     },
     "benchmark": {
       "_source": "team Q4: hidden B for this type is ₹370 (never shown). Seeded as one comparable group at ₹370 with the minimum 30 delivered orders so benchmarkB() returns it; the order spread was not given.",
@@ -152,6 +199,10 @@
       "8": 25,
       "9": 20,
       "10": 15
+    },
+    "likelyShare": {
+      "_source": "team (Phase 6 review): likely share 20% → 35–56 a week = 5–8 a day",
+      "share": 0.2
     }
   }
 }

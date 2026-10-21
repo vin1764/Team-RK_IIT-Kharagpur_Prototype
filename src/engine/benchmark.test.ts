@@ -40,7 +40,15 @@ describe('priceCheck — break-even ₹133, B ₹160', () => {
 // plan §8 pricePosition
 describe('pricePosition — thirds of like-for-like listings', () => {
   it('₹147 → low', () => expect(pricePosition(147, bottle, N)).toBe('low'));
-  it('₹165 → mid', () => expect(pricePosition(165, bottle, N)).toBe('mid'));
+  // team (Phase 6 review): share of the 1,000 comparable orders priced strictly below the maker's price
+  it('₹147 → 0% below → low', () => expect(pricePosition(147, bottle, N)).toBe('low'));
+  it('₹165 → 500 of 1,000 = 50% → mid', () => expect(pricePosition(165, bottle, N)).toBe('mid'));
+  it('₹170 → 650 = 65% → mid', () => expect(pricePosition(170, bottle, N)).toBe('mid'));
+  it('₹175 → 750 = 75% → high', () => expect(pricePosition(175, bottle, N)).toBe('high'));
+  it('every price places in a third (no price ranges left in the seed)', () => {
+    for (let p = 100; p <= 250; p++) expect(['low', 'mid', 'high']).toContain(pricePosition(p, bottle, N));
+  });
+  it('1,000 qualifying orders in total', () => expect(bottle.reduce((s, c) => s + c.deliveredOrders, 0)).toBe(1000));
 });
 
 // plan §8b Hero's price drop

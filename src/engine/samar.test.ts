@@ -3,7 +3,7 @@ import lot from '../data/packPointLot.json';
 import types from '../data/productTypes.json';
 import { benchmarkB, priceCheck, priceDrop } from './benchmark';
 import { costStack, gstAt } from './costStack';
-import { likelyOrdersPerDay, suggestedLot } from './demand';
+import { demandForType, likelyOrdersPerDay, likelyShare, slots, suggestedLot } from './demand';
 import { lotInbound, sizeSplit } from './lot';
 import { packPointFee } from './packPoint';
 
@@ -36,6 +36,18 @@ describe('Samar — hidden B ₹370', () => {
     expect((d.shareOfB * 100).toFixed(1)).toBe('9.2');
     expect(d.meetsTarget).toBe(true);
   });
+});
+
+describe('Samar — demand (team, Phase 6 review)', () => {
+  it('175–280 a week unserved at ₹350–400, Medium, 0 committed', () => {
+    expect(demandForType(T)).toEqual({ gapPerWeek: { low: 175, high: 280 }, priceBand: { low: 350, high: 400 }, confidence: 'Medium', committedUnits: 0 });
+  });
+  it('20% share → 35–56 a week = 5–8 a day', () => {
+    const s = likelyShare(T);
+    expect(s.ordersPerWeek).toEqual({ low: 35, high: 56 });
+    expect(s.ordersPerDay).toEqual({ low: 5, high: 8 });
+  });
+  it('5 slots: 175 ÷ 35 = 280 ÷ 56 = 5', () => expect(slots(T)).toBe(5));
 });
 
 describe('Samar — first lot', () => {

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import growthSeed from '../../../data/growth.json';
 import launch from '../../../data/launch.json';
-import { costStack, growthAt, packPointFee } from '../../../engine/ui';
+import { costStack, growthAt, listingPricePosition, packPointFee } from '../../../engine/ui';
 import { niceAxis, weekSeries } from '../business-dashboard/series';
 import { costCheckMode, demandOrNull, likelyShareOrNull } from '../../onboarding/signup/guards';
-import { effectivePriceEdit, positionOrNull, priceHoldView, SCRIPTED_PRICE_EDIT } from './priceHold';
+import { effectivePriceEdit, priceHoldView, SCRIPTED_PRICE_EDIT } from './priceHold';
 
 const BOTTLE = 'steel-bottle-1l' as const;
 const listing = { id: '', typeId: BOTTLE, name: '1 L steel water bottle', price: 147, breakEven: 133 };
@@ -36,9 +36,10 @@ describe('Price position and price-hold (PI-2, PI-3)', () => {
   it('without a commit there is no slot to remove', () => {
     expect(priceHoldView(listing, false, { price: 165, day: 40, scripted: true }).slotRemoved).toBe(false);
   });
-  it('a price inside a comparable group’s range has no third (never guessed); above all → high', () => {
-    expect(positionOrNull(BOTTLE, 170)).toBeNull();
-    expect(positionOrNull(BOTTLE, 200)).toBe('high');
+  it('every price places in a third (team split of the ₹165–190 orders): ₹170 → mid, ₹175 / ₹200 → high', () => {
+    expect(listingPricePosition(BOTTLE, 170)).toBe('mid');
+    expect(listingPricePosition(BOTTLE, 175)).toBe('high');
+    expect(listingPricePosition(BOTTLE, 200)).toBe('high');
   });
 });
 
@@ -70,10 +71,10 @@ describe('Business Dashboard week (D28)', () => {
   });
 });
 
-describe('Samar guards (no demand gap, no self-ship packaging)', () => {
-  it('demand and share are null, never invented', () => {
-    expect(demandOrNull('sneakers-slip-on-men')).toBeNull();
-    expect(likelyShareOrNull('sneakers-slip-on-men')).toBeNull();
+describe('Samar guards (no self-ship packaging)', () => {
+  it('demand is seeded (team, Phase 6 review): 175–280 a week, 5–8 a day', () => {
+    expect(demandOrNull('sneakers-slip-on-men')?.gapPerWeek).toEqual({ low: 175, high: 280 });
+    expect(likelyShareOrNull('sneakers-slip-on-men')?.ordersPerDay).toEqual({ low: 5, high: 8 });
     expect(demandOrNull(BOTTLE)?.gapPerWeek).toEqual({ low: 300, high: 450 });
   });
   it('cost check runs in Pack Point mode for Samar: break-even ₹305, list ₹336', () => {

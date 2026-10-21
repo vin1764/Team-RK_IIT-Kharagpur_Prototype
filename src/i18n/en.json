@@ -5,7 +5,6 @@
   "bot.tab.quantity": "Quantity",
   "bot.tab.price": "Price",
   "bot.lang": "Language",
-
   "home.photos.title": "Create from photos",
   "home.photos.point1": "Add 3–5 phone photos",
   "home.photos.point2": "Details filled for you",
@@ -18,14 +17,12 @@
   "home.live.body": "Created from photos and live on Meesho (prototype).",
   "home.live.button": "View catalogs",
   "uploads.photos.button": "Create from photos",
-
   "bot.modal.title": "Add 3–5 photos of your product",
   "bot.modal.intro": "Add photos of the same product: the front first, then it in hand and in use. Phone photos are fine; the bot cleans the cover.",
   "bot.modal.note": "Add 3 to 5 photos of one product. The first photo is the cover.",
   "bot.modal.add": "Add Photo",
   "bot.modal.cancel": "Cancel",
   "bot.modal.continue": "Continue",
-
   "bot.photos.title": "Your photos",
   "bot.photos.cover": "Cover",
   "bot.photos.count": "{n} of {max} photos",
@@ -46,7 +43,6 @@
   "bot.continue": "Continue to details",
   "bot.noType": "No matched product type for this persona — the listing bot needs a product type with demand data",
   "bot.noType.more": "Continue with the usual steps below.",
-
   "bot.summary": "Filled from your photos: the bot pre-filled {bot} of {total} mandatory fields. You enter {you} values, marked “you enter”. Every field stays editable.",
   "bot.fillDemo": "Fill demo values",
   "bot.tag.bot": "Filled by bot",
@@ -55,13 +51,11 @@
   "bot.aiFilled": "AI-filled · {n} fields",
   "bot.netQty.confirm": "I confirm the number of units in each pack",
   "bot.retailPacked": "Units arrive in their retail pack",
-
   "section.inventory": "Product, Size and Inventory",
   "section.details": "Product Details",
   "section.other": "Other Attributes",
   "placeholder.select": "Select",
   "placeholder.enter": "Enter {label}",
-
   "field.netWeight": "Net Weight (gms)",
   "field.styleCode": "Style code/ Product ID (optional)",
   "field.productName": "Product Name",
@@ -100,12 +94,10 @@
   "field.minRun": "Minimum run (units)",
   "field.leadTimeDays": "Lead time (days)",
   "field.sameAsManufacturer": "Same as Manufacturer Details",
-
   "tip.minRun": "The smallest batch your factory can make profitably in one run.",
   "tip.leadTimeDays": "Days from starting production until stock is ready to ship, or reaches the Pack Point.",
   "placeholder.makingCost": "Enter making cost",
   "placeholder.marginPct": "Enter margin",
-
   "demand.title": "Demand for {name}s · Confidence: {confidence}",
   "demand.gap": "{low}–{high} orders a week unserved at ₹{pLow}–{pHigh} · {committed} units already committed by others",
   "demand.gapNoBand": "{low}–{high} orders a week unserved · {committed} units already committed by others",
@@ -113,7 +105,6 @@
   "confidence.High": "High",
   "confidence.Medium": "Medium",
   "confidence.Low": "Low",
-
   "col.size": "Size",
   "col.makingCost": "Making cost",
   "col.meeshoPrice": "Meesho Price",
@@ -128,11 +119,9 @@
   "takeHome.perUnit": "₹{v} per unit",
   "inv.suggested": "suggested",
   "wdrp.suggested": "Suggested based on return savings",
-
   "status.qualifies": "Qualifies",
   "status.aboveCap": "Doesn't qualify",
   "status.belowCost": "Below cost",
-
   "stack.prefix": "Bot filled:",
   "stack.packaging": "packaging ₹{v}",
   "stack.packPointFee": "Pack Point fee ₹{v}",
@@ -144,7 +133,6 @@
   "lot.hint": "Lot: {units} suggested · ≈ {weeks} weeks of sales (≈ ₹{atCost} at cost) · any number",
   "lot.hintNoCost": "Lot: {units} suggested · ≈ {weeks} weeks of sales · any number",
   "lot.belowMinRun": "{units} units is below your minimum run of {minRun}. You can still go live with this number.",
-
   "check.title": "Go-live checklist",
   "check.images": "Images",
   "check.details": "Details",
@@ -154,7 +142,6 @@
   "check.feesLocked": "Fees locked at dispatch: payout matches this quote",
   "check.goLive": "Go live",
   "check.toast": "Catalog live (prototype)",
-
   "flow.progress": "Meesho filled {bot} details · you add {you}",
   "flow.back": "Back",
   "flow.next": "Next",
@@ -230,7 +217,6 @@
   "compare.botSub": "Meesho fills the rest from your photos, GST record and the category.",
   "compare.plusConfirm": "+ one tap: “Pack of 1 — Yes”",
   "compare.close": "Close",
-
   "gl.verdict.makeMore": "Make more",
   "gl.verdict.keep": "Keep",
   "gl.verdict.fix": "Fix",
@@ -283,7 +269,6 @@
   "gl.tile.returnOne": "{n} return",
   "gl.tile.returnMany": "{n} returns",
   "gl.otherRanges": "Other date ranges",
-
   "gl.perf.product": "Product",
   "pi.tab": "Price position",
   "pi.scope": "Factory Launch listings only · compared with the same material, size and type, per unit",
@@ -308,7 +293,6 @@
   "pi.position.low": "In the lowest-priced third",
   "pi.position.mid": "In the middle third",
   "pi.position.high": "In the highest-priced third",
-  "pi.position.none": "Position not shown at this price",
   "pi.thirdsTip": "Similar listings (same material, size and type, per unit) are split by price into three equal groups: the lowest-priced third, the middle third and the highest-priced third. You see which group your price is in, not an exact rank.",
   "pi.hold.title": "Your price no longer qualifies for Factory Launch · launch slot removed",
   "pi.hold.body": "The price went above what qualifies for this product, so the listing loses its launch slot and launch benefits. It stays live on Meesho at the new price, and a visibility review follows.",

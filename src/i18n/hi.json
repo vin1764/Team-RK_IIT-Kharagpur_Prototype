@@ -1,20 +1,17 @@
 {
   "_review": "DRAFT Hindi by Claude (Phase 3), for the team to review before the demo. Simple, everyday Hindi for a small manufacturer; ₹ amounts, units (L, g, cm), numbers and the product name stay as numerals/English, as Meesho does. Field labels that Meesho stores in English (option values like Yes / Navy Blue / Free Size) are not translated; when speaking, Navy Blue is नेवी ब्लू. Any key missing here falls back to en.json. The three-screen redesign keys (flow.*, filled.*, netQty.*, q.*, qty.*, price.*, how.*, compare.*) are draft too. Phase 5 growth-loop keys (gl.*: verdict chips, restock card, what to make instead, SKU Health Coach) are draft too. Phase 6 keys (pi.*: Manage Pricing price position and price-hold; pp.*: Warehouse Cluster Pack Point fee card, cost stack, clusters and lot inbound; gl.perf.product) are draft too.",
-
   "bot.new": "नया",
   "bot.title": "फ़ोटो से कैटलॉग बनाएं",
   "bot.tab.product": "प्रोडक्ट",
   "bot.tab.quantity": "मात्रा",
   "bot.tab.price": "कीमत",
   "bot.lang": "भाषा",
-
   "bot.modal.title": "अपने प्रोडक्ट की 3–5 फ़ोटो जोड़ें",
   "bot.modal.intro": "एक ही प्रोडक्ट की फ़ोटो जोड़ें: पहले सामने से, फिर हाथ में और इस्तेमाल करते हुए। फ़ोन की फ़ोटो चलेगी; कवर फ़ोटो बॉट साफ़ कर देगा।",
   "bot.modal.note": "एक प्रोडक्ट की 3 से 5 फ़ोटो जोड़ें। पहली फ़ोटो कवर बनेगी।",
   "bot.modal.add": "फ़ोटो जोड़ें",
   "bot.modal.cancel": "रद्द करें",
   "bot.modal.continue": "आगे बढ़ें",
-
   "bot.photos.title": "आपकी फ़ोटो",
   "bot.photos.cover": "कवर",
   "bot.photos.count": "{max} में से {n} फ़ोटो",
@@ -35,7 +32,6 @@
   "bot.continue": "जानकारी भरने के लिए आगे बढ़ें",
   "bot.noType": "इस पर्सोना के लिए कोई प्रोडक्ट टाइप नहीं मिला — लिस्टिंग बॉट को ऐसा प्रोडक्ट टाइप चाहिए जिसका डिमांड डेटा हो",
   "bot.noType.more": "नीचे दिए गए सामान्य स्टेप से आगे बढ़ें।",
-
   "bot.summary": "आपकी फ़ोटो से भरा गया: बॉट ने {total} ज़रूरी फ़ील्ड में से {bot} पहले से भर दिए। आपको {you} चीज़ें भरनी हैं, जिन पर “आप भरें” लिखा है। हर फ़ील्ड बदला जा सकता है।",
   "bot.fillDemo": "डेमो वैल्यू भरें",
   "bot.tag.bot": "बॉट ने भरा",
@@ -44,13 +40,11 @@
   "bot.aiFilled": "AI ने भरे · {n} फ़ील्ड",
   "bot.netQty.confirm": "मैं हर पैक में यूनिट की संख्या की पुष्टि करता/करती हूँ",
   "bot.retailPacked": "यूनिट अपने रिटेल पैक में आती हैं",
-
   "section.inventory": "प्रोडक्ट, साइज़ और इन्वेंटरी",
   "section.details": "प्रोडक्ट की जानकारी",
   "section.other": "दूसरी जानकारी",
   "placeholder.select": "चुनें",
   "placeholder.enter": "{label} लिखें",
-
   "field.netWeight": "नेट वज़न (ग्राम)",
   "field.styleCode": "स्टाइल कोड / प्रोडक्ट ID (ज़रूरी नहीं)",
   "field.productName": "प्रोडक्ट का नाम",
@@ -89,12 +83,10 @@
   "field.minRun": "कम से कम बैच (यूनिट)",
   "field.leadTimeDays": "तैयार होने में समय (दिन)",
   "field.sameAsManufacturer": "निर्माता वाली जानकारी ही",
-
   "tip.minRun": "सबसे छोटा बैच जो आपकी फ़ैक्टरी एक बार में मुनाफ़े के साथ बना सकती है।",
   "tip.leadTimeDays": "प्रोडक्शन शुरू करने से लेकर माल भेजने के लिए तैयार होने, या पैक पॉइंट तक पहुँचने तक के दिन।",
   "placeholder.makingCost": "लागत लिखें",
   "placeholder.marginPct": "मुनाफ़ा लिखें",
-
   "demand.title": "{name} की मांग · भरोसा: {confidence}",
   "demand.gap": "₹{pLow}–{pHigh} पर हर हफ़्ते {low}–{high} ऑर्डर पूरे नहीं हो रहे · दूसरे सप्लायर {committed} यूनिट पहले ही दे चुके हैं",
   "demand.gapNoBand": "हर हफ़्ते {low}–{high} ऑर्डर पूरे नहीं हो रहे · दूसरे सप्लायर {committed} यूनिट पहले ही दे चुके हैं",
@@ -102,7 +94,6 @@
   "confidence.High": "ज़्यादा",
   "confidence.Medium": "मध्यम",
   "confidence.Low": "कम",
-
   "col.size": "साइज़",
   "col.makingCost": "बनाने की लागत",
   "col.meeshoPrice": "Meesho कीमत",
@@ -117,11 +108,9 @@
   "takeHome.perUnit": "₹{v} प्रति यूनिट",
   "inv.suggested": "सुझाया गया",
   "wdrp.suggested": "रिटर्न की बचत के हिसाब से सुझाया गया",
-
   "status.qualifies": "योग्य है",
   "status.aboveCap": "योग्य नहीं है",
   "status.belowCost": "लागत से कम",
-
   "stack.prefix": "बॉट ने भरा:",
   "stack.packaging": "पैकेजिंग ₹{v}",
   "stack.packPointFee": "पैक पॉइंट फ़ीस ₹{v}",
@@ -133,7 +122,6 @@
   "lot.hint": "लॉट: {units} सुझाया गया · लगभग {weeks} हफ़्ते की बिक्री (लागत पर लगभग ₹{atCost}) · कोई भी संख्या चलेगी",
   "lot.hintNoCost": "लॉट: {units} सुझाया गया · लगभग {weeks} हफ़्ते की बिक्री · कोई भी संख्या चलेगी",
   "lot.belowMinRun": "{units} यूनिट आपके कम से कम बैच {minRun} से कम है। फिर भी आप इसी संख्या के साथ लाइव हो सकते हैं।",
-
   "check.title": "लाइव होने से पहले की चेकलिस्ट",
   "check.images": "फ़ोटो",
   "check.details": "जानकारी",
@@ -143,7 +131,6 @@
   "check.feesLocked": "डिस्पैच पर फ़ीस तय: पेमेंट इसी हिसाब से मिलेगा",
   "check.goLive": "लाइव करें",
   "check.toast": "कैटलॉग लाइव (प्रोटोटाइप)",
-
   "flow.progress": "Meesho ने {bot} जानकारी भरी · आप {you} भरें",
   "flow.back": "पीछे",
   "flow.next": "आगे",
@@ -213,7 +200,6 @@
   "compare.botSub": "बाकी Meesho आपकी फ़ोटो, GST रिकॉर्ड और कैटेगरी से भरता है।",
   "compare.plusConfirm": "+ एक टैप: “1 का पैक — हाँ”",
   "compare.close": "बंद करें",
-
   "gl.verdict.makeMore": "और बनाएं",
   "gl.verdict.keep": "जारी रखें",
   "gl.verdict.fix": "सुधारें",
@@ -266,7 +252,6 @@
   "gl.tile.returnOne": "{n} रिटर्न",
   "gl.tile.returnMany": "{n} रिटर्न",
   "gl.otherRanges": "दूसरी तारीखें",
-
   "gl.perf.product": "प्रोडक्ट",
   "pi.tab": "प्राइस पोज़िशन",
   "pi.scope": "सिर्फ़ Factory Launch लिस्टिंग · एक जैसे मटीरियल, साइज़ और टाइप से तुलना, प्रति यूनिट",
@@ -291,7 +276,6 @@
   "pi.position.low": "सबसे कम कीमत वाले तिहाई हिस्से में",
   "pi.position.mid": "बीच वाले तिहाई हिस्से में",
   "pi.position.high": "सबसे ज़्यादा कीमत वाले तिहाई हिस्से में",
-  "pi.position.none": "इस कीमत पर पोज़िशन नहीं दिखती",
   "pi.thirdsTip": "मिलती-जुलती लिस्टिंग (एक जैसा मटीरियल, साइज़ और टाइप, प्रति यूनिट) को कीमत के हिसाब से तीन बराबर हिस्सों में बाँटा जाता है: सबसे कम, बीच और सबसे ज़्यादा कीमत वाला तिहाई। आपको दिखता है कि आपकी कीमत किस हिस्से में है, सटीक रैंक नहीं।",
   "pi.hold.title": "आपकी कीमत अब Factory Launch के लिए योग्य नहीं · लॉन्च स्लॉट हटा दिया गया",
   "pi.hold.body": "कीमत इस प्रोडक्ट की योग्य सीमा से ऊपर चली गई, इसलिए लिस्टिंग का लॉन्च स्लॉट और लॉन्च के फ़ायदे हट गए। लिस्टिंग नई कीमत पर Meesho पर लाइव रहेगी, और उसकी विज़िबिलिटी की समीक्षा होगी।",

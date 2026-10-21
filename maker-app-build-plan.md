@@ -170,7 +170,8 @@ The day drives what each page shows (empty states before go-live, launch view du
 | Break-even | 80 making + 6 packaging + 32 shipping and fixed fee + 8 returns buffer + 7 GST | ₹133 |
 | Take-home | 17.5% × ₹80 | ₹14 |
 | List price | ₹133 + ₹14 | ₹147 |
-| Benchmark B (hidden) | 25th percentile of 1,000 qualifying orders: ₹150 × 200, ₹160 × 300, ₹165–190 × 500; the 250th order is at ₹160 | ₹160 |
+| Benchmark B (hidden) | 25th percentile of 1,000 qualifying orders: ₹150 × 200, ₹160 × 300, ₹165 × 150, ₹170 × 100, ₹175 × 100, ₹180 × 80, ₹190 × 70; the 250th order is at ₹160 | ₹160 |
+| Price position | share of comparable orders priced below: < 1/3 Low, 1/3–2/3 Mid, > 2/3 High | ₹147 → 0% Low · ₹165 → 50% Mid · ₹170 → 65% Mid · ₹175 → 75% High |
 | Price check | ₹133 ≤ ₹147 ≤ ₹160 → qualifies; ₹165 > ₹160 → doesn't | ✓ |
 | Hero's price drop | ₹160 − ₹147 = ₹13 = 8.1% of B, meets the deck's ≥ 8% target | ₹13 |
 | Orders per listing | 20% × 300–450 a week = 60–90 a week = 8.6–12.9 a day | 9–13 a day |
@@ -183,6 +184,7 @@ The day drives what each page shows (empty states before go-live, launch view du
 | Pack Point fee | (monthly cost ÷ orders) × 1.18 ÷ (1 − 0.178): ₹1,26,444 ÷ 6,000 = ₹21.07 → ₹24.87 → ₹30.3 | ₹30 at 40 makers (₹44 at 20, ₹26 at 60, ₹23 at 80) |
 | Samar (sneakers, Agra Pack Point; team Q4) | 200 making + 30 fee + 40 shipping and fixed + 20 returns = 290; × 1.05 = 304.5; take-home 15% × 200 = 30; (290 + 30) × 1.05 | break-even ₹305 · list ₹336 · GST ₹16 |
 | Samar vs B (hidden ₹370) | 370 − 336 = 34 = 9.2% of B | qualifies; drop ₹34 |
+| Samar demand | 175–280 a week unserved at ₹350–400, Medium, 0 committed; 20% → 35–56 a week = 5–8 a day; 175 ÷ 35 = 280 ÷ 56 | 5 slots |
 | Samar first lot | (5 + 8) ÷ 2 = 6.5 a day × 14 = 91 → 90; sizes 6–10 = 10/20/25/20/15 | 90 pairs, ₹18,000 at cost |
 | Samar D50 inbound (Agra) | 90 expected, 90 received; 650 g ± 5%; storage free 30 days, then 90 × ₹0.29 | 617.5–682.5 g · free to D80 · ₹26.10 a day after |
 

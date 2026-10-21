@@ -28,7 +28,7 @@ function ThirdsBar({ position, t }: { position: PricePosition | null; t: Tr }) {
   return (
     <div className="flex flex-col gap-1.5" data-position={position ?? 'none'}>
       <div className="flex items-center gap-1">
-        <p className={cx(T.bodySm, 'text-neutral-primary')}>{position ? t(`pi.position.${position}`) : t('pi.position.none')}</p>
+        <p className={cx(T.bodySm, 'text-neutral-primary')}>{position && t(`pi.position.${position}`)}</p>
         <InfoTip text={t('pi.thirdsTip')} />
       </div>
       <div className="grid grid-cols-3 gap-1.5 w-72">

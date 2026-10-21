@@ -34,15 +34,6 @@ export function effectivePriceEdit(real: PriceEdit | undefined, day: number, per
   return null;
 }
 
-/** The third, or null where the engine can't place a price (inside a comparable group's price range). */
-export function positionOrNull(type: ProductTypeId, price: number): PricePosition | null {
-  try {
-    return listingPricePosition(type, price);
-  } catch {
-    return null;
-  }
-}
-
 export interface PriceHoldView {
   typeId: ProductTypeId;
   name: string;
@@ -54,7 +45,7 @@ export interface PriceHoldView {
   price: number;
   edit: EffectiveEdit | null;
   status: PriceStatus;
-  position: PricePosition | null;
+  position: PricePosition;
   /** the maker holds a Factory Launch slot for this listing (a commit) */
   hadSlot: boolean;
   /** PI-3: the edited price no longer qualifies, so the slot is removed */
@@ -78,7 +69,7 @@ export function priceHoldView(
     price,
     edit,
     status,
-    position: positionOrNull(listing.typeId, price),
+    position: listingPricePosition(listing.typeId, price),
     hadSlot: hasCommit,
     slotRemoved: hasCommit && edit !== null && status !== 'qualifies',
   };
