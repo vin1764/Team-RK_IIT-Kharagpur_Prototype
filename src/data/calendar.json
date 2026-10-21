@@ -1,5 +1,5 @@
 {
-  "_source": "D0 date: team answer, 21 Oct 2026. Launch days: deck order book. Jump days: plan §6.",
+  "_source": "D0 date: team answer, 21 Oct 2026. Launch days: deck order book. Jump days: plan \u00a76. Restock moved to D28 (team, Phase 4 answers).",
   "d0": "2026-10-24",
   "launch": {
     "commitmentsCloseDay": 7,
@@ -12,7 +12,7 @@
     "listing": 3,
     "commit": 5,
     "liveLaunch": 23,
-    "restock": 31,
+    "restock": 28,
     "priceEdit": 40,
     "packPointLot": 50
   },

@@ -1,0 +1,31 @@
+{
+  "_source": "Team answers, Phase 4 (Q2, Q9, Q12, Q14) and deck order-book fields. Never invent other values.",
+  "id": "flw-1",
+  "name": "Factory Launch Week 1",
+  "category": "Home & Kitchen",
+  "productTypes": [
+    "steel-bottle-1l"
+  ],
+  "slotsTakenBeforeJasmeet": 4,
+  "_slotsTakenSource": "600 units committed by others \u00f7 150 suggested lot = 4 makers (team Q9)",
+  "commit": {
+    "jasmeet": {
+      "units": 150,
+      "day": 5
+    }
+  },
+  "dailyOrders": {
+    "21": 12,
+    "22": 10,
+    "23": 11,
+    "24": 11,
+    "25": 12,
+    "26": 11,
+    "27": 10,
+    "28": 11,
+    "29": 11,
+    "30": 11
+  },
+  "_dailyOrdersSource": "team Q12: D21\u2013D30 series for Jasmeet's 1 L bottle listing",
+  "listingScoreLabel": "Building"
+}

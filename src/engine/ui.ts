@@ -7,8 +7,9 @@ import { MissingPlanValue, type ProductTypeId } from './types';
 
 export { costStack, gstAt, takeHomeAt, typeFees, type CostStack, type Fees } from './costStack';
 export { demandForType, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions, typicalForType } from './demand';
-export { restock } from './restock';
-export { verdict } from './verdict';
+export { restock, type Restock } from './restock';
+export { launchProgress, trailingRunRate, type LaunchProgress } from './launch';
+export { verdict, type Verdict, type SkuHealth } from './verdict';
 export { coachFix } from './coach';
 export {
   eligibility,

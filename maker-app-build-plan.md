@@ -1,6 +1,7 @@
 # Maker App Prototype — Build Plan for Claude Code
 
 Team RK · Meesho DICE S3 (C2M) · maker-side prototype only
+Updated 21 Oct 2026 with the team's Phase 4 answers (restock moved from D31 to D28; launch daily orders seeded).
 Source of truth: the doc **"C2M Solution on Meesho Supplier Hub"** (verified 21 Oct 2026) + the final Round-2 deck.
 Ops console: **out of scope for now.**
 
@@ -122,11 +123,11 @@ Routes follow the real panel (`/panel/v3/new/...`). **Bold = has C2M additions.*
 **Prototype controls** — a small floating panel (bottom-right, clearly labelled, hideable):
 
 - **Persona**: Jasmeet Sharma (kitchenware maker, self-ship) · Samar Biswas (footwear maker, Pack Point) · Reseller (fails checks)
-- **Day**: D0 → D90 slider with jump buttons: D1 onboarding · D3 listing · D5 commit · D23 live launch · D31 restock · D40 price edit · D50 Pack Point lot
+- **Day**: D0 → D90 slider with jump buttons: D1 onboarding · D3 listing · D5 commit · D23 live launch · D28 restock · D40 price edit · D50 Pack Point lot
 - **Language**: EN / हिंदी (bot screens and coach card)
 - **Reset demo**
 
-The day drives what each page shows (empty states before go-live, launch view during D21–25, restock card after D30).
+The day drives what each page shows (empty states before go-live, launch view during D21–25, restock card from D28).
 
 ---
 
@@ -153,7 +154,7 @@ The day drives what each page shows (empty states before go-live, launch view du
 | `demandForType(type)` | gap range, price band, confidence, committed | 300–450/wk, ₹150–170, High, 600 committed |
 | `likelyShare(type)` | share + orders/day range | ~20% → 9–13/day |
 | `suggestedLot(type)` | units ≈ 14 days of expected sales | 150 (≈ ₹12,000 at cost) |
-| `restock(runRate, onHand, lead, safety)` | cover, reorder point, next batch (21 days, rounded to nearest 10), dates | 11/day, 84 → 7.6 days, reorder 77, next 230 (≈ ₹18,400), start 24 Nov, land 29 Nov |
+| `restock(runRate, onHand, lead, safety)` | cover, reorder point, next batch (21 days, rounded to nearest 10), dates | 11/day, 73 → 6.6 days, reorder 77, next 230 (≈ ₹18,400), start 21 Nov, land 26 Nov |
 | `verdict(sku)` | Make more / Keep / Fix / Stop / Switch | bottle Make more, lunch box Keep, sipper Stop |
 | `switchSuggestions(line)` | open-gap products for the same line | 1.5 L casserole ~200/wk High; 500 ml flask ~120/wk Medium |
 | `coachFix(funnel, categoryBands)` | one fix (trigger stays internal) | 2,400 views, 38 clicks, 1.6% vs 4.2% → "change the main photo" |
@@ -175,7 +176,8 @@ The day drives what each page shows (empty states before go-live, launch view du
 | Orders per listing | 20% × 300–450 a week = 60–90 a week = 8.6–12.9 a day | 9–13 a day |
 | Slots | 300 ÷ 60 = 5; 450 ÷ 90 = 5 | 5 |
 | Suggested lot | ~11 a day × 14 days = 154, rounded to nearest 10 | 150 units, ₹12,000 at cost |
-| Restock | cover 84 ÷ 11 = 7.6 days; reorder point 11 × (5 + 2) = 77; next batch 11 × 21 = 231 → 230; 230 × ₹80 = ₹18,400; 24 Nov + 5 days | lands 29 Nov |
+| Restock (D28, 21 Nov) | run-rate D21–27 = 77 ÷ 7 = 11/day; cover 73 ÷ 11 = 6.6 days; reorder point 11 × (5 + 2) = 77 (73 < 77 → start today); next batch 11 × 21 = 231 → 230; 230 × ₹80 = ₹18,400; 21 Nov + 5 days; 73 − 11 × 5 = 18 left on landing | lands 26 Nov |
+| Launch sales (lot 150, committed D5) | daily orders D21–D30 = 12, 10, 11, 11, 12, 11, 10, 11, 11, 11 | D23: 11 today, 33 sold, 117 left · D27: 77 sold, 73 left · D30: 110 sold = 73% sell-through |
 | Coach | 38 ÷ 2,400 clicks per view | 1.6% vs 4.2% |
 | Pack Point fee | (monthly cost ÷ orders) × 1.18 ÷ (1 − 0.178): ₹1,26,444 ÷ 6,000 = ₹21.07 → ₹24.87 → ₹30.3 | ₹30 at 40 makers (₹44 at 20, ₹26 at 60, ₹23 at 80) |
 
@@ -204,7 +206,7 @@ Promotions tab, order book, units to commit, Commit; Home step-3 card; live laun
 
 **Phase 5 — Growth loop**
 Inventory restock card, verdicts, switch suggestions; Business Dashboard and Home coach card (EN / हिंदी).
-*Check:* D31 view matches the doc mock-ups.
+*Check:* D28 view matches the doc mock-ups.
 
 **Phase 6 — Pricing and Warehouse**
 Manage Pricing "Price position" tab and price-hold breach (D40, price edit to ₹165); Warehouse Pack Point card, providers near you, lot inbound (Samar, D50).
@@ -223,8 +225,8 @@ Demo controls, concept label, responsive check, README (what's real vs simulated
 2. D1 · Business Details: GST + Udyam pass → eligible. (Switch to Reseller: not eligible.)
 3. D3 · Create from photos → 21 fields pre-filled → enters the 14 → price table: Qualifies, 150 suggested → Go live.
 4. D5 · Promotions → Factory Launch → commits units → Commit.
-5. D23 · Live launch: 11 orders today, expected 9–13; listing score building.
-6. D31 · Inventory: "Start 230 by 24 Nov"; coach: "change the main photo"; what to make instead.
+5. D23 · Live launch: 11 orders today, expected 9–13, 33 of 150 sold; listing score building.
+6. D28 · Inventory: "Start 230 by 21 Nov"; coach: "change the main photo"; what to make instead.
 7. D40 · Raises price to ₹165 → "Doesn't qualify · slot removed", position Mid.
 8. D50 · Samar: Warehouse → Cluster Pack Point → sends first lot, every unit weighed.
 
