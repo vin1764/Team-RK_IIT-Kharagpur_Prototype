@@ -5,8 +5,8 @@
 @layer base {
   :root {
     --concept-strip-h: 20px;
-    /* Scroll room under the page so the fixed "Prototype controls" pill never covers the last line. */
-    --demo-controls-room: 3.5rem;
+    /* The controls pill now sits in the concept strip, so pages need no extra room at the bottom. */
+    --demo-controls-room: 0px;
   }
   /* Phones: the concept strip wraps to two lines rather than being cut. */
   @media (width < 560px) {

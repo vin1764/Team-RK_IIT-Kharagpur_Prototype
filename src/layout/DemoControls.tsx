@@ -48,7 +48,7 @@ export function DemoUrlSync() {
   return null;
 }
 
-/** Floating "Prototype controls" panel, bottom-right, clearly labelled and hideable. */
+/** "Prototype controls": a pill at the right end of the concept strip; the panel drops down from it. */
 export function DemoControls() {
   const s = useDemo();
   // The demo guide stays open across a jump: the controls fold to the pill so the page is clear,
@@ -61,10 +61,14 @@ export function DemoControls() {
         type="button"
         data-demo-controls
         onClick={() => s.setControlsOpen(true)}
-        className="fixed bottom-4 right-4 z-snackbar rounded-full bg-black text-white text-base font-default px-3 py-1.5 border-0 cursor-pointer shadow-lg"
+        className="fixed top-0 right-2 z-[1600] flex items-center border-0 bg-transparent p-0 cursor-pointer font-default"
+        style={{ height: 'var(--concept-strip-h)' }}
       >
-        Prototype controls · D{s.day}
-        {activeStep !== null && ` · step ${activeStep}/${DEMO_GUIDE.length}`}
+        <span className="rounded-full bg-white/20 hover:bg-white/30 text-white text-sm leading-none px-2.5 py-0.5 whitespace-nowrap">
+          <span className="max-[767px]:hidden">Prototype controls</span>
+          <span className="min-[768px]:hidden">Controls</span> · D{s.day}
+          {activeStep !== null && ` · step ${activeStep}/${DEMO_GUIDE.length}`}
+        </span>
       </button>
     );
   }
@@ -80,7 +84,7 @@ export function DemoControls() {
           onClose={() => setGuideOpen(false)}
         />
       )}
-      <div data-demo-controls className="fixed bottom-4 right-4 z-snackbar w-72 rounded-lg bg-black text-white font-default text-base shadow-2xl">
+      <div data-demo-controls className="fixed right-2 z-snackbar w-72 rounded-lg bg-black text-white font-default text-base shadow-2xl overflow-y-auto" style={{ top: 'calc(var(--concept-strip-h) + 6px)', maxHeight: 'calc(100vh - var(--concept-strip-h) - 12px)' }}>
         <div className="flex items-center justify-between px-3 py-2 border-b border-solid border-white/15 border-x-0 border-t-0">
           <span className="font-semibold tracking-wide uppercase text-sm text-white/70">Prototype controls</span>
           <button type="button" onClick={() => s.setControlsOpen(false)} className="bg-transparent border-0 text-white/70 cursor-pointer text-lg leading-none" aria-label="Hide controls">

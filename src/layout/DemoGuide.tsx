@@ -47,8 +47,8 @@ export function DemoGuide({ active, onJump, onClose }: { active: number | null; 
       data-demo-guide
       role="dialog"
       aria-label="Demo guide"
-      className="fixed bottom-4 right-[19.5rem] z-snackbar w-[24rem] max-w-[calc(100vw-21rem)] flex flex-col rounded-lg bg-black text-white font-default text-base shadow-2xl"
-      style={{ maxHeight: 'calc(100vh - var(--concept-strip-h) - 2rem)' }}
+      className="fixed right-[19.5rem] z-snackbar w-[24rem] max-w-[calc(100vw-21rem)] flex flex-col rounded-lg bg-black text-white font-default text-base shadow-2xl"
+      style={{ top: 'calc(var(--concept-strip-h) + 6px)', maxHeight: 'calc(100vh - var(--concept-strip-h) - 12px)' }}
     >
       <div className="flex items-center justify-between px-3 py-2 border-b border-solid border-white/15 border-x-0 border-t-0 shrink-0">
         <span className="font-semibold tracking-wide uppercase text-sm text-white/70">Demo guide · 8 steps</span>
