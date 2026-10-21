@@ -72,3 +72,14 @@ describe('Samar — D50 lot inbound at Agra', () => {
     expect(r.storagePerDayAfterFree).toBe(26.1);
   });
 });
+
+import nodes from '../data/packPointNodes.json';
+import personas from '../data/personas.json';
+import { clusterForPincode } from './lot';
+
+describe('Pack Point cluster by pickup pincode (team, Phase 6 review)', () => {
+  it('Samar (Agra) → Agra, live', () => expect(clusterForPincode(nodes.nodes, personas.samar.address.pincode)).toMatchObject({ city: 'Agra', status: 'live' }));
+  it('Jasmeet (Rajkot) → Rajkot, live', () => expect(clusterForPincode(nodes.nodes, personas.jasmeet.address.pincode)).toMatchObject({ city: 'Rajkot' }));
+  it('a Moradabad pincode → opening cluster', () => expect(clusterForPincode(nodes.nodes, '244001')).toMatchObject({ status: 'opening' }));
+  it('outside every cluster → null', () => expect(clusterForPincode(nodes.nodes, '110001')).toBeNull());
+});

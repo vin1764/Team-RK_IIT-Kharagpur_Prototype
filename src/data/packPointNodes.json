@@ -4,17 +4,27 @@
     {
       "city": "Agra",
       "status": "live",
-      "makersPooled": 40
+      "makersPooled": 40,
+      "pincodePrefixes": [
+        "282"
+      ]
     },
     {
       "city": "Rajkot",
       "status": "live",
-      "makersPooled": 40
+      "makersPooled": 40,
+      "pincodePrefixes": [
+        "360"
+      ]
     },
     {
       "city": "Moradabad",
       "status": "opening",
-      "opensAtMakers": 40
+      "opensAtMakers": 40,
+      "pincodePrefixes": [
+        "244"
+      ]
     }
-  ]
+  ],
+  "_pincodeSource": "team (Phase 6 review): the Pack Point card shows to Factory-verified makers whose pickup pincode is in a cluster. Clusters are matched by the city's 3-digit postal prefix (public India Post district prefixes), not by any real address."
 }

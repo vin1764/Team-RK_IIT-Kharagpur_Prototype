@@ -53,3 +53,9 @@ export function sizeSplitFor(type: ProductTypeId, lot: number): { size: string; 
   const split = (data as unknown as Record<string, { sizeSplit?: Record<string, number | string> }>)[type]?.sizeSplit;
   return split ? sizeSplit(split, lot) : null;
 }
+
+/** The Pack Point cluster a pickup pincode falls in (by postal prefix), or null. */
+export function clusterForPincode<N extends { city: string; pincodePrefixes?: string[] }>(nodes: N[], pincode: string): N | null {
+  const pin = pincode.replace(/\s/g, '');
+  return nodes.find((n) => (n.pincodePrefixes ?? []).some((p) => pin.startsWith(p))) ?? null;
+}
