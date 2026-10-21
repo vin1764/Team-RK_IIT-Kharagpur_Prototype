@@ -5,7 +5,9 @@
 // Later phases will pick the state from the demo day instead of the query string.
 import { useSearchParams } from 'react-router';
 import { notInPrototype } from '../../components/Toast';
-import { useCatalog } from '../../store/catalog';
+import { useDemo } from '../../store/demo';
+import { useScriptedListing } from '../../store/timeline';
+import { LAUNCH } from './factory-launch/launch';
 import { HomeRail } from './home/HomeRail';
 import { HomeSteps, type HomeState } from './home/HomeSteps';
 
@@ -46,6 +48,10 @@ export function HomeView({ state }: { state: HomeState }) {
 
 export default function Home() {
   const [params] = useSearchParams();
-  const live = useCatalog((s) => s.listings.length > 0);
+  const day = useDemo((s) => s.day);
+  const listing = useScriptedListing();
+  // A real go-live listing of this persona; or, once the listing day is behind (presenter jumped
+  // ahead), the scripted one. On the listing day itself Home keeps the upload choice for the demo.
+  const live = !!listing && (!listing.scripted || day > LAUNCH.listingDay);
   return <HomeView state={params.get('state') === 'qc' ? 'qc' : live ? 'live' : 'start'} />;
 }

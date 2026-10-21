@@ -2,6 +2,7 @@
 // Every number is as captured: no ratings yet, so no score, and nothing in any tab.
 import { useState } from 'react';
 import { notInPrototype } from '../../components/Toast';
+import { ListingScoreCard } from './factory-launch/ListingScoreCard';
 import { InfoIcon, TEXT_BTN } from './quality/parts';
 
 const RATINGS = { lowStar: 0, total: 0 };
@@ -72,6 +73,9 @@ export default function Quality() {
             <h5 className="m-0 p-0 text-lg leading-5 font-semibold font-button text-white">Trusted and verified customers</h5>
           </div>
         </div>
+
+        {/* C2M LW-8: listing score for a launched listing, from the first live day */}
+        <ListingScoreCard />
 
         <div className="relative flex h-full justify-between gap-2">
           {/* Quality Score */}

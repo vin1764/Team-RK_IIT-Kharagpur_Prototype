@@ -3,8 +3,11 @@
 // (e.g. Phase 4's FACTORY_LAUNCH), append one entry to the list for that page.
 import { useSearchParams } from 'react-router';
 
-/** What the tab panel shows. 'events' = header image + status tabs + list; 'deals' = deals carousel + list. */
-export type PromoTabKind = 'events' | 'deals';
+/**
+ * What the tab panel shows. 'events' = header image + status tabs + list; 'deals' = deals carousel + list;
+ * 'factoryLaunch' = the C2M Factory Launch order book (LW-2), status picked from the demo day.
+ */
+export type PromoTabKind = 'events' | 'deals' | 'factoryLaunch';
 
 export interface PromoTab {
   /** Value of the `tab` query param (and the button id, `tab-<value>`, as on the panel). */
@@ -15,14 +18,19 @@ export interface PromoTab {
   kind: PromoTabKind;
   /** Noun used by the empty state: "No upcoming <noun> events yet". */
   noun: string;
+  /** C2M doc id when the tab is an addition (data-c2m on the tab button). */
+  c2m?: string;
 }
 
 export const SALE_TAB: PromoTab = { value: 'SALE', label: 'Sale Events', kind: 'events', noun: 'sale' };
 export const DEAL_TAB: PromoTab = { value: 'DEAL', label: 'Deals', isNew: true, kind: 'deals', noun: 'deal' };
 export const FLASH_TAB: PromoTab = { value: 'FLASH', label: 'Flash Events', kind: 'events', noun: 'flash' };
 
-export const PROMOTIONS_TABS: PromoTab[] = [SALE_TAB, DEAL_TAB, FLASH_TAB];
-export const SALE_OPT_IN_TABS: PromoTab[] = [SALE_TAB, FLASH_TAB];
+/** C2M (LW-2): Factory Launch Week as one more event type, after the panel's own tabs. */
+export const FACTORY_LAUNCH_TAB: PromoTab = { value: 'FACTORY_LAUNCH', label: 'Factory Launch', isNew: true, kind: 'factoryLaunch', noun: 'factory launch', c2m: 'LW-2' };
+
+export const PROMOTIONS_TABS: PromoTab[] = [SALE_TAB, DEAL_TAB, FLASH_TAB, FACTORY_LAUNCH_TAB];
+export const SALE_OPT_IN_TABS: PromoTab[] = [SALE_TAB, FLASH_TAB, FACTORY_LAUNCH_TAB];
 export const OFFER_OPT_IN_TABS: PromoTab[] = [DEAL_TAB];
 
 /** Status sub-tabs. The panel's own ids are tab-UPCOMING / tab-LIVE / tab-COMPLETED. */

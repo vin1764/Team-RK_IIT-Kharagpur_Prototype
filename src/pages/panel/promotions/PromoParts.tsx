@@ -111,6 +111,7 @@ export function PromoTabBar({
               aria-selected={on}
               aria-controls={`tabpanel-${i}`}
               data-active={on}
+              data-c2m={t.c2m}
               onClick={() => onChange(t)}
             >
               {anchorTab === t.value ? (

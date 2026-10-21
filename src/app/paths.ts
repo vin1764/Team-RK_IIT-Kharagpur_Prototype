@@ -29,6 +29,7 @@ export const paths = {
   promotions: `${P}/promotions/${SID}/list?tab=SALE&status=UPCOMING`,
   promotionsBase: `${P}/promotions/${SID}/list`,
   factoryLaunch: `${P}/promotions/${SID}/list?tab=FACTORY_LAUNCH`,
+  factoryLaunchLive: `${P}/promotions/${SID}/factory-launch/flw-1/live`, // ours (C2M LW-7)
   saleOptIn: `${P}/promotions/${SID}/sale/list?tab=SALE&status=UPCOMING`,
   saleOptInBase: `${P}/promotions/${SID}/sale/list`,
   offerOptIn: `${P}/promotions/${SID}/offer/list?tab=DEAL`,

@@ -8,7 +8,8 @@ import { paths } from '../../../app/paths';
 import { notInPrototype } from '../../../components/Toast';
 import { Button, Pill } from '../../../components/ui';
 import { tEn } from '../../../i18n';
-import { useCatalog } from '../../../store/catalog';
+import { useListingsForPersona } from '../../../store/catalog';
+import { HomeLaunchCard, useHasHomeLaunchCard } from '../factory-launch/HomeLaunchCard';
 import { PinkTag } from '../catalog/BulkTemplatePanel';
 import { BOT_QUERY } from '../catalog/bot';
 import { DEMO_IMAGE } from '../catalog/draftStore';
@@ -148,7 +149,8 @@ function UploadChoice() {
 // ── Step 2 after go-live from photos (LB-8): same box as the QC status, one live row ──
 function LiveStatus() {
   const navigate = useNavigate();
-  const n = useCatalog((s) => s.listings.length);
+  // Real go-live listings of this persona; the scripted listing (presenter jumped ahead) counts as one.
+  const n = Math.max(useListingsForPersona().length, 1);
   return (
     <div className="mt-0.5 p-6 bg-white" data-c2m="LB-8">
       <div className="flex items-start gap-7.5">
@@ -245,19 +247,23 @@ function QcStatus() {
 const CONTENT: Record<HomeState, Partial<Record<number, () => ReactNode>>> = {
   start: { 1: () => <UploadChoice /> },
   qc: { 1: () => <UploadChoice />, 2: () => <QcStatus /> },
-  live: { 1: () => <UploadChoice />, 2: () => <LiveStatus /> },
+  live: { 1: () => <UploadChoice />, 2: () => <LiveStatus />, 3: () => <HomeLaunchCard /> },
 };
 
 export function HomeSteps({ state }: { state: HomeState }) {
   const status = STATUS[state];
+  // C2M LW-6: step 3 shows the Factory Launch card only when the maker has an order book to join.
+  const hasLaunchCard = useHasHomeLaunchCard();
+  const content: Partial<Record<number, () => ReactNode>> = { ...CONTENT[state] };
+  if (!hasLaunchCard) delete content[3];
   // Open on the current step; when it has no captured content, on the latest step before it that has.
   let initial = status.indexOf('current') + 1;
-  while (initial > 1 && !CONTENT[state][initial]) initial--;
+  while (initial > 1 && !content[initial]) initial--;
   const [active, setActive] = useState(initial);
   const [shown, setShown] = useState(initial);
   const select = (n: number) => {
     setActive(n);
-    if (CONTENT[state][n]) setShown(n);
+    if (content[n]) setShown(n);
   };
   return (
     <div className="w-2/3 h-full rounded-lg overflow-hidden mr-3 overflow-visible">
@@ -266,7 +272,7 @@ export function HomeSteps({ state }: { state: HomeState }) {
           <StepTab key={label} n={i + 1} label={label} status={status[i]!} active={active === i + 1} onClick={() => select(i + 1)} />
         ))}
       </div>
-      {CONTENT[state][shown]?.()}
+      {content[shown]?.()}
     </div>
   );
 }

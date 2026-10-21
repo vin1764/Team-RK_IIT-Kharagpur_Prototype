@@ -25,6 +25,7 @@ import ReduceRto from '../pages/panel/ReduceRto';
 import Returns from '../pages/panel/Returns';
 import SaleOptIn from '../pages/panel/SaleOptIn';
 import Warehouse from '../pages/panel/Warehouse';
+import LiveLaunch from '../pages/panel/factory-launch/LiveLaunch';
 import Outreach from '../pages/onboarding/Outreach';
 import Signup from '../pages/onboarding/Signup';
 import CostCheck from '../pages/onboarding/CostCheck';
@@ -60,6 +61,7 @@ export function App() {
           <Route path={`${P}/promotions/${SID}/list`} element={<Promotions />} />
           <Route path={`${P}/promotions/${SID}/sale/list`} element={<SaleOptIn />} />
           <Route path={`${P}/promotions/${SID}/offer/list`} element={<OfferOptIn />} />
+          <Route path={paths.factoryLaunchLive} element={<LiveLaunch />} />
           <Route path={`${P}/finance/${SID}/home`} element={<InstantCash />} />
           <Route path={`${P}/insights/${SID}/business-dashboard`} element={<BusinessDashboard />} />
         </Route>
