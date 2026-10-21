@@ -24,7 +24,7 @@ function CostCheckResult({ onContinue }: { onContinue: () => void }) {
   const stack = costStack(cc.type, cc.makingCost, marginPct, costCheckMode(persona, cc.type));
   return (
     <>
-      <div className="mt-4 rounded-lg border border-solid border-tertiary-border bg-secondary-bg p-4" data-c2m="FO-5">
+      <div className="mt-4 rounded-lg border border-solid border-tertiary-border bg-secondary-bg p-4" data-c2m="FO-5" data-c2m-id="FO-5">
         <p className="m-0 font-button text-xl leading-5">Cost check · two inputs</p>
         <p className="m-0 mt-1.5 text-lg leading-5 text-secondary-text">
           Product: {productTypeName(cc.type)} · Making cost: ₹{cc.makingCost}
@@ -52,7 +52,7 @@ export function OutreachPanel({ onContinue }: { onContinue: () => void }) {
     return (
       <GenericPanel
         note={
-          <p className="m-0 mt-1 text-base leading-4 text-tertiary-text" data-c2m="FO-4">
+          <p className="m-0 mt-1 text-base leading-4 text-tertiary-text" data-c2m="FO-4" data-c2m-id="FO-4">
             Demand teaser shown for makers with a matched product type
           </p>
         }
@@ -65,7 +65,7 @@ export function OutreachPanel({ onContinue }: { onContinue: () => void }) {
   const band = demand?.priceBand ?? null;
 
   return (
-    <div className="mt-[44px] rounded-lg border border-solid border-brand-primary-border bg-white p-5" data-c2m="FO-4">
+    <div className="mt-[44px] rounded-lg border border-solid border-brand-primary-border bg-white p-5" data-c2m="FO-4" data-c2m-id="FO-4">
       <h2 className="m-0 font-heading text-2xl leading-6">For {plural(productTypeName(type))}</h2>
       {demand && (
         <p className="m-0 mt-2 text-xl leading-6">
@@ -81,7 +81,7 @@ export function OutreachPanel({ onContinue }: { onContinue: () => void }) {
       {done ? (
         <CostCheckResult onContinue={onContinue} />
       ) : (
-        <div className="mt-4 flex items-center justify-between gap-4 rounded-lg border border-solid border-tertiary-border bg-secondary-bg p-4" data-c2m="FO-5">
+        <div className="mt-4 flex items-center justify-between gap-4 rounded-lg border border-solid border-tertiary-border bg-secondary-bg p-4" data-c2m="FO-5" data-c2m-id="FO-5">
           <p className="m-0 font-button text-xl leading-5">See your take-home in 5 minutes · two inputs</p>
           <Button className="shrink-0" onClick={() => go(onboarding.costCheck)}>
             Check take-home

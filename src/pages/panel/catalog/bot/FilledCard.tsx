@@ -39,7 +39,7 @@ export function FilledCard({
   };
 
   return (
-    <section className="mt-2.5 rounded bg-tertiary-bg px-5 py-4" data-c2m="LB-4" data-testid="filledCard" data-open={open ? 'true' : 'false'}>
+    <section className="mt-2.5 rounded bg-tertiary-bg px-5 py-4" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="filledCard" data-open={open ? 'true' : 'false'}>
       <div className="flex items-center gap-3">
         <img src={GREEN_CHECK} alt="" width="24" height="24" className="size-6 shrink-0" />
         <div className="min-w-0 flex-1">

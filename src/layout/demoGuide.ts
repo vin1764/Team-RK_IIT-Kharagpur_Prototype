@@ -24,7 +24,7 @@ import {
   type ProductTypeId,
 } from '../engine/ui';
 import { BOT_FILLED_COUNT, MAKER_COUNT } from '../pages/panel/catalog/bot';
-import { withDemoParams, type Persona } from '../store/demo';
+import { withDemoParams, type Lang, type Persona } from '../store/demo';
 
 const J = personas.jasmeet;
 const S = personas.samar;
@@ -93,6 +93,8 @@ export interface GuideJump {
   day: number;
   /** route, possibly with its own query (e.g. ?tab=FACTORY_LAUNCH) */
   path: string;
+  /** language to land in (showcase jumps); guide jumps land in English */
+  lang?: Lang;
 }
 
 export interface GuideStep {

@@ -15,7 +15,7 @@ export function DemandCard({ type, className = 'mt-4' }: { type: ProductTypeId; 
   const s = likelyShareOrNull(type);
   if (!d || !s) return null;
   return (
-    <div className={`${className} rounded bg-secondary-bg px-4 py-3`} data-c2m="LB-5" data-bot-anchor="quantity" data-testid="demandCard">
+    <div className={`${className} rounded bg-secondary-bg px-4 py-3`} data-c2m="LB-5" data-c2m-id="LB-5" data-bot-anchor="quantity" data-testid="demandCard">
       <p className="m-0 font-button text-xl leading-5 text-primary-text">
         {t('demand.title', { name: productTypeName(type), confidence: t(`confidence.${d.confidence}`) })}
       </p>
@@ -34,7 +34,7 @@ export function DemandCard({ type, className = 'mt-4' }: { type: ProductTypeId; 
 /** "Bot filled: packaging ₹6 · shipping + fixed fee ₹32 · returns and refusal ₹8 · GST (5%, in price) ₹7 → break-even ₹133" */
 export function StackLine({ stack, gst }: { stack: CostStack | null; gst: number | null }) {
   const t = useT();
-  if (!stack) return <p className="m-0 mt-3 font-body text-base leading-4 text-secondary-text" data-c2m="LB-6">{t('stack.waiting')}</p>;
+  if (!stack) return <p className="m-0 mt-3 font-body text-base leading-4 text-secondary-text" data-c2m="LB-6" data-c2m-id="LB-6">{t('stack.waiting')}</p>;
   const f = stack.fees;
   const parts = [
     f.packaging !== undefined ? t('stack.packaging', { v: fmt(f.packaging) }) : null,
@@ -44,7 +44,7 @@ export function StackLine({ stack, gst }: { stack: CostStack | null; gst: number
     t('stack.gst', { rate: fmt(stack.gstRate * 100), v: fmt(gst ?? f.gst) }),
   ].filter(Boolean);
   return (
-    <p className="m-0 mt-3 font-body text-base leading-4 text-secondary-text" data-c2m="LB-6" data-testid="stackLine">
+    <p className="m-0 mt-3 font-body text-base leading-4 text-secondary-text" data-c2m="LB-6" data-c2m-id="LB-6" data-testid="stackLine">
       {t('stack.prefix')} {parts.join(' · ')} → {t('stack.breakEven', { v: fmt(stack.breakEven) })}
     </p>
   );
@@ -55,7 +55,7 @@ export function LotLine({ lot, makingCost, inventory, minRun }: { lot: Suggested
   const t = useT();
   const weeks = fmt(lot.days / 7);
   return (
-    <div data-c2m="LB-5">
+    <div data-c2m="LB-5" data-c2m-id="LB-5">
       <p className="m-0 mt-1.5 font-body text-base leading-4 text-secondary-text" data-testid="lotLine">
         {makingCost
           ? t('lot.hint', { units: fmt(lot.units), weeks, atCost: fmt(lot.units * makingCost) })
@@ -108,7 +108,7 @@ export function GoLiveBar({
   const t = useT();
   const priceLabel = !checks.price && status && status !== 'qualifies' ? `${t('check.price')} · ${t(`status.${status}`)}` : t('check.price');
   return (
-    <div className="flex items-center gap-4" data-c2m="LB-8" data-testid="goLive">
+    <div className="flex items-center gap-4" data-c2m="LB-8" data-c2m-id="LB-8" data-testid="goLive">
       <span className="font-button text-lg leading-5 whitespace-nowrap text-primary-text">{t('check.title')}</span>
       <div className="flex flex-wrap gap-2">
         <Check ok={checks.images} label={t('check.images')} onClick={() => onShow('images')} />

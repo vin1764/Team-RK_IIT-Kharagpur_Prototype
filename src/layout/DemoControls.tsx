@@ -10,6 +10,7 @@ import { resetLaunch } from '../store/timeline';
 import { resetPriceEdits } from '../store/priceEdits';
 import { DemoGuide, takePendingJump } from './DemoGuide';
 import { DEMO_GUIDE } from './demoGuide';
+import { FrameBridge } from '../embed/FrameBridge';
 
 const PERSONAS: { id: Persona; label: string }[] = [
   { id: 'jasmeet', label: 'Jasmeet Sharma · kitchenware, self-ship' },
@@ -43,7 +44,7 @@ export function DemoUrlSync() {
     if (jump) {
       setPersona(jump.persona);
       setDay(jump.day);
-      setLang('en');
+      setLang(jump.lang ?? 'en');
       return;
     }
     const next = withDemoParams(loc.search, { persona, day, lang, c2m });
@@ -55,7 +56,8 @@ export function DemoUrlSync() {
 /** "Prototype controls": a pill at the right end of the concept strip; the panel drops down from it. */
 export function DemoControls() {
   // Inside the showcase frame the sidebar has these controls; the pill would only duplicate them.
-  return EMBEDDED ? null : <DemoControlsPanel />;
+  // The frame instead runs the bridge to the showcase page (postMessage, highlight overlay).
+  return EMBEDDED ? <FrameBridge /> : <DemoControlsPanel />;
 }
 
 function DemoControlsPanel() {

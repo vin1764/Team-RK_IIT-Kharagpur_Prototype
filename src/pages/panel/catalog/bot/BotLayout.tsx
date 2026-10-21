@@ -12,7 +12,7 @@ import { GREEN_CHECK, LinkButton } from './Bits';
 export function BotStepper({ step, done, canOpen, onStep }: { step: BotStep; done: Record<BotStep, boolean>; canOpen?: (s: BotStep) => boolean; onStep?: (s: BotStep) => void }) {
   const t = useT();
   return (
-    <div className="flex items-center justify-between rounded bg-white pr-4 pl-1" data-c2m="LB-4" data-testid="botStepper">
+    <div className="flex items-center justify-between rounded bg-white pr-4 pl-1" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="botStepper">
       <div className="flex" role="tablist">
         {BOT_STEPS.map((s, i) => {
           const on = s === step;
@@ -71,7 +71,7 @@ export function BotLayout({
         <CatalogHeader title="Add Single Catalog" helper="Learn to upload single catalog?" onBack={onBackHeader} />
         <div className="mx-auto max-w-[40rem] px-0 pt-2.5 pb-10" data-testid="botColumn">
           <BotStepper step={step} done={done} canOpen={canOpen} onStep={onStep} />
-          <div className="flex items-center justify-between gap-3 px-1 pt-3" data-c2m="LB-4" data-testid="botProgress">
+          <div className="flex items-center justify-between gap-3 px-1 pt-3" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="botProgress">
             <p className="m-0 flex items-center gap-2 font-body text-lg leading-5 text-secondary-text">
               <span className="font-button text-primary-text">{t('bot.title')}</span>
               <PinkTag>{t('bot.new')}</PinkTag>

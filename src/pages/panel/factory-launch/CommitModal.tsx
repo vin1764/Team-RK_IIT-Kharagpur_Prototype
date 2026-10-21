@@ -45,7 +45,7 @@ export function CommitModal({ open, onClose, view, row }: { open: boolean; onClo
           </>
         }
       >
-        <div data-c2m="LW-5" data-commit="no-listing">
+        <div data-c2m="LW-5" data-c2m-id="LW-5" data-commit="no-listing">
           <Banner tone="info">
             <b className="font-button">{FL.listFirst(row.name)}</b>
             <br />
@@ -79,7 +79,7 @@ export function CommitModal({ open, onClose, view, row }: { open: boolean; onClo
         </>
       }
     >
-      <div className="flex flex-col gap-5" data-c2m="LW-5">
+      <div className="flex flex-col gap-5" data-c2m="LW-5" data-c2m-id="LW-5">
         {/* SKU */}
         <div className="flex flex-col gap-1.5">
           <p className={LABEL}>{FL.sku}</p>

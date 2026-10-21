@@ -6,6 +6,7 @@ import { useSearchParams } from 'react-router';
 import { onboarding } from '../../app/paths';
 import { Button } from '../../components/ui';
 import { notInPrototype, toast } from '../../components/Toast';
+import { useDemo } from '../../store/demo';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import { Field } from './signup/Field';
 import { GenericPanel } from './signup/GenericPanel';
@@ -18,6 +19,8 @@ const digits = (v: string, max: number) => v.replace(/\D/g, '').slice(0, max);
 export default function Signup() {
   const [params] = useSearchParams();
   const fromOutreach = params.get('ref') === 'outreach';
+  // Plain mode ("Today vs ours"): today's right panel, no demand teaser.
+  const c2m = useDemo((s) => s.c2m);
   const persona = usePersona();
   const { phone, otpSent, otp, set } = useOnboarding();
   const { go } = useDemoLink();
@@ -98,7 +101,7 @@ export default function Signup() {
     <SplitLayout
       left={left}
       leftFooter={footer}
-      right={fromOutreach ? <OutreachPanel onContinue={() => phoneRef.current?.focus()} /> : <GenericPanel />}
+      right={fromOutreach && c2m ? <OutreachPanel onContinue={() => phoneRef.current?.focus()} /> : <GenericPanel />}
     />
   );
 }

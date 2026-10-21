@@ -123,6 +123,7 @@ export function AddCatalogActions() {
             <button
               type="button"
               data-c2m="LB-3"
+              data-c2m-id="LB-3"
               className={`${BTN_OUTLINE} h-9 px-4 text-xl ml-4 gap-2`}
               onClick={() => navigate(`${paths.addSingleCategory}?${BOT_QUERY}`)}
             >

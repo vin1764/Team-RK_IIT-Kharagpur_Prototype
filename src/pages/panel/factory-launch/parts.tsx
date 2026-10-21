@@ -66,7 +66,7 @@ export function CheckRow({ ok, children }: { ok: boolean; children: ReactNode })
 /** Bordered white section with a crystal heading (the Promotions pages' card language). */
 export function Section({ title, right, children, className, c2m }: { title?: ReactNode; right?: ReactNode; children: ReactNode; className?: string; c2m?: string }) {
   return (
-    <section className={cx('rounded-8 border border-solid border-neutral-light bg-neutral-base', className)} data-c2m={c2m}>
+    <section className={cx('rounded-8 border border-solid border-neutral-light bg-neutral-base', className)} data-c2m={c2m} data-c2m-id={c2m}>
       {(title || right) && (
         <div className="flex items-center justify-between gap-3 px-4 pt-4 pb-3">
           {title && <h3 className={T.h3}>{title}</h3>}

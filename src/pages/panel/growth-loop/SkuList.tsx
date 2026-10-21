@@ -64,7 +64,7 @@ export function SkuList({ g, rows, tab, onTab }: { g: GrowthView; rows: SkuVerdi
   return (
     <div className="bg-neutral-base px-4 pb-4 shrink-0 min-h-[calc(100vh-4rem)]" data-growth-skus>
       <div className="flex justify-end pb-2">
-        <div className="w-80 mr-4 flex items-center gap-1" data-c2m="GL-5">
+        <div className="w-80 mr-4 flex items-center gap-1" data-c2m="GL-5" data-c2m-id="GL-5">
           <p className={cx(T.bodySm, 'text-neutral-secondary')}>{t('gl.verdict.label')}</p>
           <CrystalTip text={t('gl.verdict.tip')} />
         </div>

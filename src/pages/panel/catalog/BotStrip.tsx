@@ -15,7 +15,7 @@ export function LangToggle() {
   const { lang, setLang } = useDemo();
   const t = useT();
   return (
-    <div className="flex items-center rounded-full border border-solid border-secondary-border bg-white p-0.5" role="group" aria-label={t('bot.lang')} data-c2m="LB-10">
+    <div className="flex items-center rounded-full border border-solid border-secondary-border bg-white p-0.5" role="group" aria-label={t('bot.lang')} data-c2m="LB-10" data-c2m-id="LB-10">
       {(['en', 'hi'] as const).map((l) => (
         <button
           key={l}
@@ -34,7 +34,7 @@ export function LangToggle() {
 export function BotStrip({ active, done = [], onTab, onShort }: { active: BotTab; done?: BotTab[]; onTab?: (t: BotTab) => void; onShort?: () => void }) {
   const t = useT();
   return (
-    <div className="mt-2.5 flex items-center justify-between bg-white pr-4 pl-5" data-c2m="LB-4" data-testid="botStrip">
+    <div className="mt-2.5 flex items-center justify-between bg-white pr-4 pl-5" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="botStrip">
       <div className="flex items-center gap-6">
         <div className="flex items-center gap-2">
           <span className="font-button text-xl leading-5 text-primary-text">{t('bot.title')}</span>

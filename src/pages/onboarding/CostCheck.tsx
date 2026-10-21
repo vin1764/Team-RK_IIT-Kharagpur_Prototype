@@ -90,7 +90,7 @@ function CostCheckPage() {
   );
 
   const footer = (
-    <div className="pb-[59px]" data-c2m="FO-5">
+    <div className="pb-[59px]" data-c2m="FO-5" data-c2m-id="FO-5">
       <Button
         className="h-11 w-full"
         disabled={!result}
@@ -111,7 +111,7 @@ function CostCheckPage() {
   );
 
   const right = (
-    <div className="mt-[44px]" data-c2m="FO-5">
+    <div className="mt-[44px]" data-c2m="FO-5" data-c2m-id="FO-5">
       {!result ? (
         <Card className="text-lg leading-5 text-secondary-text">Pick a product type and enter your making cost to see your take-home.</Card>
       ) : (

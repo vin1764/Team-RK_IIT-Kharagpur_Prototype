@@ -33,6 +33,7 @@ export function PricingTabs({ tabs, active, onChange }: { tabs: PricingTab[]; ac
                   aria-selected={on}
                   data-active={on}
                   data-c2m={t.c2m}
+                  data-c2m-id={t.c2m}
                   onClick={() => onChange(t.id)}
                   className={cx(
                     'cursor-pointer transition-all duration-200 ease-in-out bg-transparent border-0 border-solid whitespace-nowrap shrink-0 font-[inherit] text-neutral-primary hover:text-brand-primary hover:bg-brand-light focus-visible:outline-1 focus-visible:outline-brand-base focus-visible:rounded-6 border-b-2 border-b-transparent data-[active=true]:text-brand-primary data-[active=true]:border-b-brand-base px-3 text-body-medium font-normal data-[active=true]:font-medium leading-5 py-2 mt-1 border-x border-x-transparent',

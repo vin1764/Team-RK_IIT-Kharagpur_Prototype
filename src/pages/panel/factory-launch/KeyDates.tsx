@@ -40,7 +40,7 @@ function TodayChip({ day }: { day: number }) {
 export function KeyDates({ day }: { day: number }) {
   const t = todaySlot(day);
   return (
-    <div className="flex items-start gap-4 flex-wrap" data-c2m="LW-3" aria-label={FL.keyDates}>
+    <div className="flex items-start gap-4 flex-wrap" data-c2m="LW-3" data-c2m-id="LW-3" aria-label={FL.keyDates}>
       {KEY_DATES.map((k, i) => {
         const passed = day > k.to;
         const current = t.on && t.index === i;

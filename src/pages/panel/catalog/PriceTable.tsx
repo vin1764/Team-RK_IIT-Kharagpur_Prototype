@@ -49,7 +49,7 @@ export function PriceTable({
   const isDisplay = (k: string): k is Display['key'] => k in DISPLAY_WIDTH;
 
   return (
-    <div className="mt-3 overflow-x-auto border border-solid border-tertiary-border" data-testid="priceTable" data-c2m={bot ? 'LB-6' : undefined}>
+    <div className="mt-3 overflow-x-auto border border-solid border-tertiary-border" data-testid="priceTable" data-c2m={bot ? 'LB-6' : undefined} data-c2m-id={bot ? 'LB-6' : undefined}>
       <table className="w-max border-collapse font-body text-lg leading-5 text-primary-text">
         <thead>
           <tr className="h-16 bg-tertiary-bg text-left align-bottom text-base leading-4">
@@ -57,7 +57,7 @@ export function PriceTable({
             {order.map((k) => {
               if (isDisplay(k))
                 return (
-                  <th key={k} className={`${DISPLAY_WIDTH[k]} border-0 border-l border-solid border-white px-3 pb-2.5 font-normal`} data-c2m="LB-6">
+                  <th key={k} className={`${DISPLAY_WIDTH[k]} border-0 border-l border-solid border-white px-3 pb-2.5 font-normal`} data-c2m="LB-6" data-c2m-id="LB-6">
                     {bot!.label(k, k)}
                   </th>
                 );
@@ -90,7 +90,7 @@ export function PriceTable({
                 {order.map((k) => {
                   if (isDisplay(k))
                     return (
-                      <td key={k} className="border-0 border-l border-solid border-tertiary-border px-3 pt-9.5 pb-9.5" data-cell={k} data-c2m="LB-6">
+                      <td key={k} className="border-0 border-l border-solid border-tertiary-border px-3 pt-9.5 pb-9.5" data-cell={k} data-c2m="LB-6" data-c2m-id="LB-6">
                         <div className="flex min-h-10 items-center">{k === 'makingCost' ? bot!.makingCost : k === 'takeHome' ? bot!.takeHome(row) : bot!.status(row)}</div>
                       </td>
                     );

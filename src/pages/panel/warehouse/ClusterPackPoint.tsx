@@ -47,7 +47,7 @@ const sameCity = (a: string, b: string) => a.trim().toLowerCase() === b.trim().t
 
 function Box({ title, children, c2m, id }: { title: ReactNode; children: ReactNode; c2m: string; id?: string }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-solid border-tertiary-border p-4" data-c2m={c2m} id={id}>
+    <div className="flex flex-col gap-3 rounded-lg border border-solid border-tertiary-border p-4" data-c2m={c2m} data-c2m-id={c2m} id={id}>
       <h3 className={H3}>{title}</h3>
       {children}
     </div>
@@ -254,7 +254,7 @@ export function ClusterPackPoint() {
     </Button>
   ) : null;
   return (
-    <div className={cx(CARD, 'flex flex-col gap-5')} data-c2m="PP-3" data-pack-point={usesPackPoint ? 'member' : 'offer'}>
+    <div className={cx(CARD, 'flex flex-col gap-5')} data-c2m="PP-3" data-c2m-id="PP-3" data-pack-point={usesPackPoint ? 'member' : 'offer'}>
       <div className="flex items-start justify-between gap-6 max-[767px]:flex-col max-[767px]:gap-4">
         <div className="flex flex-col gap-2 min-w-0">
           <div className="flex items-center gap-2">

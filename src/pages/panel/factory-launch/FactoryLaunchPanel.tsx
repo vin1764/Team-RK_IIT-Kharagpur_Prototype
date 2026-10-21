@@ -1,7 +1,7 @@
 // LW-2 / LW-3 / LW-4: the "Factory Launch" tab of Promotions and Sale Opt-in. Same layout as Sale
 // Events (event header, Upcoming / Live / Expired, the event under its status), with the event's
 // published order book. The price cap is checked at commit, not printed (doc p.22).
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../../app/paths';
 import { Banner, Button, InfoTip, Pill, cx } from '../../../components/ui';
@@ -15,6 +15,8 @@ import { LAUNCH, liveDates, liveDayIndex, statusForPhase, type LaunchPhase } fro
 import { Cell, CheckRow, MerlinTable, Section, T, type Col } from './parts';
 import { useLaunchView, type LaunchView, type OrderBookRow } from './useLaunchView';
 import { usePriceHold } from '../manage-pricing/priceHold';
+import { COMMIT_PARAM } from '../../../embed/prep';
+import { useDemo } from '../../../store/demo';
 
 const PHASE_TONE: Record<LaunchPhase, 'brand' | 'warning' | 'info' | 'success' | 'error'> = {
   open: 'brand',
@@ -58,7 +60,7 @@ function ActionCell({ view, row, onCommit, slotRemoved }: { view: LaunchView; ro
     return (
       <div className="flex flex-col items-start gap-1.5">
         {slotRemoved ? (
-          <div className="flex flex-col items-start gap-0.5" data-c2m="PI-3" data-slot-removed>
+          <div className="flex flex-col items-start gap-0.5" data-c2m="PI-3" data-c2m-id="PI-3" data-slot-removed>
             <Pill tone="error" bordered>
               {FL.slotRemovedPill}
             </Pill>
@@ -74,6 +76,7 @@ function ActionCell({ view, row, onCommit, slotRemoved }: { view: LaunchView; ro
           className="bg-transparent border-0 p-0 cursor-pointer text-body-small leading-4 font-medium text-brand-primary"
           onClick={() => navigate(paths.factoryLaunchLive)}
           data-c2m="LW-7"
+          data-c2m-id="LW-7"
         >
           {FL.viewLive}
         </button>
@@ -146,7 +149,7 @@ function OrderBook({ view, onCommit, slotRemoved }: { view: LaunchView; onCommit
     action: <ActionCell view={view} row={r} onCommit={() => onCommit(r)} slotRemoved={slotRemoved} />,
   }));
   return (
-    <div className="px-4 pb-4" data-c2m="LW-3">
+    <div className="px-4 pb-4" data-c2m="LW-3" data-c2m-id="LW-3">
       <h3 className={cx(T.h3, 'mb-3')}>{FL.orderBook}</h3>
       <div className="overflow-hidden rounded-8 border border-solid border-neutral-light">
         <MerlinTable cols={cols} rows={rows} label={FL.orderBook} />
@@ -169,7 +172,7 @@ function NotEligible({ view }: { view: LaunchView }) {
   const price = view.priceStatus === 'qualifies';
   const stock = !!view.commit;
   return (
-    <div className="px-4 pb-4" data-c2m="LW-4" data-eligibility="notEligible">
+    <div className="px-4 pb-4" data-c2m="LW-4" data-c2m-id="LW-4" data-eligibility="notEligible">
       <div className="rounded-8 border border-solid border-error-border bg-error-bg p-4">
         <p className="m-0 p-0 text-xl leading-5 font-button text-primary-text">{FL.notEligible}</p>
         <p className="m-0 mt-1 text-lg leading-5 font-body text-primary-text">{FL.stillSells}</p>
@@ -196,7 +199,7 @@ function StateBanner({ view, slotRemoved }: { view: LaunchView; slotRemoved: boo
   if (view.eligibility.status === 'notEligible') return null;
   if (!view.hasBook) {
     return (
-      <div className="px-4 pb-4" data-c2m="LW-4" data-no-order-book>
+      <div className="px-4 pb-4" data-c2m="LW-4" data-c2m-id="LW-4" data-no-order-book>
         <Banner tone="info">
           <b className="font-button">{FL.noOrderBook}</b>
           <br />
@@ -209,7 +212,7 @@ function StateBanner({ view, slotRemoved }: { view: LaunchView; slotRemoved: boo
   if (view.commit && slotRemoved) {
     // PI-3 price-hold breach: no number shown.
     return (
-      <div className="px-4 pb-4" data-c2m="PI-3" data-launch-banner="slotRemoved">
+      <div className="px-4 pb-4" data-c2m="PI-3" data-c2m-id="PI-3" data-launch-banner="slotRemoved">
         <Banner
           tone="error"
           action={
@@ -231,7 +234,7 @@ function StateBanner({ view, slotRemoved }: { view: LaunchView; slotRemoved: boo
   else if (view.phase === 'stockReady') banner = <Banner tone="info">{FL.stockBanner(stock, dayLabel(LAUNCH.liveFromDay))}</Banner>;
   if (!banner) return null;
   return (
-    <div className="px-4 pb-4" data-c2m="LW-5" data-launch-banner>
+    <div className="px-4 pb-4" data-c2m="LW-5" data-c2m-id="LW-5" data-launch-banner>
       {banner}
     </div>
   );
@@ -242,6 +245,23 @@ export function FactoryLaunchPanel() {
   const slotRemoved = usePriceHold()?.slotRemoved ?? false;
   const [params, setParams] = useSearchParams();
   const [commitRow, setCommitRow] = useState<OrderBookRow | null>(null);
+  const persona = useDemo((s) => s.persona);
+  const day = useDemo((s) => s.day);
+  // Showcase prep 'commitModal' (src/embed/prep.ts): ?commit=1 opens the commit modal on the maker's own row,
+  // once the jump's persona and day have landed; the param is then dropped.
+  useEffect(() => {
+    if (params.get(COMMIT_PARAM) !== '1' || params.get('persona') !== persona || params.get('day') !== String(day)) return;
+    const own = view.phase === 'open' && !view.commit && view.eligibility.status !== 'notEligible' ? view.rows.find((r) => r.typeId === view.ownType) : undefined;
+    if (own) setCommitRow(own);
+    setParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete(COMMIT_PARAM);
+        return next;
+      },
+      { replace: true },
+    );
+  }, [params, persona, day, view]); // eslint-disable-line react-hooks/exhaustive-deps
   const eventStatus = statusForPhase(view.phase);
   const raw = (params.get('status') ?? '').toUpperCase();
   const status = STATUSES.find((s) => s.value === (raw === 'EXPIRED' ? 'COMPLETED' : raw)) ?? STATUSES.find((s) => s.value === eventStatus)!;
@@ -256,7 +276,7 @@ export function FactoryLaunchPanel() {
     );
 
   return (
-    <div data-c2m="LW-2" className="flex flex-1 flex-col">
+    <div data-c2m="LW-2" data-c2m-id="LW-2" className="flex flex-1 flex-col">
       <StatusTabs active={status} onChange={setStatus} />
       {status.value === eventStatus ? (
         <div className="p-4">

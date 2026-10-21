@@ -151,7 +151,7 @@ export function RuledList({ rows }: { rows: { label: string; value: ReactNode; c
   return (
     <dl className="m-0 mt-[11px] border-0 border-l border-solid border-success-text pl-4">
       {rows.map((r, i) => (
-        <div key={r.label} data-c2m={r.c2m} className={cx(i > 0 && 'mt-[18px]')}>
+        <div key={r.label} data-c2m={r.c2m} data-c2m-id={r.c2m} className={cx(i > 0 && 'mt-[18px]')}>
           <dt className="text-base leading-4 font-button text-secondary-text">{r.label}</dt>
           <dd className="m-0 mt-1 text-xl leading-6 font-body text-primary-text">{r.value}</dd>
         </div>

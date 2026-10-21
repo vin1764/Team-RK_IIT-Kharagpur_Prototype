@@ -26,7 +26,7 @@ function HowWeGotIt({ m }: { m: BotModel }) {
     t('how.gst', { rate: fmt(s.gstRate * 100), v: fmt(f.gst) }),
   ].filter(Boolean);
   return (
-    <div className="mt-4 border-0 border-t border-solid border-tertiary-border pt-3" data-c2m="LB-6" data-testid="howWeGot" data-open={open ? 'true' : 'false'}>
+    <div className="mt-4 border-0 border-t border-solid border-tertiary-border pt-3" data-c2m="LB-6" data-c2m-id="LB-6" data-testid="howWeGot" data-open={open ? 'true' : 'false'}>
       <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="flex cursor-pointer items-center gap-1 border-0 bg-transparent p-0 font-button text-lg leading-5 text-brand-primary-text">
         {t('how.title', { v: fmt(s.listPrice) })}
         <img src={open ? '/brand/msa/merlin/lined/chevron-up-blue.svg' : '/brand/msa/merlin/lined/chevron-right-blue.svg'} alt="" width="16" height="16" className="size-4" />

@@ -39,7 +39,7 @@ export default function Outreach() {
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-var(--concept-strip-h))] items-center justify-center gap-12 bg-secondary-bg px-4 py-8 font-body text-primary-text max-[639px]:flex-col max-[639px]:gap-6 max-[639px]:pb-[var(--demo-controls-room)]" data-c2m="FO-3">
+    <div className="flex min-h-[calc(100vh-var(--concept-strip-h))] items-center justify-center gap-12 bg-secondary-bg px-4 py-8 font-body text-primary-text max-[639px]:flex-col max-[639px]:gap-6 max-[639px]:pb-[var(--demo-controls-room)]" data-c2m="FO-3" data-c2m-id="FO-3">
       {/* phone */}
       <div className="w-[300px] shrink-0 rounded-[36px] border-[10px] border-solid border-primary-text bg-primary-text">
         <div className="flex h-[580px] flex-col overflow-hidden rounded-[26px] bg-tertiary-bg">

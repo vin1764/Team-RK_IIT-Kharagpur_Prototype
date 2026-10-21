@@ -116,6 +116,7 @@ function NoCatalogs() {
 }
 
 export default function Inventory() {
+  // Null before D28 and in plain mode ("Today vs ours"): the captured empty page.
   const g = useGrowth();
   // Remount when the growth loop switches on or off (demo day / persona), so the default tab follows.
   return <InventoryView key={g ? 'growth' : 'captured'} g={g} />;

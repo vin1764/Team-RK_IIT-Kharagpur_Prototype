@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { ToastHost } from '../components/Toast';
 import { ConceptStrip } from '../layout/ConceptStrip';
@@ -33,7 +34,11 @@ import BusinessDetails from '../pages/onboarding/BusinessDetails';
 import PickupAddress from '../pages/onboarding/PickupAddress';
 import BankDetails from '../pages/onboarding/BankDetails';
 import SupplierDetails from '../pages/onboarding/SupplierDetails';
+import { OffShowcase, SHOWCASE_PATH } from '../showcase/OffShowcase';
 import { onboarding, paths, SID } from './paths';
+
+// The showcase page ("/"): its own chunk, so the prototype inside its frame doesn't load it.
+const Showcase = lazy(() => import('../showcase/Showcase'));
 
 const P = '/panel/v3/new';
 
@@ -41,7 +46,9 @@ export function App() {
   return (
     <>
       <ConceptStrip />
-      <DemoUrlSync />
+      <OffShowcase>
+        <DemoUrlSync />
+      </OffShowcase>
       <Routes>
         <Route element={<PanelShell />}>
           <Route path={`${P}/growth/${SID}/home`} element={<Home />} />
@@ -78,9 +85,19 @@ export function App() {
         <Route path={onboarding.pickupAddress} element={<PickupAddress />} />
         <Route path={onboarding.bankDetails} element={<BankDetails />} />
         <Route path={onboarding.supplierDetails} element={<SupplierDetails />} />
+        <Route
+          path={SHOWCASE_PATH}
+          element={
+            <Suspense fallback={null}>
+              <Showcase />
+            </Suspense>
+          }
+        />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>
-      <DemoControls />
+      <OffShowcase>
+        <DemoControls />
+      </OffShowcase>
       <ToastHost />
     </>
   );

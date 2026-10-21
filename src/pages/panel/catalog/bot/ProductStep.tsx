@@ -75,7 +75,7 @@ export function NetQtyRow({ m }: { m: BotModel }) {
   const n = m.values.netQuantity ?? '';
   const ok = m.d.netQtyConfirmed;
   return (
-    <section className="mt-2.5 flex flex-wrap items-center gap-3 rounded bg-white px-5 py-3.5" data-c2m="LB-4" data-testid="netQtyConfirm" data-confirmed={ok ? 'true' : 'false'}>
+    <section className="mt-2.5 flex flex-wrap items-center gap-3 rounded bg-white px-5 py-3.5" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="netQtyConfirm" data-confirmed={ok ? 'true' : 'false'}>
       <p className="m-0 flex min-w-0 flex-1 items-center gap-2 font-body text-xl leading-5 text-primary-text">
         {ok && <img src={GREEN_CHECK} alt="" width="20" height="20" className="size-5" />}
         {ok ? t('netQty.confirmed', { n }) : t('netQty.question', { n })}
@@ -187,7 +187,7 @@ export function ProductStep({ m, type, onEditPhotos, onChangeCategory, onFullFor
       <FilledCard values={m.values} row={m.row} botFilled={m.d.botFilled} onSave={(id, v) => m.setValue(id, v)} />
       <NetQtyRow m={m} />
       <ProductMakerCard m={m} />
-      <div className="mt-4 flex items-center justify-between px-1" data-c2m="LB-4">
+      <div className="mt-4 flex items-center justify-between px-1" data-c2m="LB-4" data-c2m-id="LB-4">
         <LinkButton onClick={onCompare} className="font-body text-secondary-text underline" testId="openCompare">
           {t('flow.compare', { n: MANDATORY_IDS.length + TODAY_IMAGE_SLOTS })}
         </LinkButton>

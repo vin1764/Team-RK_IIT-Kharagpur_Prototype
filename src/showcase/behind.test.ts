@@ -1,0 +1,145 @@
+import { describe, expect, it } from 'vitest';
+import calendar from '../data/calendar.json';
+import { BEHIND } from './behind';
+import { REGISTRY } from './registry';
+import type { BehindCtx } from './types';
+
+const at = (persona: BehindCtx['persona'], day: number) => ({ persona, day, lang: 'en', route: '' }) as BehindCtx;
+const text = (key: string, persona: BehindCtx['persona'], day: number) => BEHIND[key]!(at(persona, day)).join('\n');
+const J = calendar.jumps;
+
+describe('Behind it: keys and shape', () => {
+  it('every behind key in the registry exists in BEHIND', () => {
+    const keys = REGISTRY.elements.flatMap((e) => (e.behind ? [e.behind] : []));
+    expect(keys.filter((k) => !(k in BEHIND))).toEqual([]);
+  });
+
+  it('every BEHIND entry is used by some element', () => {
+    const used = new Set(REGISTRY.elements.map((e) => e.behind));
+    expect(Object.keys(BEHIND).filter((k) => !used.has(k))).toEqual([]);
+  });
+
+  it('returns 1–4 non-empty lines for every persona on every key day, without throwing', () => {
+    const days = [0, ...Object.values(J), 21, 25, 30, 39, calendar.maxDay];
+    for (const persona of ['jasmeet', 'samar', 'reseller'] as const)
+      for (const day of days)
+        for (const [key, fn] of Object.entries(BEHIND)) {
+          const lines = fn(at(persona, day));
+          expect(lines.length, `${key} ${persona} D${day}`).toBeGreaterThanOrEqual(1);
+          expect(lines.length, `${key} ${persona} D${day}`).toBeLessThanOrEqual(4);
+          for (const l of lines) expect(l.trim(), `${key} ${persona} D${day}`).not.toBe('');
+        }
+  });
+});
+
+describe('Behind it: hero numbers (plan §8b)', () => {
+  it('Jasmeet’s cost stack: 126 → ₹133 break-even, ₹14 take-home, ₹147 list, GST ₹7', () => {
+    const t = text('price', 'jasmeet', J.listing);
+    expect(t).toContain('80 making + 6 packaging + 32 shipping & fixed fee + 8 returns buffer = 126');
+    expect(t).toContain('126 × 1.05 GST = 132.3 → ₹133');
+    expect(t).toContain('17.5% × ₹80 = ₹14');
+    expect(t).toContain('(126 + 14) × 1.05 = ₹147');
+    expect(t).toContain('GST inside ₹7');
+    expect(t).toContain('Qualifies');
+  });
+
+  it('Samar’s cost stack: 290 → ₹305, (290 + 30) × 1.05 = ₹336', () => {
+    const t = text('price', 'samar', J.packPointLot);
+    expect(t).toContain('200 making + 30 Pack Point fee + 40 shipping & fixed fee + 20 returns buffer = 290');
+    expect(t).toContain('304.5 → ₹305');
+    expect(t).toContain('(290 + 30) × 1.05 = ₹336');
+  });
+
+  it('cost check: a qualifying price exists, the cap itself not shown', () => {
+    const t = text('costCheck', 'jasmeet', J.onboarding);
+    expect(t).toContain('₹133');
+    expect(t).toContain('a qualifying price exists');
+  });
+
+  it('demand, share, slots and lot: 9–13 a day, 5 slots, 150 (₹12,000)', () => {
+    const t = text('demandLot', 'jasmeet', J.listing);
+    expect(t).toContain('300–450 a week × 20%');
+    expect(t).toContain('60–90 a week');
+    expect(t).toContain('9–13 a day');
+    expect(t).toContain('= 5');
+    expect(t).toContain('11 a day × 14 days = 154 → 150 (₹12,000 at cost)');
+  });
+
+  it('order book: 600 committed = 4 slots taken → 1 left', () => {
+    expect(text('orderBook', 'jasmeet', J.commit)).toContain('600 units already committed ÷ 150 a lot = 4 slots taken → 1 left');
+  });
+
+  it('live launch at D23: 11 today, 33 of 150 sold, 117 left; not live before D21', () => {
+    const t = text('launchLive', 'jasmeet', J.liveLaunch);
+    expect(t).toContain('11 orders today vs 9–13 expected');
+    expect(t).toContain('12 + 10 + 11 = 33 of 150 → 117 left');
+    expect(text('launchLive', 'jasmeet', J.commit)).toMatch(/^Not live yet/);
+  });
+
+  it('restock at D28: 11 a day, 6.6 days, reorder 77, batch 230 (₹18,400), 21 Nov → 26 Nov', () => {
+    const t = text('restock', 'jasmeet', J.restock);
+    expect(t).toContain('77 ÷ 7 = 11 a day');
+    expect(t).toContain('73 ÷ 11 = 6.6 days < 5 lead + 2 safety → Make more');
+    expect(t).toContain('11 × (5 + 2) = 77');
+    expect(t).toContain('231 → 230 (₹18,400 at cost)');
+    expect(t).toContain('Start 21 Nov, lands 26 Nov');
+    expect(text('restock', 'jasmeet', J.liveLaunch)).toMatch(/^Starts on D28/);
+  });
+
+  it('coach: 1.6% vs 4.2%, 7.9% conversion, with no trigger value', () => {
+    const t = text('coach', 'jasmeet', J.restock);
+    expect(t).toContain('38 clicks ÷ 2,400 views = 1.6% click-through vs 4.2% for similar listings');
+    expect(t).toContain('7.9%');
+  });
+
+  it('dashboard: 4.0%, 10.0%, ₹11,319', () => {
+    const t = text('dashboard', 'jasmeet', J.restock);
+    expect(t).toContain('770 ÷ 19,250 = 4.0%');
+    expect(t).toContain('77 ÷ 770 = 10.0%');
+    expect(t).toContain('77 × ₹147 = ₹11,319');
+  });
+
+  it('verdicts and switch: Make more / Fix / Stop, casserole and flask', () => {
+    const v = text('verdicts', 'jasmeet', J.restock);
+    expect(v).toContain('Make more');
+    expect(v).toContain('Fix');
+    expect(v).toContain('Stop');
+    expect(text('switchTo', 'jasmeet', J.restock)).toMatch(/casserole[\s\S]*flask/);
+  });
+
+  it('eligibility: Jasmeet eligible, reseller not', () => {
+    expect(text('eligibility', 'jasmeet', J.onboarding)).toContain('→ Eligible');
+    const r = text('eligibility', 'reseller', J.onboarding);
+    expect(r).toContain('→ Not eligible');
+    expect(r.match(/✗/g)).toHaveLength(3);
+  });
+
+  it('price position: ₹147 Low and Qualifies before the edit; ₹165 Mid and doesn’t qualify from D40', () => {
+    const before = text('pricePosition', 'jasmeet', J.priceEdit - 1);
+    expect(before).toContain('₹147 → Low third · Qualifies');
+    const after = text('pricePosition', 'jasmeet', J.priceEdit);
+    expect(after).toContain('₹165 → Mid third · Doesn’t qualify');
+    const hold = text('priceHold', 'jasmeet', J.priceEdit);
+    expect(hold).toContain('₹147 → ₹165');
+    expect(hold).toContain('launch slot removed');
+    expect(hold).toContain('Position Low → Mid');
+  });
+
+  it('Pack Point fee: ₹1,26,444 ÷ 6,000 = ₹21.07 → ₹24.87 → ₹30.3 → ₹30 at 40 makers', () => {
+    const t = text('packPointFee', 'samar', J.packPointLot);
+    expect(t).toContain('₹1,26,444 a month ÷ 6,000 orders = ₹21.07');
+    expect(t).toContain('₹24.87 ÷ 0.822');
+    expect(t).toContain('= ₹30.3');
+    expect(t).toContain('₹30 per delivered order at 40 makers (₹44 at 20, ₹26 at 60, ₹23 at 80)');
+  });
+
+  it('Samar’s lot at D50: 90 received, 617.5–682.5 g, free to D80 then ₹26.10 a day', () => {
+    const t = text('lotInbound', 'samar', J.packPointLot);
+    expect(t).toContain('6.5 a day × 14 = 91 → 90 (₹18,000 at cost)');
+    expect(t).toContain('90 expected · 90 received');
+    expect(t).toContain('650 g ± 5% = 617.5–682.5 g');
+    expect(t).toContain('free to D80');
+    expect(t).toContain('90 × ₹0.29 = ₹26.10 a day');
+    expect(text('lotInbound', 'samar', J.packPointLot - 1)).toContain('Inbound at Agra on D50');
+  });
+});

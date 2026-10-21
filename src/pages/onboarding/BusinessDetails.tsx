@@ -6,6 +6,7 @@ import { onboarding } from '../../app/paths';
 import { notInPrototype } from '../../components/Toast';
 import { Banner, Button, Pill, cx } from '../../components/ui';
 import { BUSINESS_TYPES, eligibility, type BusinessType, type EligibilityCheck } from '../../engine/ui';
+import { useDemo } from '../../store/demo';
 import { useOnboarding, usePersona, type PersonaRecord } from '../../store/onboarding';
 import { C2M } from './stepper/copy';
 import { formatAddress, taxIdKind } from './stepper/format';
@@ -38,7 +39,7 @@ function AutomaticChecks({ persona, businessType }: { persona: PersonaRecord; bu
   const ok = (c: EligibilityCheck) => !result.failedChecks.includes(c);
   const gstinFailed = !ok('gstin');
   return (
-    <section data-c2m="FO-7" className="mt-6">
+    <section data-c2m="FO-7" data-c2m-id="FO-7" className="mt-6">
       <h3 className="m-0 text-xl leading-5 font-button text-primary-text">{C2M.checksHeading}</h3>
       <ul className="m-0 mt-2 flex list-none flex-col gap-1.5 p-0">
         {gstinFailed ? (
@@ -111,7 +112,10 @@ export default function BusinessDetails() {
     }, 300);
   };
 
-  const ready = o.businessFetched && o.businessType !== null;
+  // Plain mode ("Today vs ours"): today's step 1 has no business-type question (it is on Supplier Details) and no
+  // checks; the FO-6/FO-7 sections are hidden (data-c2m-id) and Continue only needs the fetched details.
+  const c2m = useDemo((s) => s.c2m);
+  const ready = o.businessFetched && (!c2m || o.businessType !== null);
 
   return (
     <OnboardingLayout
@@ -161,7 +165,7 @@ export default function BusinessDetails() {
             ]}
           />
 
-          <section data-c2m="FO-6" className="mt-6">
+          <section data-c2m="FO-6" data-c2m-id="FO-6" className="mt-6">
             <h3 className="m-0 mb-4 text-xl leading-5 font-button text-primary-text">{C2M.businessTypeHeading}</h3>
             <SelectField
               label={C2M.businessTypeLabel}
@@ -178,7 +182,7 @@ export default function BusinessDetails() {
             />
           </section>
 
-          {o.businessType && <AutomaticChecks persona={persona} businessType={o.businessType} />}
+          {c2m && o.businessType && <AutomaticChecks persona={persona} businessType={o.businessType} />}
         </>
       )}
     </OnboardingLayout>

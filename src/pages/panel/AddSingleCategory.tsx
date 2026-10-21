@@ -7,8 +7,10 @@ import { useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { Banner } from '../../components/ui';
 import { useT } from '../../i18n';
+import { useDemo } from '../../store/demo';
 import { useOnboarding, usePersona } from '../../store/onboarding';
-import { botPrefill, botTypeFor, cleanedFor, MAX_PHOTOS, stackMode } from './catalog/bot';
+import { botTypeFor, MAX_PHOTOS } from './catalog/bot';
+import { applyPhotos } from './catalog/photos';
 import { BotStrip } from './catalog/BotStrip';
 import { BotLayout } from './catalog/bot/BotLayout';
 import { botStepUrl } from './catalog/bot/BotFlow';
@@ -21,6 +23,12 @@ import { DEMO_IMAGE, useDraft, type DraftImage } from './catalog/draftStore';
 import { ProductsModal } from './catalog/ProductsModal';
 
 export default function AddSingleCategory() {
+  // "Today vs ours": plain mode is today's category step (no "Create from photos"); remount on a switch.
+  const c2m = useDemo((s) => s.c2m);
+  return <CategoryPage key={c2m ? 'c2m' : 'plain'} c2m={c2m} />;
+}
+
+function CategoryPage({ c2m }: { c2m: boolean }) {
   const navigate = useNavigate();
   const d = useDraft();
   const { categoryPath, images, setCategoryPath, setImages, reset } = d;
@@ -28,7 +36,7 @@ export default function AddSingleCategory() {
   const persona = usePersona();
   const fulfilment = useOnboarding((s) => s.fulfilment);
   const t = useT();
-  const botMode = params.get('mode') === 'photos';
+  const botMode = c2m && params.get('mode') === 'photos';
   const type = persona.product?.type ?? null;
   const botType = botMode ? botTypeFor(type) : null;
   const bot = !!botType && !!type;
@@ -42,24 +50,10 @@ export default function AddSingleCategory() {
     navigate(paths.catalogUploadsBulk);
   };
 
-  /** Photos in: the first time, the bot pre-fills the whole draft; later (photos edited) only the images change. */
+  /** Photos in: the bot pre-fills the draft the first time (catalog/photos.ts), then the Product screen opens. */
   const photosIn = (imgs: DraftImage[]) => {
     if (!bot || !type) return;
-    const [cover, ...rest] = imgs;
-    if (!cover) return;
-    d.setBot({ photos: imgs });
-    if (!d.categoryConfirmed || !d.botFilled.length) {
-      const pf = botPrefill(type, persona, stackMode(fulfilment, persona), d.retailPacked);
-      setCategoryPath(pf.categoryPath);
-      d.setValues(pf.values);
-      const size = pf.values.size;
-      if (size) d.setPrice(size, pf.price);
-      d.setBot({ botFilled: pf.botFilled, sameAsManufacturer: pf.sameAsManufacturer, netQtyConfirmed: false, categoryConfirmed: true, botStep: 'product' });
-    }
-    // The cleaned cover becomes the product's Front Image; the other photos go under "Uploaded Images".
-    setImages([cleanedFor(cover) ?? cover]);
-    d.setExtraImages(cover.id, rest);
-    navigate(botStepUrl('product'));
+    if (applyPhotos(imgs, type, persona, fulfilment)) navigate(botStepUrl('product'));
   };
   const prefilled = d.categoryConfirmed && d.images.length > 0;
 
@@ -100,7 +94,7 @@ export default function AddSingleCategory() {
           </div>
           {botMode && <BotStrip active="product" />}
           {botMode && !bot && (
-            <div className="mt-2.5" data-c2m="LB-4">
+            <div className="mt-2.5" data-c2m="LB-4" data-c2m-id="LB-4">
               <Banner tone="warning">
                 {t('bot.noType')}. {t('bot.noType.more')}
               </Banner>

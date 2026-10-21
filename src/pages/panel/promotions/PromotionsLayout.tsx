@@ -2,6 +2,7 @@
 // tab bar (driven by a tab list + ?tab=), then the tab's panel. Only the captured empty
 // states exist — no events are listed in the prototype.
 import { useRef, type ReactNode } from 'react';
+import { useDemo } from '../../../store/demo';
 import { FactoryLaunchPanel } from '../factory-launch/FactoryLaunchPanel';
 import { MegaComboPopover } from './MegaComboPopover';
 import { DealsCarousel, EventListHeader, EventsEmpty, PromoHeader, PromoTabBar, SeasonBanner, eventsEmptyCopy } from './PromoParts';
@@ -9,7 +10,7 @@ import { usePromoParams, type PromoTab } from './tabs';
 
 export function PromotionsLayout({
   title,
-  tabs,
+  tabs: allTabs,
   megaCombo = false,
   renderPanel,
 }: {
@@ -20,6 +21,9 @@ export function PromotionsLayout({
   /** Override a tab's panel (for tabs added later); return undefined to use the default. */
   renderPanel?: (tab: PromoTab) => ReactNode | undefined;
 }) {
+  // Plain mode ("Today vs ours"): only the panel's own tabs (no Factory Launch).
+  const c2m = useDemo((s) => s.c2m);
+  const tabs = c2m ? allTabs : allTabs.filter((t) => !t.c2m);
   const { tab, status, setTab, setStatus } = usePromoParams(tabs);
   const dealAnchor = useRef<HTMLDivElement>(null);
   // Not over the Factory Launch tab (C2M): the popover would cover its order book and commit panel.

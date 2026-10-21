@@ -45,7 +45,7 @@ export function ProductsModal({
         </>
       }
     >
-      <div className="px-4 pt-4.5 pb-4" data-c2m={photos ? 'LB-4' : undefined}>
+      <div className="px-4 pt-4.5 pb-4" data-c2m={photos ? 'LB-4' : undefined} data-c2m-id={photos ? 'LB-4' : undefined}>
         <p className="m-0 font-body text-xl leading-5 text-secondary-text">
           {photos?.intro ??
             'Please add only front image of your product. If you want to add multiple images for particular product, you can add it in next step.'}

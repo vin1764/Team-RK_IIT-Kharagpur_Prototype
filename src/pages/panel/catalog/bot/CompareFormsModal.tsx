@@ -35,10 +35,10 @@ export function CompareFormsModal({ onClose }: { onClose: () => void }) {
       open
       onClose={onClose}
       width="w-[66rem]"
-      title={<span data-c2m="LB-4">{t('compare.title')}</span>}
+      title={<span data-c2m="LB-4" data-c2m-id="LB-4">{t('compare.title')}</span>}
       footer={<Button onClick={onClose}>{t('compare.close')}</Button>}
     >
-      <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-6" data-c2m="LB-4" data-testid="compareForms">
+      <div className="grid grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-6" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="compareForms">
         <section>
           <p className="m-0 font-button text-xl leading-5 text-primary-text">{t('compare.today', { n: today.length })}</p>
           <p className="m-0 mt-0.5 font-body text-base leading-4 text-secondary-text">{t('compare.todaySub')}</p>

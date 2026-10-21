@@ -93,17 +93,19 @@ function HoldBanner({ v, t }: { v: PriceHoldView; t: Tr }) {
         ? [t('pi.hold.title'), t('pi.hold.body')]
         : [t('pi.hold.noSlotTitle'), t('pi.hold.noSlot')];
   return (
-    <Banner tone="error" className="mt-3">
-      <span data-c2m="PI-3" data-price-hold={v.slotRemoved ? 'slotRemoved' : v.status}>
-        <b className="font-button">{lines[0]}</b>
-        {lines.slice(1).filter(Boolean).map((l) => (
-          <span key={l}>
-            <br />
-            {l}
-          </span>
-        ))}
-      </span>
-    </Banner>
+    <div className="mt-3" data-c2m="PI-3" data-c2m-id="PI-3">
+      <Banner tone="error">
+        <span data-price-hold={v.slotRemoved ? 'slotRemoved' : v.status}>
+          <b className="font-button">{lines[0]}</b>
+          {lines.slice(1).filter(Boolean).map((l) => (
+            <span key={l}>
+              <br />
+              {l}
+            </span>
+          ))}
+        </span>
+      </Banner>
+    </div>
   );
 }
 
@@ -115,7 +117,7 @@ export function PricePositionTab({ v }: { v: PriceHoldView }) {
   const [editing, setEditing] = useState(false);
   const chip = statusChip(v, t);
   return (
-    <div className="px-4 pb-6 pt-3 bg-neutral-base flex flex-col gap-3" data-c2m="PI-2" data-price-position>
+    <div className="px-4 pb-6 pt-3 bg-neutral-base flex flex-col gap-3" data-c2m="PI-2" data-c2m-id="PI-2" data-price-position>
       <Banner tone="info">
         {t('pi.scope')}
         <br />

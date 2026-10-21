@@ -17,7 +17,7 @@ const VERDICT_TONE: Record<Verdict, 'success' | 'info' | 'warning' | 'error' | '
 /** GL-5: the verdict chip and its one-line reason (no numbers, team Q5). */
 export function VerdictChip({ verdict, reason, t }: { verdict: Verdict; reason: VerdictReason; t: Tr }) {
   return (
-    <div className="flex flex-col items-start gap-1" data-c2m="GL-5" data-verdict={verdict}>
+    <div className="flex flex-col items-start gap-1" data-c2m="GL-5" data-c2m-id="GL-5" data-verdict={verdict}>
       <Pill tone={VERDICT_TONE[verdict]} bordered className="!text-body-small whitespace-nowrap">
         {t(`gl.verdict.${verdict}`)}
       </Pill>

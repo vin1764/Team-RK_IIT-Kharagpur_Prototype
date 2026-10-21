@@ -19,7 +19,7 @@ export function DashboardCoachCard({ g }: { g: GrowthView }) {
   if (!c) return null;
   const action = t(`gl.coach.action.${c.fix.fix}`);
   return (
-    <div className="p-4 bg-neutral-base mb-3" data-c2m="GL-3" data-coach>
+    <div className="p-4 bg-neutral-base mb-3" data-c2m="GL-3" data-c2m-id="GL-3" data-coach>
       <div className="flex flex-row flex-nowrap items-start">
         <div className="flex flex-1 flex-col flex-nowrap">
           <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export function DashboardCoachCard({ g }: { g: GrowthView }) {
 function CoachTiles({ c }: { c: Coach }) {
   const t = useT();
   return (
-    <div data-c2m="GL-4">
+    <div data-c2m="GL-4" data-c2m-id="GL-4">
       <Tiles
         tiles={[
           { key: 'views', label: t('gl.coach.views'), value: fmt(c.views) },
@@ -81,7 +81,7 @@ export function HomeCoachCard({ g }: { g: GrowthView }) {
   const c = g.coach;
   if (!c) return null;
   return (
-    <div className="flex flex-col p-4 gap-3 bg-white rounded" data-c2m="GL-3" data-home-coach>
+    <div className="flex flex-col p-4 gap-3 bg-white rounded" data-c2m="GL-3" data-c2m-id="GL-3" data-home-coach>
       <div className="flex items-center justify-between gap-2">
         <h4 className="m-0 p-0 font-bold font-heading text-xl leading-5 text-primary-text">{t('gl.coach.title')}</h4>
         <img src="/brand/msa/merlin/filled/bulb-yellow.svg" alt="" width="24" height="24" />

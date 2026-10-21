@@ -1,13 +1,16 @@
 // Onboarding step 4 · Supplier Details. Replicates reference/screens/onb-supplier-details.png
 // minus "What's your business type", which moved to step 1 (FO-6). The WhatsApp opt-in stays
 // as today (FO-2 uses its record). Mock only: Submit creates nothing.
+// Plain mode ("Today vs ours", c2m off): the business-type question is back here, as captured.
 import { useEffect, useState } from 'react';
 import { paths } from '../../app/paths';
 import { notInPrototype, toast } from '../../components/Toast';
 import { Banner, Button } from '../../components/ui';
+import { BUSINESS_TYPES } from '../../engine/ui';
+import { useDemo } from '../../store/demo';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import { C2M } from './stepper/copy';
-import { Checkbox, DemoFill, TextField } from './stepper/fields';
+import { Checkbox, DemoFill, SelectField, TextField } from './stepper/fields';
 import { useDevState, useGo } from './stepper/nav';
 import { OnboardingLayout } from './stepper/OnboardingLayout';
 
@@ -25,6 +28,7 @@ export default function SupplierDetails() {
   const fillDemo = () => {
     setStoreName(persona.storeName);
     setEmail(persona.email);
+    if (!useDemo.getState().c2m && !useOnboarding.getState().businessType) o.set({ businessType: persona.businessType });
   };
   useEffect(() => {
     setFullName(persona.name);
@@ -32,7 +36,8 @@ export default function SupplierDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [persona, dev]);
 
-  const ready = storeName.trim() !== '' && email.trim() !== '' && fullName.trim() !== '' && agree;
+  const c2m = useDemo((s) => s.c2m);
+  const ready = storeName.trim() !== '' && email.trim() !== '' && fullName.trim() !== '' && agree && (c2m || o.businessType !== null);
 
   return (
     <OnboardingLayout
@@ -58,7 +63,10 @@ export default function SupplierDetails() {
       <TextField className="mt-6" label="Store Name" value={storeName} onChange={setStoreName} helper="Eg. Business Name, Trade Name, etc." />
       <TextField className="mt-[35px]" label="Your Full Name" value={fullName} onChange={setFullName} />
       <TextField className="mt-8" label="Email ID" type="email" value={email} onChange={setEmail} />
-      <Checkbox className="mt-4" checked={whatsApp} onChange={setWhatsApp}>
+      {!c2m && (
+        <SelectField className="mt-8" label="What's your business type" options={BUSINESS_TYPES} value={o.businessType} onChange={(v) => o.set({ businessType: v })} />
+      )}
+      <Checkbox className={c2m ? 'mt-4' : 'mt-1'} checked={whatsApp} onChange={setWhatsApp}>
         <span className="inline-flex items-center gap-1">
           I want to receive important updates on
           <img src="/brand/local/onboarding/whatsapp.png" alt="" width="17" height="17" className="size-[17px]" />

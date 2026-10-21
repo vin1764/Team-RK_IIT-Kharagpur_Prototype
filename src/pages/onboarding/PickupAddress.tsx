@@ -69,7 +69,7 @@ function ShipChoice({ address }: { address: Address }) {
       ? [C2M.packPointOpening(node.city, node.opensAtMakers)]
       : [C2M.packPointNone(address.pincode)];
   return (
-    <section data-c2m="FO-8" className="mt-6">
+    <section data-c2m="FO-8" data-c2m-id="FO-8" className="mt-6">
       <h3 className="m-0 text-xl leading-5 font-button text-primary-text">{C2M.shipHeading}</h3>
       <div className="mt-3 flex flex-col gap-3">
         <RadioCard testId="ship-self" checked={o.fulfilment === 'selfShip'} onSelect={() => o.set({ fulfilment: 'selfShip' })} title={C2M.selfShipTitle} lines={[C2M.selfShipBody]} />
@@ -83,6 +83,8 @@ function ShipChoice({ address }: { address: Address }) {
 export default function PickupAddress() {
   const persona = usePersona();
   const personaId = useDemo((s) => s.persona);
+  // Plain mode ("Today vs ours"): no shipping choice (FO-8 hidden), so Continue doesn't wait for one.
+  const c2m = useDemo((s) => s.c2m);
   const o = useOnboarding();
   const go = useGo();
   const dev = useDevState();
@@ -122,7 +124,7 @@ export default function PickupAddress() {
             <Button variant="outline" className="h-11 w-full !text-2xl" onClick={() => o.set({ pickupSaved: false, fulfilment: null })}>
               Edit Pickup Address
             </Button>
-            <Button className="h-11 w-full" disabled={!o.fulfilment} onClick={() => go(onboarding.bankDetails)}>
+            <Button className="h-11 w-full" disabled={c2m && !o.fulfilment} onClick={() => go(onboarding.bankDetails)}>
               Continue
             </Button>
           </>
@@ -132,7 +134,7 @@ export default function PickupAddress() {
           Pick up address updated successfully
         </Banner>
         <DetailList rows={FIELDS.map((f) => ({ label: f.label, value: addr[f.key] || '-' }))} />
-        <ShipChoice address={addr} />
+        {c2m && <ShipChoice address={addr} />}
       </OnboardingLayout>
     );
   }

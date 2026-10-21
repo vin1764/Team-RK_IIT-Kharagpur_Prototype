@@ -49,9 +49,11 @@ export function HomeView({ state }: { state: HomeState }) {
 export default function Home() {
   const [params] = useSearchParams();
   const day = useDemo((s) => s.day);
+  const c2m = useDemo((s) => s.c2m);
   const listing = useScriptedListing();
   // A real go-live listing of this persona; or, once the listing day is behind (presenter jumped
   // ahead), the scripted one. On the listing day itself Home keeps the upload choice for the demo.
-  const live = !!listing && (!listing.scripted || day > LAUNCH.listingDay);
+  // Plain mode ("Today vs ours"): no catalog from photos, so Home stays as captured.
+  const live = c2m && !!listing && (!listing.scripted || day > LAUNCH.listingDay);
   return <HomeView state={params.get('state') === 'qc' ? 'qc' : live ? 'live' : 'start'} />;
 }

@@ -14,7 +14,7 @@ export function SwitchPanel({ suggestions }: { suggestions: GrowthView['switchTo
   const t = useT();
   if (!suggestions?.length) return null;
   return (
-    <div className="mt-3 rounded-8 border border-solid border-neutral-light bg-neutral-base" data-c2m="GL-6" data-switch>
+    <div className="mt-3 rounded-8 border border-solid border-neutral-light bg-neutral-base" data-c2m="GL-6" data-c2m-id="GL-6" data-switch>
       <div className="px-4 pt-4 pb-2">
         <h3 className={T.h3}>{t('gl.switch.title')}</h3>
         <p className={cx(T.bodySm, 'mt-1 text-neutral-tertiary')}>{t('gl.switch.sub')}</p>

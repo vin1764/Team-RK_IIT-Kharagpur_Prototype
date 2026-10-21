@@ -5,9 +5,12 @@ import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { dayLabel } from '../../engine/ui';
 import { useListingsForPersona } from '../../store/catalog';
+import { useDemo } from '../../store/demo';
 import { botTypeFor } from './catalog/bot';
 import { CATALOG_UPLOADS_DEFAULT, CATALOG_UPLOADS_SNAPSHOT, listingRows, STATUS_TABS, type StatusTabId } from './catalog-uploads/data';
 import { AddCatalogActions, BannerCarousel, FilterBar, Header, MainTabs, NoResults, Overview, QcTip, SubTabs, UploadsTable } from './catalog-uploads/parts';
+
+const NONE: ReturnType<typeof useListingsForPersona> = [];
 
 export default function CatalogUploads() {
   const { kind: kindParam } = useParams();
@@ -16,7 +19,10 @@ export default function CatalogUploads() {
   const navigate = useNavigate();
   const seed = params.get('state') === 'qc' ? CATALOG_UPLOADS_SNAPSHOT : CATALOG_UPLOADS_DEFAULT;
   // Catalogs the current persona put live from photos (LB-8) join the Single Uploads list.
-  const listings = useListingsForPersona();
+  // Plain mode ("Today vs ours"): only the captured rows.
+  const c2m = useDemo((s) => s.c2m);
+  const ours = useListingsForPersona();
+  const listings = c2m ? ours : NONE;
   const data = useMemo(
     () => ({
       bulk: seed.bulk,

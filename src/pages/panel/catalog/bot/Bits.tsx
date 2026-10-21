@@ -7,7 +7,7 @@ import { borderFor, Info, INPUT_BOX } from '../FormBits';
 /** White panel card with an optional 15px title (Card / "Add Product Details" look). */
 export function StepCard({ title, right, className, children, c2m, testId }: { title?: ReactNode; right?: ReactNode; className?: string; children: ReactNode; c2m: string; testId?: string }) {
   return (
-    <section className={cx('mt-2.5 rounded bg-white p-5', className)} data-c2m={c2m} data-testid={testId}>
+    <section className={cx('mt-2.5 rounded bg-white p-5', className)} data-c2m={c2m} data-c2m-id={c2m} data-testid={testId}>
       {title && (
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="m-0 font-button text-xl leading-5 text-primary-text">{title}</h2>

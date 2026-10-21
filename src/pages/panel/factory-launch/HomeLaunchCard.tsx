@@ -12,12 +12,13 @@ import { PinkTag } from '../catalog/BulkTemplatePanel';
 import { FL } from './copy';
 import { LAUNCH, liveDates, liveDayIndex } from './launch';
 import { useLaunchView } from './useLaunchView';
+import { useDemo } from '../../../store/demo';
 import { useGrowth, shortDate } from '../growth-loop/useGrowth';
 import { usePriceHold } from '../manage-pricing/priceHold';
 
 function Shell({ tag, title, line, body, button, onClick, state, c2m = 'LW-6' }: { tag?: boolean; title: string; line?: string; body: string; button: string; onClick: () => void; state: string; c2m?: string }) {
   return (
-    <div className="mt-0.5 p-6 bg-white" data-c2m={c2m} data-home-launch={state}>
+    <div className="mt-0.5 p-6 bg-white" data-c2m={c2m} data-c2m-id={c2m} data-home-launch={state}>
       <div className="flex items-start gap-7.5 rounded border border-solid border-brand-secondary-border bg-brand-secondary-bg p-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
@@ -38,7 +39,8 @@ function Shell({ tag, title, line, body, button, onClick, state, c2m = 'LW-6' }:
 /** Whether the step-3 card has anything to show for this persona. */
 export function useHasHomeLaunchCard(): boolean {
   const v = useLaunchView();
-  return v.eligibility.status !== 'notEligible' && v.hasBook && v.rows.some((r) => r.typeId === v.ownType);
+  const c2m = useDemo((s) => s.c2m);
+  return c2m && v.eligibility.status !== 'notEligible' && v.hasBook && v.rows.some((r) => r.typeId === v.ownType);
 }
 
 export function HomeLaunchCard() {

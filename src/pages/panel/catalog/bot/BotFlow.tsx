@@ -97,7 +97,7 @@ export default function BotFlow() {
         {t('flow.back')}
       </Button>
       {step === 'price' ? (
-        <Button disabled={!m.checks.all} onClick={goLive} data-testid="goLiveButton" data-c2m="LB-8">
+        <Button disabled={!m.checks.all} onClick={goLive} data-testid="goLiveButton" data-c2m="LB-8" data-c2m-id="LB-8">
           {t('check.goLive')}
         </Button>
       ) : (

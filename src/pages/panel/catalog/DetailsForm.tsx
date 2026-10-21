@@ -63,13 +63,13 @@ export interface BotView {
 export function BotTag({ children }: { children: ReactNode }) {
   return (
     <Pill tone="brand" className="leading-4 whitespace-nowrap" >
-      <span data-c2m="LB-4">{children}</span>
+      <span data-c2m="LB-4" data-c2m-id="LB-4">{children}</span>
     </Pill>
   );
 }
 export function YouTag({ children }: { children: ReactNode }) {
   return (
-    <span data-c2m="LB-4" className="font-body text-sm leading-4 whitespace-nowrap text-tertiary-text">
+    <span data-c2m="LB-4" data-c2m-id="LB-4" className="font-body text-sm leading-4 whitespace-nowrap text-tertiary-text">
       {children}
     </span>
   );
@@ -134,6 +134,7 @@ export function FieldGrid({ fields: all, form }: { fields: FieldDef[]; form: For
                     data-field={first ? u.id : undefined}
                     data-bot-filled={first && uBot ? 'true' : undefined}
                     data-c2m="LB-4"
+                    data-c2m-id="LB-4"
                   >
                     <FieldControl f={u} value={form.values[u.id] ?? ''} onChange={(v) => form.setValue(u.id, v)} error={form.errors.has(u.id)} />
                   </div>

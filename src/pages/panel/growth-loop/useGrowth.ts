@@ -20,17 +20,21 @@ export function makerInputs(
   return { lot: commit.units, leadTimeDays: listing.leadTimeDays, minRun: listing.minRun, makingCost: listing.makingCost, listPrice: listing.price };
 }
 
-/** The growth-loop view on the demo day: null before D28, for other personas, or without a launch commit. */
+/**
+ * The growth-loop view on the demo day: null before D28, for other personas, without a launch commit, or in
+ * plain mode ("Today vs ours", c2m off), where Inventory, Business Dashboard and Home show their captured state.
+ */
 export function useGrowth(): GrowthView | null {
   const day = useDemo((s) => s.day);
   const persona = useDemo((s) => s.persona);
+  const c2m = useDemo((s) => s.c2m);
   const listing = useScriptedListing();
   const commit = useScriptedCommit();
   return useMemo(() => {
-    if (persona !== GROWTH_PERSONA) return null;
+    if (!c2m || persona !== GROWTH_PERSONA) return null;
     const maker = makerInputs(listing, commit);
     return maker ? growthAt(day, maker) : null;
-  }, [day, persona, listing, commit]);
+  }, [c2m, day, persona, listing, commit]);
 }
 
 /** "2026-11-21" → "21 Nov" (the year is implied on these cards). */

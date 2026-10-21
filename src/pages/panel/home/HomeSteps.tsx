@@ -9,6 +9,7 @@ import { notInPrototype } from '../../../components/Toast';
 import { Button, Pill } from '../../../components/ui';
 import { tEn } from '../../../i18n';
 import { useListingsForPersona } from '../../../store/catalog';
+import { useDemo } from '../../../store/demo';
 import { HomeLaunchCard, useHasHomeLaunchCard } from '../factory-launch/HomeLaunchCard';
 import { PinkTag } from '../catalog/BulkTemplatePanel';
 import { BOT_QUERY } from '../catalog/bot';
@@ -76,7 +77,7 @@ function UploadOption({
   c2m?: string;
 }) {
   return (
-    <div className="w-60 min-w-0 shrink" data-c2m={c2m}>
+    <div className="w-60 min-w-0 shrink" data-c2m={c2m} data-c2m-id={c2m}>
       <div className="flex items-center gap-2 border-0 border-l-2 border-solid border-brand-primary-text pl-2.5">
         <span className="m-0 p-0 font-semibold font-button text-xl leading-6 text-black">{title}</span>
         {tag}
@@ -109,10 +110,12 @@ function PhotosThumb() {
 
 function UploadChoice() {
   const navigate = useNavigate();
+  // Plain mode: the third option is hidden (data-c2m-id), so the two captured options keep their captured gap.
+  const c2m = useDemo((s) => s.c2m);
   return (
     <div className="mt-0.5 p-6 bg-white">
       <h3 className="m-0 p-0 text-primary-text font-bold font-heading text-2xl leading-6">Choose how you would like to upload your catalog</h3>
-      <div className="flex items-start justify-between gap-3 mt-5.5">
+      <div className={`flex items-start mt-5.5 ${c2m ? 'justify-between gap-3' : 'gap-20'}`}>
         <UploadOption
           title="Upload Single Catalog"
           video="/brand/local/home/upload-single-video.png"
@@ -152,7 +155,7 @@ function LiveStatus() {
   // Real go-live listings of this persona; the scripted listing (presenter jumped ahead) counts as one.
   const n = Math.max(useListingsForPersona().length, 1);
   return (
-    <div className="mt-0.5 p-6 bg-white" data-c2m="LB-8">
+    <div className="mt-0.5 p-6 bg-white" data-c2m="LB-8" data-c2m-id="LB-8">
       <div className="flex items-start gap-7.5">
         <div className="flex-1 min-w-0 min-h-32.75 rounded bg-secondary-bg px-2 pbs-2.5 pbe-1.25">
           <div className="px-2 mb-1.75 flex items-center">

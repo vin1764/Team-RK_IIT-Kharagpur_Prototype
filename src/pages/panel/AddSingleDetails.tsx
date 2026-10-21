@@ -89,11 +89,14 @@ function ProductStrip({ selected, onSelect }: { selected: string; onSelect: (id:
 export default function AddSingleDetails() {
   const [params] = useSearchParams();
   const persona = usePersona();
-  const short = params.get('mode') === 'photos' && params.get('view') !== 'form' && !!botTypeFor(persona.product?.type);
-  return short ? <BotFlow /> : <DetailsPage />;
+  // "Today vs ours": plain mode is today's details form + price table on the same draft (no bot screens,
+  // no demand card, cost inputs, take-home, status or go-live checklist). Remount on a switch.
+  const c2m = useDemo((s) => s.c2m);
+  const short = c2m && params.get('mode') === 'photos' && params.get('view') !== 'form' && !!botTypeFor(persona.product?.type);
+  return short ? <BotFlow /> : <DetailsPage key={c2m ? 'c2m' : 'plain'} c2m={c2m} />;
 }
 
-function DetailsPage() {
+function DetailsPage({ c2m }: { c2m: boolean }) {
   const navigate = useNavigate();
   const d = useDraft();
   const [params] = useSearchParams();
@@ -104,7 +107,7 @@ function DetailsPage() {
   const t = useT();
   const type = persona.product?.type ?? null;
   // "Create from photos" needs a product type with bot data (Jasmeet); otherwise the plain flow runs.
-  const bot = params.get('mode') === 'photos' && !!botTypeFor(type);
+  const bot = c2m && params.get('mode') === 'photos' && !!botTypeFor(type);
   const [selected, setSelected] = useState(d.images[0]?.id ?? '');
   const [copyAll, setCopyAll] = useState(true);
   const [copyPrices, setCopyPrices] = useState(true);
@@ -212,7 +215,7 @@ function DetailsPage() {
         sectionRight: (id) => {
           const n = sectionCount(id);
           return n > 0 ? (
-            <span data-c2m="LB-4" data-testid={`aiFilled-${id}`}>
+            <span data-c2m="LB-4" data-c2m-id="LB-4" data-testid={`aiFilled-${id}`}>
               <Pill tone="brand" bordered className="px-3 text-base">
                 {n === 1 ? t('bot.aiFilledOne') : t('bot.aiFilled', { n })}
               </Pill>
@@ -222,7 +225,7 @@ function DetailsPage() {
         extra: (id) => {
           if (id === 'netQuantity')
             return (
-              <div data-c2m="LB-4" data-testid="netQtyConfirm">
+              <div data-c2m="LB-4" data-c2m-id="LB-4" data-testid="netQtyConfirm">
                 <Checkbox
                   className="mt-3"
                   checked={d.netQtyConfirmed}
@@ -233,7 +236,7 @@ function DetailsPage() {
             );
           if (id === 'packerName' && mode === 'packPoint')
             return (
-              <div data-c2m="LB-4">
+              <div data-c2m="LB-4" data-c2m-id="LB-4">
                 <Checkbox
                   className="mt-3"
                   checked={d.retailPacked}
@@ -395,7 +398,7 @@ function DetailsPage() {
           <div className="min-w-0 flex-1 scroll-mt-24 rounded bg-white p-6" data-testid="addProductDetails" data-bot-anchor={bot ? 'product' : undefined}>
             <h2 className="m-0 font-heading text-2xl leading-6 text-black">Add Product Details</h2>
             {bot && (
-              <div className="mt-4" data-c2m="LB-4" data-testid="botSummary">
+              <div className="mt-4" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="botSummary">
                 <Banner
                   tone="success"
                   action={
@@ -430,7 +433,7 @@ function DetailsPage() {
                     <div className="scroll-mt-24" data-bot-anchor="quantity">
                       <DemandCard type={type} />
                     </div>
-                    <div className="scroll-mt-24" data-bot-anchor="price" data-c2m="LB-6" data-testid="botInputs">
+                    <div className="scroll-mt-24" data-bot-anchor="price" data-c2m="LB-6" data-c2m-id="LB-6" data-testid="botInputs">
                       <FieldGrid fields={BOT_INPUTS} form={form} />
                     </div>
                     {sizes.length > 0 && (

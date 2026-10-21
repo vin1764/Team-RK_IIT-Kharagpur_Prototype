@@ -86,8 +86,10 @@ export function usePriceHold(): PriceHoldView | null {
   const listing = useScriptedListing();
   const commit = useScriptedCommit();
   const real = usePriceEdits((s) => s.edits[persona]);
+  // Plain mode ("Today vs ours"): no Price position tab and no price-hold.
+  const c2m = useDemo((s) => s.c2m);
   return useMemo(() => {
-    if (!listing) return null;
+    if (!c2m || !listing) return null;
     const elig = eligibility({
       taxId: record.taxId,
       businessType: record.businessType,
@@ -102,5 +104,5 @@ export function usePriceHold(): PriceHoldView | null {
     }
     const hasCommit = !!commit && commit.typeId === listing.typeId;
     return priceHoldView(listing, hasCommit, effectivePriceEdit(real, day, persona));
-  }, [listing, commit, real, day, persona, record]);
+  }, [c2m, listing, commit, real, day, persona, record]);
 }

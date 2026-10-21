@@ -12,6 +12,18 @@ import { DEMO_GUIDE, jumpHref, stepDayLabel, type GuideJump } from './demoGuide'
  */
 let pending: GuideJump | null = null;
 
+/** Starts a jump from outside the guide (the showcase frame, src/embed/FrameBridge.tsx); navigate right after. */
+export function startJump(j: GuideJump) {
+  pending = j;
+}
+
+/** Drops a jump that never landed (e.g. the page redirected elsewhere); returns it, or null if it landed. */
+export function clearPendingJump(): GuideJump | null {
+  const j = pending;
+  pending = null;
+  return j;
+}
+
 /** For DemoUrlSync: 'wait' while the jump's route isn't current yet, the jump once it is, else null. */
 export function takePendingJump(pathname: string): GuideJump | 'wait' | null {
   if (!pending) return null;
