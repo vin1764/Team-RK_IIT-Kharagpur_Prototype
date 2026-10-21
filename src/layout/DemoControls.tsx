@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import calendar from '../data/calendar.json';
 import { dayLabel } from '../engine/ui';
-import { useDemo, withDemoParams, type Persona } from '../store/demo';
+import { EMBEDDED, useDemo, withDemoParams, type Persona } from '../store/demo';
 import { resetCatalog } from '../store/catalog';
 import { resetDraft } from '../pages/panel/catalog/draftStore';
 import { useOnboarding } from '../store/onboarding';
@@ -29,9 +29,13 @@ const JUMPS: { day: number; label: string }[] = [
 
 /** Keeps ?persona=&day=&lang= on the URL so every demo moment is a link. */
 export function DemoUrlSync() {
-  const { persona, day, lang, setPersona, setDay, setLang } = useDemo();
+  const { persona, day, lang, c2m, setPersona, setDay, setLang } = useDemo();
   const loc = useLocation();
   const navigate = useNavigate();
+  // "Today vs ours": html[data-c2m="off"] hides every [data-c2m-id] addition (index.css).
+  useEffect(() => {
+    document.documentElement.dataset.c2m = c2m ? 'on' : 'off';
+  }, [c2m]);
   useEffect(() => {
     // A Demo guide jump: its route carries the params; adopt them instead of overwriting them.
     const jump = takePendingJump(loc.pathname);
@@ -42,14 +46,19 @@ export function DemoUrlSync() {
       setLang('en');
       return;
     }
-    const next = withDemoParams(loc.search, { persona, day, lang });
+    const next = withDemoParams(loc.search, { persona, day, lang, c2m });
     if (next !== loc.search) navigate({ pathname: loc.pathname, search: next, hash: loc.hash }, { replace: true });
-  }, [persona, day, lang, loc.pathname, loc.search, loc.hash, navigate, setPersona, setDay, setLang]);
+  }, [persona, day, lang, c2m, loc.pathname, loc.search, loc.hash, navigate, setPersona, setDay, setLang]);
   return null;
 }
 
 /** "Prototype controls": a pill at the right end of the concept strip; the panel drops down from it. */
 export function DemoControls() {
+  // Inside the showcase frame the sidebar has these controls; the pill would only duplicate them.
+  return EMBEDDED ? null : <DemoControlsPanel />;
+}
+
+function DemoControlsPanel() {
   const s = useDemo();
   // The demo guide stays open across a jump: the controls fold to the pill so the page is clear,
   // and reopening them brings the guide back with the last step marked.

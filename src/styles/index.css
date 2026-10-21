@@ -2,6 +2,9 @@
 @import './fonts.css';
 @import './tokens.css';
 
+/* "Today vs ours" (?c2m=off): every C2M addition is hidden; changed pages also branch on useDemo().c2m. */
+html[data-c2m='off'] [data-c2m-id] { display: none !important; }
+
 @layer base {
   :root {
     --concept-strip-h: 20px;
