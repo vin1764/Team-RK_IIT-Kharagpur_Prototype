@@ -43,7 +43,7 @@ function CostCheckPage() {
     const marginPct = persona.product?.type === type ? persona.product.marginPct : 0;
     const mode = costCheckMode(persona, type);
     const stack = costStack(type, makingCost, marginPct, mode);
-    // No demand gap or price band for some types (Samar's sneakers, team Q4): the slider then runs to the list price.
+    // A type with no demand gap or price band seeded: the slider then runs to the list price.
     const band = demandOrNull(type)?.priceBand ?? null;
     const min = stack.breakEven;
     const max = Math.max(min, band?.high ?? min, marginPct > 0 ? stack.listPrice : min);

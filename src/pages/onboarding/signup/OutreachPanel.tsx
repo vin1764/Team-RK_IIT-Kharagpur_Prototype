@@ -60,7 +60,7 @@ export function OutreachPanel({ onContinue }: { onContinue: () => void }) {
     );
 
   const { type } = persona.product;
-  // No demand gap seeded for some types (Samar's sneakers, team Q4): the teaser line is left out, never invented.
+  // A type with no demand gap seeded: the teaser line is left out, never invented.
   const demand = demandOrNull(type);
   const band = demand?.priceBand ?? null;
 

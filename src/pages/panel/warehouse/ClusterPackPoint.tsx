@@ -2,13 +2,15 @@
 // PP-4 · fee card (₹ per delivered order, how it is built, the fee by makers pooled) with the maker's
 //        own cost stack, and the Pack Point clusters with their status.
 // PP-5 · lot inbound: the first lot (≈ 14 days of expected sales), counted, every unit weighed.
-// Shown to makers who ship through a Pack Point (Samar). Every number comes from src/engine/ui.ts or
+// Shown to every Factory-verified maker whose pickup pincode is in a cluster (usePackPointOffer):
+// Samar ships through Agra (fee, his cost stack, lot inbound); Jasmeet self-ships in Rajkot and sees
+// the offer with her own Pack Point cost stack beside her self-ship one, and "Switch to Pack Point". Every number comes from src/engine/ui.ts or
 // the seed JSON (packPointNodes, packPointModel, packPointLot; the size split via sizeSplitFor); none is typed here.
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import lotSeed from '../../../data/packPointLot.json';
 import model from '../../../data/packPointModel.json';
-import nodesSeed from '../../../data/packPointNodes.json';
 import { Button, Pill, cx } from '../../../components/ui';
+import { toast } from '../../../components/Toast';
 import {
   costStack,
   dayLabel,
@@ -24,11 +26,13 @@ import {
 import { fmt, useT, type T as Tr } from '../../../i18n';
 import { useDemo } from '../../../store/demo';
 import { usePersona } from '../../../store/onboarding';
+import { useScriptedListing } from '../../../store/timeline';
+import { PACK_POINT_NODES, packPointOffer, type PackPointNode, type PackPointOffer } from './offer';
 import { MerlinTable, type Col } from '../factory-launch/parts';
 import { NewTag } from '../promotions/PromoParts';
 
-type Node = { city: string; status: 'live' | 'opening'; makersPooled?: number; opensAtMakers?: number };
-const NODES = nodesSeed.nodes as Node[];
+type Node = PackPointNode;
+const NODES = PACK_POINT_NODES;
 /** The pool sizes the deck tabulates (20 / 40 / 60 / 80 makers). */
 const POOL_SIZES = Object.keys(model.staffByPoolSize).filter((k) => !k.startsWith('_')).map(Number);
 
@@ -104,8 +108,9 @@ function FeeCard({ node, t }: { node: Node & { makersPooled: number }; t: Tr }) 
 }
 
 /** PP-4: the maker's cost per unit at their Pack Point (cost stack in Pack Point mode). */
-function StackCard({ type, makingCost, marginPct, node, t }: { type: ProductTypeId; makingCost: number; marginPct: number; node: Node & { makersPooled: number }; t: Tr }) {
+function StackCard({ type, makingCost, marginPct, node, selfShip, t }: { type: ProductTypeId; makingCost: number; marginPct: number; node: Node & { makersPooled: number }; selfShip: boolean; t: Tr }) {
   const s = costStack(type, makingCost, marginPct, 'packPoint', node.makersPooled);
+  const own = selfShip ? costStack(type, makingCost, marginPct, 'selfShip') : null;
   return (
     <Box title={t('pp.stack.title', { city: node.city })} c2m="PP-4">
       <p className={SUB}>{productTypeName(type)}</p>
@@ -120,14 +125,19 @@ function StackCard({ type, makingCost, marginPct, node, t }: { type: ProductType
         <Line strong label={t('pp.stack.list')} value={rupees(s.listPrice)} />
         <Line label={t('pp.stack.gst')} value={rupees(s.fees.gst)} />
       </div>
+      {own && (
+        <p className={cx(TEXT, 'font-button')} data-stack-selfship>
+          {t('pp.stack.selfShipNow', { breakEven: fmt(own.breakEven), list: fmt(own.listPrice) })}
+        </p>
+      )}
       <p className={SUB}>{t('pp.stack.note')}</p>
     </Box>
   );
 }
 
 /** PP-4: cluster status, the maker's pickup city first. */
-function NodesCard({ city, t }: { city: string; t: Tr }) {
-  const ordered = [...NODES.filter((n) => sameCity(n.city, city)), ...NODES.filter((n) => !sameCity(n.city, city))];
+function NodesCard({ node, t }: { node: Node; t: Tr }) {
+  const ordered = [node, ...NODES.filter((n) => n !== node)];
   const cols: Col[] = [
     { key: 'city', header: t('pp.nodes.city'), width: '30%' },
     { key: 'status', header: t('pp.nodes.status'), width: '20%' },
@@ -142,7 +152,7 @@ function NodesCard({ city, t }: { city: string; t: Tr }) {
       city: (
         <span className="inline-flex items-center gap-2 font-button">
           {n.city}
-          {sameCity(n.city, city) && <Pill tone="brand" bordered>{t('pp.nodes.yours')}</Pill>}
+          {n === node && <Pill tone="brand" bordered>{t('pp.nodes.yours')}</Pill>}
         </span>
       ),
       status: (
@@ -216,27 +226,37 @@ function LotCard({ type, makingCost, node, day, t }: { type: ProductTypeId; maki
   );
 }
 
-export function useHasPackPoint(): boolean {
+/** The current persona's Pack Point offer (gating in ./offer.ts). */
+export function usePackPointOffer(): PackPointOffer | null {
   const p = usePersona();
-  return p.fulfilment === 'packPoint' && !!p.product && NODES.some((n) => sameCity(n.city, p.address.city));
+  const listing = useScriptedListing();
+  return useMemo(() => packPointOffer(p, listing), [p, listing]);
 }
 
 export function ClusterPackPoint() {
   const t = useT();
   const day = useDemo((s) => s.day);
-  const persona = usePersona();
-  const has = useHasPackPoint();
-  if (!has || !persona.product) return null;
-  const node = NODES.find((n) => sameCity(n.city, persona.address.city))!;
+  const offer = usePackPointOffer();
+  if (!offer) return null;
+  const { node, usesPackPoint, product } = offer;
   const others = NODES.filter((n) => n !== node);
-  const { type, makingCost, marginPct } = persona.product;
+  const { type, makingCost, marginPct } = product;
   const liveNode = node.status === 'live' && node.makersPooled !== undefined ? (node as Node & { makersPooled: number }) : null;
   const toLot = () => document.getElementById('pp-lot')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   const arrived = lotSeed.productType === type && day >= lotSeed.day;
+  const action = usesPackPoint ? (
+    <Button className="shrink-0" variant={arrived ? 'outline' : 'primary'} onClick={toLot}>
+      {t(arrived ? 'pp.viewLot' : 'pp.sendLot')}
+    </Button>
+  ) : liveNode ? (
+    <Button className="shrink-0" variant="primary" onClick={() => toast(t('pp.switch.toast', { city: node.city }))} data-pp-switch>
+      {t('pp.switch')}
+    </Button>
+  ) : null;
   return (
-    <div className={cx(CARD, 'flex flex-col gap-5')} data-c2m="PP-3" data-pack-point>
-      <div className="flex items-start justify-between gap-6">
-        <div className="flex flex-col gap-2">
+    <div className={cx(CARD, 'flex flex-col gap-5')} data-c2m="PP-3" data-pack-point={usesPackPoint ? 'member' : 'offer'}>
+      <div className="flex items-start justify-between gap-6 max-[767px]:flex-col max-[767px]:gap-4">
+        <div className="flex flex-col gap-2 min-w-0">
           <div className="flex items-center gap-2">
             <h1 className={H1}>{t('pp.title')}</h1>
             <NewTag />
@@ -250,25 +270,29 @@ export function ClusterPackPoint() {
               </p>
             ))}
           </div>
-          {liveNode && <p className="m-0 p-0 font-heading text-3xl leading-7 text-primary-text pt-1">{t('pp.fee.value', { fee: fmt(packPointFee(liveNode.makersPooled).feePerDeliveredOrder) })}</p>}
+          {liveNode ? (
+            <p className="m-0 p-0 font-heading text-3xl leading-7 text-primary-text pt-1">{t('pp.fee.value', { fee: fmt(packPointFee(liveNode.makersPooled).feePerDeliveredOrder) })}</p>
+          ) : (
+            <p className={cx(TEXT, 'pt-1')} data-pp-opening>
+              {t('pp.opening.note', { city: node.city, n: fmt(node.opensAtMakers ?? model.densityFloorMakers) })}
+            </p>
+          )}
           <ul className="m-0 p-0 pl-5 flex flex-col gap-1">
             <li className={TEXT}>{t('pp.storageTerms', { free: fmt(model.storage.freeDays), rate: fmt(model.storage.perUnitPerDayAfter) })}</li>
             <li className={TEXT}>{t('pp.lotWeek')}</li>
-            <li className={TEXT}>{t('pp.selfShip')}</li>
+            <li className={TEXT}>{t(usesPackPoint ? 'pp.selfShip' : 'pp.selfShipNow')}</li>
           </ul>
         </div>
-        <Button className="shrink-0" variant={arrived ? 'outline' : 'primary'} onClick={toLot}>
-          {t(arrived ? 'pp.viewLot' : 'pp.sendLot')}
-        </Button>
+        {action}
       </div>
       {liveNode && (
-        <div className="grid grid-cols-2 gap-4 max-[481px]:grid-cols-1">
+        <div className="grid grid-cols-2 gap-4 max-[767px]:grid-cols-1">
           <FeeCard node={liveNode} t={t} />
-          <StackCard type={type} makingCost={makingCost} marginPct={marginPct} node={liveNode} t={t} />
+          <StackCard type={type} makingCost={makingCost} marginPct={marginPct} node={liveNode} selfShip={!usesPackPoint} t={t} />
         </div>
       )}
-      <NodesCard city={persona.address.city} t={t} />
-      <LotCard type={type} makingCost={makingCost} node={node} day={day} t={t} />
+      <NodesCard node={node} t={t} />
+      {usesPackPoint && <LotCard type={type} makingCost={makingCost} node={node} day={day} t={t} />}
     </div>
   );
 }

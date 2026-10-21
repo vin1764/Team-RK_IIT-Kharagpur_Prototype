@@ -25,7 +25,7 @@ export default function Outreach() {
   const product = persona.product;
 
   let message = null;
-  // The message quotes the open gap; a type without one (Samar's sneakers, team Q4) gets no teaser.
+  // The message quotes the open gap (Jasmeet's bottle, Samar's sneakers); a type without one gets no teaser.
   const d = product ? demandOrNull(product.type) : null;
   if (product && d) {
     const band = d.priceBand;

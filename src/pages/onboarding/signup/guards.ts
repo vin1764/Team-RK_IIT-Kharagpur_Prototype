@@ -1,7 +1,7 @@
-// Guards for product types whose plan values are only partly seeded (Samar's sneakers, team Q4:
-// no demand gap or price band, no self-ship packaging). The engine throws MissingPlanValue for a
-// missing value; these helpers turn that into "not shown" instead of a crashed page. They never
-// fill a gap with a made-up value.
+// Guards for product types whose plan values are only partly seeded (e.g. Samar's sneakers have
+// no self-ship packaging value, team Q4; their demand is seeded since the Phase 6 review). The
+// engine throws MissingPlanValue for a missing value; these helpers turn that into "not shown"
+// instead of a crashed page. They never fill a gap with a made-up value.
 import { demandForType, likelyShare, typeFees, type ProductTypeId } from '../../../engine/ui';
 import type { PersonaRecord } from '../../../store/onboarding';
 
@@ -16,7 +16,7 @@ function orNull<T>(f: () => T): T | null {
   }
 }
 
-/** The type's demand gap, or null when the team gave none (sneakers). */
+/** The type's demand gap, or null when the team gave none. */
 export const demandOrNull = (type: ProductTypeId) => orNull(() => demandForType(type));
 
 /** The type's likely share of the gap, or null when it isn't seeded. */

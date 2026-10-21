@@ -30,7 +30,7 @@ export default function Warehouse() {
         <h1 className="m-0 p-0 text-primary-text font-bold font-heading text-4xl leading-7">Meesho Warehouse</h1>
       </header>
 
-      {/* Fulfilment options: Meesho Warehouse as captured, then (Pack Point makers) the Cluster Pack Point program (C2M PP-3 … PP-5). */}
+      {/* Fulfilment options: Meesho Warehouse as captured, then (Factory-verified makers in a Pack Point cluster) the Cluster Pack Point program (C2M PP-3 … PP-5). */}
       <MeeshoWarehouseCard />
       <ClusterPackPoint />
 
