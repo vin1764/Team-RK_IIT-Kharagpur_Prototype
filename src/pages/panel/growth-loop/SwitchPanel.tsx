@@ -10,7 +10,7 @@ import { Thumb } from './parts';
 
 const CONFIDENCE_TONE = { High: 'success', Medium: 'warning', Low: 'error' } as const;
 
-export function SwitchPanel({ suggestions }: { suggestions: GrowthView['switchTo'][string] }) {
+export function SwitchPanel({ suggestions }: { suggestions: GrowthView['switchTo'][string] | undefined }) {
   const t = useT();
   if (!suggestions?.length) return null;
   return (

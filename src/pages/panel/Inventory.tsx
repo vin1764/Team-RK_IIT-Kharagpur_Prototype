@@ -8,6 +8,9 @@ import { cx } from '../../components/ui';
 import { CrystalPage, Dropdown, T } from './manage-pricing/crystal';
 import { CoachMark } from './inventory/CoachMark';
 import { StatusTabs, StockTabs, type InvTab } from './inventory/StockTabs';
+import { SkuList, stockTabRows } from './growth-loop/SkuList';
+import { useGrowth } from './growth-loop/useGrowth';
+import type { GrowthView } from '../../engine/ui';
 
 // Counts as captured on the live panel (21 Oct 2026). Tooltip copy wasn't captured (ours, neutral).
 const STATUS_TABS: InvTab[] = [
@@ -109,16 +112,28 @@ function NoCatalogs() {
 }
 
 export default function Inventory() {
+  const g = useGrowth();
+  // Remount when the growth loop switches on or off (demo day / persona), so the default tab follows.
+  return <InventoryView key={g ? 'growth' : 'captured'} g={g} />;
+}
+
+function InventoryView({ g }: { g: GrowthView | null }) {
   const [status, setStatus] = useState('active');
-  const [stock, setStock] = useState('all_stock');
+  // From D28 (growth loop) the page opens on Low Stock, where the restock card is (GL-2).
+  const [stock, setStock] = useState(g ? 'low_stock' : 'all_stock');
+  // D28+ (Jasmeet): her live SKUs fill Active; the tab counts follow the rows shown (C2M, GL-2/GL-5).
+  const rows = g ? stockTabRows(g) : null;
+  const statusTabs = rows ? STATUS_TABS.map((t) => ({ ...t, count: t.id === 'active' ? rows.all_stock.length : 0 })) : STATUS_TABS;
+  const stockTabs = rows ? STOCK_TABS.map((t) => ({ ...t, count: rows[t.id as keyof typeof rows].length })) : STOCK_TABS;
+  const shown = g && rows && status === 'active' ? rows[stock as keyof typeof rows] : [];
   return (
     <CrystalPage className="h-screen flex flex-col">
       <Header />
-      <StatusTabs tabs={STATUS_TABS} active={status} onChange={setStatus}>
+      <StatusTabs tabs={statusTabs} active={status} onChange={setStatus}>
         <CoachMark text="Find all your live catalogs here" className="top-11 left-4" />
       </StatusTabs>
       <StockTabs
-        tabs={STOCK_TABS}
+        tabs={stockTabs}
         active={stock}
         onChange={setStock}
         action={
@@ -136,8 +151,8 @@ export default function Inventory() {
         }
       />
       <FilterBar />
-      {/* Every status/stock tab is empty for this seller as captured (the one pending catalog's row wasn't captured). */}
-      <NoCatalogs />
+      {/* Before D28 every status/stock tab is empty for this seller as captured (the one pending catalog's row wasn't captured). */}
+      {g && shown.length ? <SkuList g={g} rows={shown} tab={stock} onTab={setStock} /> : <NoCatalogs />}
     </CrystalPage>
   );
 }

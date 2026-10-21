@@ -62,7 +62,7 @@ function SkuRow({ g, sku, tab, onTab }: { g: GrowthView; sku: SkuVerdict; tab: s
 export function SkuList({ g, rows, tab, onTab }: { g: GrowthView; rows: SkuVerdict[]; tab: string; onTab: (id: string) => void }) {
   const t = useT();
   return (
-    <div className="bg-neutral-base px-4 pb-4 flex-1" data-growth-skus>
+    <div className="bg-neutral-base px-4 pb-4 shrink-0 min-h-[calc(100vh-4rem)]" data-growth-skus>
       <div className="flex justify-end pb-2">
         <div className="w-80 mr-4 flex items-center gap-1" data-c2m="GL-5">
           <p className={cx(T.bodySm, 'text-neutral-secondary')}>{t('gl.verdict.label')}</p>

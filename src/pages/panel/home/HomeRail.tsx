@@ -1,6 +1,9 @@
 // Home right rail: "Complete your account setup" + "Learn & Grow On Meesho".
-// Ported from reference/html/meesho-home.html (classes as captured).
+// Ported from reference/html/meesho-home.html (classes as captured). From D28 the SKU Health Coach
+// card (GL-3) is added on top.
 import { notInPrototype } from '../../../components/Toast';
+import { HomeCoachCard } from '../growth-loop/CoachCard';
+import { useGrowth } from '../growth-loop/useGrowth';
 
 function AccountSetupCard() {
   return (
@@ -76,8 +79,11 @@ function LearnGrowCard() {
 }
 
 export function HomeRail() {
+  // C2M (GL-3): from D28, "This week's one fix" tops the rail once the maker is live.
+  const g = useGrowth();
   return (
     <div className="w-[calc(33.333333%-0.375rem)] flex flex-col gap-2.5">
+      {g && <HomeCoachCard g={g} />}
       <AccountSetupCard />
       <LearnGrowCard />
     </div>

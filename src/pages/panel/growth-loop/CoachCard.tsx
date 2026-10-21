@@ -45,7 +45,7 @@ export function DashboardCoachCard({ g }: { g: GrowthView }) {
             </Button>
           }
         >
-          <p className="m-0 p-0 font-semibold" data-coach-vs>
+          <p className="m-0 p-0 font-button" data-coach-vs>
             {t('gl.coach.vs', { ctr: c.fix.ctrDisplay, similar: c.fix.similarDisplay })}
           </p>
           <p className="m-0 p-0" data-coach-fix>
@@ -90,7 +90,7 @@ export function HomeCoachCard({ g }: { g: GrowthView }) {
         <Thumb src={THUMBS[c.skuId]} />
         <p className="m-0 p-0 font-semibold font-button text-lg leading-5 text-primary-text">{c.skuName}</p>
       </div>
-      <p className="m-0 p-0 font-semibold font-body text-lg leading-5 text-primary-text" data-coach-vs>
+      <p className="m-0 p-0 font-button text-lg leading-5 text-primary-text" data-coach-vs>
         {t('gl.coach.vs', { ctr: c.fix.ctrDisplay, similar: c.fix.similarDisplay })}
       </p>
       <p className="m-0 p-0 font-normal font-body text-lg leading-5 text-secondary-text" data-coach-fix>

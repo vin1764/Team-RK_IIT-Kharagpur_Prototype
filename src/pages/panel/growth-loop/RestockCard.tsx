@@ -42,7 +42,7 @@ export function RestockCard({ g }: { g: GrowthView }) {
             </Button>
           }
         >
-          <span className="font-semibold" data-start-by>
+          <span className="font-button" data-start-by>
             {t('gl.restock.startBy', { n: fmt(r.nextBatch), date: shortDate(r.startBy) })}
           </span>
           {' · '}

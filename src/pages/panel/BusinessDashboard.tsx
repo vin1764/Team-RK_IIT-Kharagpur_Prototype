@@ -1,16 +1,20 @@
 // Performance → Business Dashboard. Faithful replica of reference/html/meesho-business-dashboard.html
 // in its captured empty state. The date label follows the demo day instead of the capture date.
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { notInPrototype } from '../../components/Toast';
 import { cx } from '../../components/ui';
 import { useDemo } from '../../store/demo';
 import { CrystalPage, T } from './manage-pricing/crystal';
 import { FunnelTiles, type FunnelKey } from './business-dashboard/FunnelTiles';
 import { SegmentTabs } from './business-dashboard/SegmentTabs';
-import { rangeLabel, type RangeId } from './business-dashboard/dates';
+import { dashDate, rangeLabel, type RangeId } from './business-dashboard/dates';
+import { DashboardCoachCard } from './growth-loop/CoachCard';
+import { useGrowth } from './growth-loop/useGrowth';
+import { pctDisplay, type GrowthView } from '../../engine/ui';
+import { fmt, useT } from '../../i18n';
 
 // As captured: no views, clicks, orders or sales for this seller yet.
-const CAPTURED_FUNNEL: Record<FunnelKey, number> = { views: 0, clicks: 0, orders: 0, conversion: 0, sales: 0, returnPct: 0 };
+const CAPTURED_FUNNEL: Record<FunnelKey, ReactNode> = { views: 0, clicks: 0, orders: 0, conversion: 0, sales: 0, returnPct: 0 };
 
 type Chip = RangeId | 'CUSTOM';
 const RANGES: Array<{ id: Chip; label: string }> = [
@@ -52,7 +56,31 @@ function TrendCard() {
   );
 }
 
-function BusinessOverview({ label, range, onRange }: { label: string; range: Chip; onRange: (r: Chip) => void }) {
+/** D28+ (C2M, GL-1 inputs, team Q13): the tiles filled from the growth snapshot's last 7 days. */
+function useSnapshotTiles(g: GrowthView | null): Record<FunnelKey, ReactNode> {
+  const t = useT();
+  if (!g) return CAPTURED_FUNNEL;
+  const d = g.dashboard;
+  const sub = (s: string) => <span className={cx(T.bodySm, 'text-neutral-secondary')}>{s}</span>;
+  return {
+    views: fmt(d.views),
+    clicks: (
+      <span className="inline-flex items-baseline gap-2">
+        {fmt(d.clicks)} {sub(`(${pctDisplay(d.clickRate)})`)}
+      </span>
+    ),
+    orders: fmt(d.orders),
+    conversion: pctDisplay(d.conversion),
+    sales: `₹${fmt(d.sales)}`,
+    returnPct: (
+      <span className="inline-flex items-baseline gap-2">
+        {pctDisplay(d.returnRate)} {sub(`(${t(d.returns === 1 ? 'gl.tile.returnOne' : 'gl.tile.returnMany', { n: fmt(d.returns) })})`)}
+      </span>
+    ),
+  };
+}
+
+function BusinessOverview({ label, range, onRange, tiles }: { label: string; range: Chip; onRange: (r: Chip) => void; tiles: Record<FunnelKey, ReactNode> }) {
   return (
     <div className="p-4 bg-neutral-base mb-3">
       <div className="flex flex-row flex-nowrap">
@@ -67,8 +95,7 @@ function BusinessOverview({ label, range, onRange }: { label: string; range: Chi
         </div>
       </div>
       <TrendCard />
-      {/* Later phases slot the SKU Health Coach card here, above the funnel tiles. */}
-      <FunnelTiles values={CAPTURED_FUNNEL} />
+      <FunnelTiles values={tiles} />
     </div>
   );
 }
@@ -99,15 +126,22 @@ function ProductPerformance({ label }: { label: string }) {
 
 export default function BusinessDashboard() {
   const day = useDemo((s) => s.day);
-  const [range, setRange] = useState<RangeId>('SEVEN_DAYS');
-  const label = rangeLabel(day, range);
-  const onRange = (r: Chip) => (r === 'CUSTOM' ? notInPrototype('Custom date range') : setRange(r));
+  const g = useGrowth();
+  const t = useT();
+  const [picked, setRange] = useState<RangeId>('SEVEN_DAYS');
+  const tiles = useSnapshotTiles(g);
+  // From D28 the page shows the growth snapshot: Last 7 Days = the D28 week (14–20 Nov), the only range seeded.
+  const range: RangeId = g ? 'SEVEN_DAYS' : picked;
+  const label = g ? `${dashDate(g.weekFrom)} - ${dashDate(g.weekTo)}` : rangeLabel(day, range);
+  const onRange = (r: Chip) =>
+    r === 'CUSTOM' ? notInPrototype('Custom date range') : g && r !== 'SEVEN_DAYS' ? notInPrototype(t('gl.otherRanges')) : setRange(r);
   return (
     <CrystalPage className="flex flex-col">
       <div className="flex flex-row items-center p-4 bg-neutral-base mb-3 border-0 border-b border-solid border-b-neutral-light">
         <h1 className={T.h1}>Business Dashboard</h1>
       </div>
-      <BusinessOverview label={label} range={range} onRange={onRange} />
+      {g && <DashboardCoachCard g={g} />}
+      <BusinessOverview label={label} range={range} onRange={onRange} tiles={tiles} />
       <ProductPerformance label={label} />
     </CrystalPage>
   );
