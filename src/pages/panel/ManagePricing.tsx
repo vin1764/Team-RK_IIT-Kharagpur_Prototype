@@ -6,6 +6,10 @@ import { useParams } from 'react-router';
 import { cx } from '../../components/ui';
 import { CrystalPage, Dropdown, SearchBox, T, UfoEmpty } from './manage-pricing/crystal';
 import { PricingTabs, type PricingTab } from './manage-pricing/PricingTabs';
+import { PricePositionTab } from './manage-pricing/PricePositionTab';
+import { usePriceHold } from './manage-pricing/priceHold';
+import { NewTag } from './promotions/PromoParts';
+import { useT } from '../../i18n';
 
 // Counts as captured on the live panel (21 Oct 2026): the demo seller has no live products.
 const CAPTURED = { orderGrowth: 0, orderGrowthPct: 0, priceUpdates: 0, losingOrderProducts: 0 };
@@ -126,17 +130,32 @@ function FilterBar() {
   );
 }
 
+/** C2M PI-2: the fifth tab, only for a maker who passed the checks and has a Factory Launch listing (doc p.7). */
+export const PRICE_POSITION_TAB = 'price-position';
+
 export default function ManagePricing() {
   const { tab } = useParams();
-  const [active, setActive] = useState(PRICING_TABS.some((t) => t.id === tab) ? tab! : 'allproducts');
+  const t = useT();
+  const hold = usePriceHold();
+  const tabs: PricingTab[] = hold
+    ? [...PRICING_TABS, { id: PRICE_POSITION_TAB, label: t('pi.tab'), badge: <NewTag className="ml-1" />, c2m: 'PI-2' }]
+    : PRICING_TABS;
+  const [picked, setActive] = useState(tab ?? 'allproducts');
+  const active = tabs.some((x) => x.id === picked) ? picked : 'allproducts';
   return (
     <CrystalPage>
       <PricingHeader />
       <Overview />
-      <PricingTabs tabs={PRICING_TABS} active={active} onChange={setActive} />
-      <FilterBar />
-      {/* Every tab is empty for this seller, as captured. */}
-      <UfoEmpty title="No price available" text="No active products live, keep checking." />
+      <PricingTabs tabs={tabs} active={active} onChange={setActive} />
+      {hold && active === PRICE_POSITION_TAB ? (
+        <PricePositionTab v={hold} />
+      ) : (
+        <>
+          <FilterBar />
+          {/* Every tab is empty for this seller, as captured. */}
+          <UfoEmpty title="No price available" text="No active products live, keep checking." />
+        </>
+      )}
     </CrystalPage>
   );
 }

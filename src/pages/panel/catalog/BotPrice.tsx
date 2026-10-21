@@ -2,16 +2,18 @@
 // demand card above the price table, the bot-filled fee stack and lot hint under it, and the go-live checklist.
 // Every number is passed in from the engine; B is never an input here (status only).
 import { Banner, Pill } from '../../../components/ui';
-import { demandForType, likelyShare, productTypeName, suggestedLot, type CostStack, type PriceStatus, type ProductTypeId } from '../../../engine/ui';
+import { productTypeName, suggestedLot, type CostStack, type PriceStatus, type ProductTypeId } from '../../../engine/ui';
 
 type SuggestedLotView = ReturnType<typeof suggestedLot>;
 import { fmt, useT } from '../../../i18n';
 import type { GoLiveChecks } from './bot';
+import { demandOrNull, likelyShareOrNull } from '../../onboarding/signup/guards';
 
 export function DemandCard({ type, className = 'mt-4' }: { type: ProductTypeId; className?: string }) {
   const t = useT();
-  const d = demandForType(type);
-  const s = likelyShare(type);
+  const d = demandOrNull(type);
+  const s = likelyShareOrNull(type);
+  if (!d || !s) return null;
   return (
     <div className={`${className} rounded bg-secondary-bg px-4 py-3`} data-c2m="LB-5" data-bot-anchor="quantity" data-testid="demandCard">
       <p className="m-0 font-button text-xl leading-5 text-primary-text">

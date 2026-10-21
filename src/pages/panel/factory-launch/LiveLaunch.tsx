@@ -4,13 +4,14 @@
 import { useNavigate } from 'react-router';
 import { paths } from '../../../app/paths';
 import { Button, Pill, cx } from '../../../components/ui';
-import { dayLabel } from '../../../engine/ui';
+import { dayLabel, dayToDate } from '../../../engine/ui';
 import { EventsEmpty, PromoHeader } from '../promotions/PromoParts';
 import { FL } from './copy';
 import { LAUNCH, liveDayIndex } from './launch';
 import { Section, T } from './parts';
 import { useLaunchView } from './useLaunchView';
 import { chartDays, percent } from './liveSeries';
+import { shortDate, useGrowth } from '../growth-loop/useGrowth';
 
 function Tiles({ tiles }: { tiles: { key: string; label: string; value: string }[] }) {
   return (
@@ -96,6 +97,9 @@ function ProgressBar({ sold, lot, pct }: { sold: number; lot: number; pct: numbe
 export default function LiveLaunch() {
   const navigate = useNavigate();
   const view = useLaunchView();
+  // D28+: Home and Inventory count sales to the end of the snapshot week; here the count runs to the
+  // end of the demo day, so the Sold / Left tiles say which day they are counted to.
+  const dated = useGrowth() !== null;
   const back = (
     <Button variant="outline" size="sm" onClick={() => navigate(paths.factoryLaunch)}>
       {FL.backToLaunch}
@@ -121,8 +125,8 @@ export default function LiveLaunch() {
     const tiles = [
       { key: 'today', label: FL.tile.today, value: progress.today !== null ? String(progress.today) : '—' },
       { key: 'expected', label: FL.tile.expected, value: FL.expectedRange(expected.low, expected.high) },
-      { key: 'sold', label: FL.tile.sold, value: FL.ofLot(progress.soldToDate, commit.units) },
-      { key: 'left', label: FL.tile.left, value: String(progress.left) },
+      { key: 'sold', label: dated ? FL.tile.soldTo(shortDate(dayToDate(day))) : FL.tile.sold, value: FL.ofLot(progress.soldToDate, commit.units) },
+      { key: 'left', label: dated ? FL.tile.leftAt(shortDate(dayToDate(day))) : FL.tile.left, value: String(progress.left) },
       ...(ended ? [{ key: 'sellThrough', label: FL.tile.sellThrough, value: `${pct}%` }] : []),
     ];
     body = (

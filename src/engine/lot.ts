@@ -1,3 +1,5 @@
+import data from '../data/productTypes.json';
+import type { ProductTypeId } from './types';
 // Cluster Pack Point lot inbound (PP-5) and storage terms (PP-3). Pure; values from src/data/packPointLot.json.
 
 export interface LotSeed {
@@ -44,4 +46,10 @@ export function sizeSplit(split: Record<string, number | string>, lot: number): 
   const total = rows.reduce((s, r) => s + r.units, 0);
   if (total !== lot) throw new Error(`size split adds to ${total}, lot is ${lot}`);
   return rows;
+}
+
+/** A product type's seeded first-lot size split (team Q4), or null if none. */
+export function sizeSplitFor(type: ProductTypeId, lot: number): { size: string; units: number }[] | null {
+  const split = (data as unknown as Record<string, { sizeSplit?: Record<string, number | string> }>)[type]?.sizeSplit;
+  return split ? sizeSplit(split, lot) : null;
 }

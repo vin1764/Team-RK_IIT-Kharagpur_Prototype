@@ -7,7 +7,7 @@
     "steel-bottle-1l"
   ],
   "slotsTakenBeforeJasmeet": 4,
-  "_slotsTakenSource": "600 units committed by others \u00f7 150 suggested lot = 4 makers (team Q9)",
+  "_slotsTakenSource": "600 units committed by others ÷ 150 suggested lot = 4 makers (team Q9)",
   "commit": {
     "jasmeet": {
       "units": 150,
@@ -26,6 +26,11 @@
     "29": 11,
     "30": 11
   },
-  "_dailyOrdersSource": "team Q12: D21\u2013D30 series for Jasmeet's 1 L bottle listing",
-  "listingScoreLabel": "Building"
+  "_dailyOrdersSource": "team Q12: D21–D30 series for Jasmeet's 1 L bottle listing",
+  "listingScoreLabel": "Building",
+  "priceEdit": {
+    "persona": "jasmeet",
+    "price": 165,
+    "_source": "plan §10 step 7: at D40 Jasmeet raises the price to ₹165 (day = calendar.jumps.priceEdit)"
+  }
 }

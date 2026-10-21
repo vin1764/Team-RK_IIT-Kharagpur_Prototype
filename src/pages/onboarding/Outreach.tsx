@@ -2,7 +2,8 @@
 // deliberately not styled like WhatsApp or IndiaMART. Numbers come from the engine.
 import { Link } from 'react-router';
 import { onboarding } from '../../app/paths';
-import { demandForType, productTypeName } from '../../engine/ui';
+import { productTypeName } from '../../engine/ui';
+import { demandOrNull } from './signup/guards';
 import { usePersona } from '../../store/onboarding';
 import { plural, rupeeRange, useDemoLink } from './signup/nav';
 
@@ -24,8 +25,9 @@ export default function Outreach() {
   const product = persona.product;
 
   let message = null;
-  if (product) {
-    const d = demandForType(product.type);
+  // The message quotes the open gap; a type without one (Samar's sneakers, team Q4) gets no teaser.
+  const d = product ? demandOrNull(product.type) : null;
+  if (product && d) {
     const band = d.priceBand;
     message = (
       <>
@@ -64,7 +66,7 @@ export default function Outreach() {
                 </div>
               </div>
             ) : (
-              <p className="m-0 self-center rounded-lg bg-white px-3 py-2 text-center text-lg leading-5 text-secondary-text">No matched product type for this persona</p>
+              <p className="m-0 self-center rounded-lg bg-white px-3 py-2 text-center text-lg leading-5 text-secondary-text">{product ? 'No open demand gap for this product type yet' : 'No matched product type for this persona'}</p>
             )}
           </div>
         </div>

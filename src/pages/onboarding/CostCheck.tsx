@@ -4,7 +4,8 @@
 import { useState } from 'react';
 import { onboarding } from '../../app/paths';
 import { Button, Card } from '../../components/ui';
-import { costStack, demandForType, gstAt, qualifyingPriceExists, takeHomeAt, type ProductTypeId } from '../../engine/ui';
+import { costStack, gstAt, qualifyingPriceExists, takeHomeAt, type ProductTypeId } from '../../engine/ui';
+import { costCheckMode, demandOrNull } from './signup/guards';
 import { useDemo } from '../../store/demo';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import { Field } from './signup/Field';
@@ -40,18 +41,20 @@ function CostCheckPage() {
   let result = null;
   if (ready) {
     const marginPct = persona.product?.type === type ? persona.product.marginPct : 0;
-    const stack = costStack(type, makingCost, marginPct, 'selfShip');
-    const band = demandForType(type).priceBand;
+    const mode = costCheckMode(persona, type);
+    const stack = costStack(type, makingCost, marginPct, mode);
+    // No demand gap or price band for some types (Samar's sneakers, team Q4): the slider then runs to the list price.
+    const band = demandOrNull(type)?.priceBand ?? null;
     const min = stack.breakEven;
-    const max = Math.max(min, band?.high ?? min);
+    const max = Math.max(min, band?.high ?? min, marginPct > 0 ? stack.listPrice : min);
     // Default: the persona's list price (break-even + take-home at their margin); without a margin, the low end of the buyers' price band.
     const fallback = marginPct > 0 ? stack.listPrice : (band?.low ?? min);
     const price = clamp(picked ?? fallback, min, max);
     const qualifies = qualifyingPriceExists(type, stack.breakEven);
     const f = stack.fees;
-    result = { stack, min, max, price, qualifies, rows: [
+    result = { stack, mode, min, max, price, qualifies, rows: [
       { label: 'Making cost', value: stack.makingCost },
-      { label: 'Packaging', value: f.packaging ?? 0 },
+      f.packPointFee !== undefined ? { label: 'Pack Point fee', value: f.packPointFee } : { label: 'Packaging', value: f.packaging ?? 0 },
       { label: 'Shipping + fixed fee', value: f.shippingAndFixed },
       { label: 'Returns & refusal buffer', value: f.returnsBuffer },
       // Q18: GST is 5% of the selling price, included in it, so this row follows the slider.
@@ -100,7 +103,9 @@ function CostCheckPage() {
         Continue to sign up
       </Button>
       <p className="m-0 mt-[18px] text-center text-sm leading-4 text-tertiary-text">
-        Fees are Meesho's fee card for this product type; storage and Pack Point fees aren't included.
+        {result?.mode === 'packPoint'
+          ? "Fees are Meesho's fee card for this product type, with the Pack Point fee; storage isn't included."
+          : "Fees are Meesho's fee card for this product type; storage and Pack Point fees aren't included."}
       </p>
     </div>
   );

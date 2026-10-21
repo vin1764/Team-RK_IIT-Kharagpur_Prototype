@@ -24,7 +24,7 @@ export {
   type MakerRecords,
 } from './eligibility';
 export { packPointFee } from './packPoint';
-export { lotInbound, sizeSplit, type LotInbound, type LotSeed } from './lot';
+export { lotInbound, sizeSplit, sizeSplitFor, type LotInbound, type LotSeed } from './lot';
 export { dayToDate, dayLabel, formatDate } from './calendar';
 export type { PricePosition, PriceStatus, ProductTypeId };
 

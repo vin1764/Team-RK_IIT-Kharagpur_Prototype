@@ -97,6 +97,8 @@ export const FL = {
     expected: 'Expected', // prompt
     sold: 'Sold', // prompt
     left: 'Left', // prompt
+    soldTo: (date: string) => `Sold to end of ${date}`, // ours (Phase 6)
+    leftAt: (date: string) => `Left at end of ${date}`, // ours (Phase 6)
     sellThrough: 'Sell-through', // prompt
   },
   ofLot: (sold: number, lot: number) => `${fmt(sold)} of ${fmt(lot)}`, // prompt
@@ -118,6 +120,14 @@ export const FL = {
   homeLive: (today: number) => `Live now · ${s(today, 'order', 'orders')} today`, // prompt
   homeLiveBody: (sold: string) => `${sold} sold so far.`, // ours
   homeEnded: 'Launch week ended · orders continue', // prompt
+  homeEndedBody: (sold: string, date: string, left: number) => `${sold} sold by ${date} · ${fmt(left)} left.`, // ours (Phase 6: matches the restock plan)
+  // Price-hold breach (PI-3, doc p.7: "price no longer qualifies" → launch slot removed, no number shown)
+  homeSlotRemoved: 'Launch slot removed', // doc
+  homeSlotRemovedLine: 'Your price no longer qualifies for Factory Launch', // doc
+  toPricePosition: 'View price position', // ours
+  slotRemovedPill: 'Slot removed', // doc
+  slotRemovedSub: 'Price no longer qualifies', // doc
+  slotRemovedBanner: 'Your price no longer qualifies for Factory Launch · launch slot removed. Sales so far stay as they are.', // doc + ours
   homeClosed: (date: string) => `Commitments closed on ${date}`, // prompt
   // Quality (LW-8)
   scoreTitle: (type: string) => `Listing score · ${type}`, // prompt

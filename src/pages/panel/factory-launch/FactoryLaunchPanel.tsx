@@ -14,6 +14,7 @@ import { KeyDates } from './KeyDates';
 import { LAUNCH, liveDates, liveDayIndex, statusForPhase, type LaunchPhase } from './launch';
 import { Cell, CheckRow, MerlinTable, Section, T, type Col } from './parts';
 import { useLaunchView, type LaunchView, type OrderBookRow } from './useLaunchView';
+import { usePriceHold } from '../manage-pricing/priceHold';
 
 const PHASE_TONE: Record<LaunchPhase, 'brand' | 'warning' | 'info' | 'success' | 'error'> = {
   open: 'brand',
@@ -49,16 +50,25 @@ function EventHeader({ view }: { view: LaunchView }) {
   );
 }
 
-function ActionCell({ view, row, onCommit }: { view: LaunchView; row: OrderBookRow; onCommit: () => void }) {
+function ActionCell({ view, row, onCommit, slotRemoved }: { view: LaunchView; row: OrderBookRow; onCommit: () => void; slotRemoved: boolean }) {
   const navigate = useNavigate();
   if (view.eligibility.status === 'notEligible') return <Cell value={<span className="text-error-text">{FL.notEligible}</span>} />;
   if (!view.hasBook || view.ownType !== row.typeId) return <Cell value="—" />;
   if (view.commit && view.commit.typeId === row.typeId) {
     return (
       <div className="flex flex-col items-start gap-1.5">
-        <Pill tone="success" bordered>
-          {FL.committedPill(view.commit.units)}
-        </Pill>
+        {slotRemoved ? (
+          <div className="flex flex-col items-start gap-0.5" data-c2m="PI-3" data-slot-removed>
+            <Pill tone="error" bordered>
+              {FL.slotRemovedPill}
+            </Pill>
+            <p className={cx(T.bodySm, 'text-neutral-secondary')}>{FL.slotRemovedSub}</p>
+          </div>
+        ) : (
+          <Pill tone="success" bordered>
+            {FL.committedPill(view.commit.units)}
+          </Pill>
+        )}
         <button
           type="button"
           className="bg-transparent border-0 p-0 cursor-pointer text-body-small leading-4 font-medium text-brand-primary"
@@ -87,8 +97,9 @@ function ActionCell({ view, row, onCommit }: { view: LaunchView; row: OrderBookR
   );
 }
 
-function OrderBook({ view, onCommit }: { view: LaunchView; onCommit: (row: OrderBookRow) => void }) {
+function OrderBook({ view, onCommit, slotRemoved }: { view: LaunchView; onCommit: (row: OrderBookRow) => void; slotRemoved: boolean }) {
   const holdsSlot = (row: OrderBookRow) => view.commit?.typeId === row.typeId;
+  const lostSlot = (row: OrderBookRow) => holdsSlot(row) && slotRemoved;
   const cols: Col[] = [
     { key: 'type', header: FL.col.type, width: '15%' },
     { key: 'slots', header: FL.col.slots, width: '11%' },
@@ -115,9 +126,15 @@ function OrderBook({ view, onCommit }: { view: LaunchView; onCommit: (row: Order
       <Cell
         value={`${r.slots.taken}/${r.slots.total}`}
         sub={
-          <span className={r.slots.crowded && !holdsSlot(r) ? 'text-error-text' : undefined} data-slots={r.slots.crowded ? 'crowded' : 'open'}>
-            {r.slots.crowded ? (holdsSlot(r) ? FL.slotsFullYours : FL.slotsFull) : FL.slotsLeft(r.slots.left)}
-          </span>
+          lostSlot(r) ? (
+            <span className="text-error-text" data-slots="removed">
+              {FL.slotRemovedPill}
+            </span>
+          ) : (
+            <span className={r.slots.crowded && !holdsSlot(r) ? 'text-error-text' : undefined} data-slots={r.slots.crowded ? 'crowded' : 'open'}>
+              {r.slots.crowded ? (holdsSlot(r) ? FL.slotsFullYours : FL.slotsFull) : FL.slotsLeft(r.slots.left)}
+            </span>
+          )
         }
       />
     ),
@@ -126,7 +143,7 @@ function OrderBook({ view, onCommit }: { view: LaunchView; onCommit: (row: Order
     committed: <Cell value={FL.units(r.committedUnits)} />,
     ppFee: <Cell value={r.packPointFee !== undefined ? FL.ppFeeValue(r.packPointFee) : '—'} sub={view.packPointMaker && view.hasBook ? FL.ppFeeYours : FL.ppFeeInfo} />,
     priceCap: <Cell value={FL.priceCapValue} />,
-    action: <ActionCell view={view} row={r} onCommit={() => onCommit(r)} />,
+    action: <ActionCell view={view} row={r} onCommit={() => onCommit(r)} slotRemoved={slotRemoved} />,
   }));
   return (
     <div className="px-4 pb-4" data-c2m="LW-3">
@@ -168,7 +185,7 @@ function NotEligible({ view }: { view: LaunchView }) {
   );
 }
 
-function StateBanner({ view }: { view: LaunchView }) {
+function StateBanner({ view, slotRemoved }: { view: LaunchView; slotRemoved: boolean }) {
   const navigate = useNavigate();
   const stock = dayLabel(LAUNCH.stockAtNodeDay);
   const viewLive = (
@@ -189,6 +206,23 @@ function StateBanner({ view }: { view: LaunchView }) {
     );
   }
   const live = liveDayIndex(view.day);
+  if (view.commit && slotRemoved) {
+    // PI-3 price-hold breach: no number shown.
+    return (
+      <div className="px-4 pb-4" data-c2m="PI-3" data-launch-banner="slotRemoved">
+        <Banner
+          tone="error"
+          action={
+            <Button size="sm" variant="outline" onClick={() => navigate(paths.pricePosition)}>
+              {FL.toPricePosition}
+            </Button>
+          }
+        >
+          {FL.slotRemovedBanner}
+        </Banner>
+      </div>
+    );
+  }
   let banner = null;
   if (view.commit && live) banner = <Banner tone="success" action={viewLive}>{FL.liveBanner(live.n, live.of)}</Banner>;
   else if (view.commit && view.phase === 'ended') banner = <Banner tone="info" action={viewLive}>{FL.endedBanner}</Banner>;
@@ -205,6 +239,7 @@ function StateBanner({ view }: { view: LaunchView }) {
 
 export function FactoryLaunchPanel() {
   const view = useLaunchView();
+  const slotRemoved = usePriceHold()?.slotRemoved ?? false;
   const [params, setParams] = useSearchParams();
   const [commitRow, setCommitRow] = useState<OrderBookRow | null>(null);
   const eventStatus = statusForPhase(view.phase);
@@ -227,9 +262,9 @@ export function FactoryLaunchPanel() {
         <div className="p-4">
           <Section className="overflow-hidden">
             <EventHeader view={view} />
-            <StateBanner view={view} />
+            <StateBanner view={view} slotRemoved={slotRemoved} />
             {view.eligibility.status === 'notEligible' && <NotEligible view={view} />}
-            <OrderBook view={view} onCommit={setCommitRow} />
+            <OrderBook view={view} onCommit={setCommitRow} slotRemoved={slotRemoved} />
           </Section>
         </div>
       ) : (

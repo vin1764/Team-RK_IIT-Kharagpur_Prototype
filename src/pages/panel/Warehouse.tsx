@@ -1,6 +1,7 @@
 // Meesho Warehouse: faithful replica of reference/html/meesho-warehouse.html.
 // Fee values live in ./warehouse/fees.ts, copied verbatim from the snapshot.
 import { MeeshoWarehouseCard } from './warehouse/MeeshoWarehouseCard';
+import { ClusterPackPoint } from './warehouse/ClusterPackPoint';
 import { OneTimeTable, PerUnitTable, ReverseShippingTable } from './warehouse/FeeTable';
 
 const BENEFITS = [
@@ -29,8 +30,9 @@ export default function Warehouse() {
         <h1 className="m-0 p-0 text-primary-text font-bold font-heading text-4xl leading-7">Meesho Warehouse</h1>
       </header>
 
-      {/* Fulfilment options. Phase 1 has only Meesho Warehouse; a sibling card slots in here. */}
+      {/* Fulfilment options: Meesho Warehouse as captured, then (Pack Point makers) the Cluster Pack Point program (C2M PP-3 … PP-5). */}
       <MeeshoWarehouseCard />
+      <ClusterPackPoint />
 
       <div className="flex flex-col items-center justify-center gap-8 mb-4 bg-white py-4 px-18 pb-8 rounded-lg border-2 border-solid border-secondary-bg max-[481px]:p-4 max-[481px]:m-4 max-[481px]:items-start">
         <h2 className={H2}>Benefits of Meesho Warehouse</h2>

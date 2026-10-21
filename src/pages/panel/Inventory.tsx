@@ -11,6 +11,10 @@ import { StatusTabs, StockTabs, type InvTab } from './inventory/StockTabs';
 import { SkuList, stockTabRows } from './growth-loop/SkuList';
 import { useGrowth } from './growth-loop/useGrowth';
 import type { GrowthView } from '../../engine/ui';
+import { useDemo } from '../../store/demo';
+
+/** The first-visit coach-mark is a first-visit thing: from demo day D4 the maker has been here before. */
+const COACH_MARK_UNTIL_DAY = 3;
 
 // Counts as captured on the live panel (21 Oct 2026). Tooltip copy wasn't captured (ours, neutral).
 const STATUS_TABS: InvTab[] = [
@@ -118,6 +122,7 @@ export default function Inventory() {
 }
 
 function InventoryView({ g }: { g: GrowthView | null }) {
+  const day = useDemo((s) => s.day);
   const [status, setStatus] = useState('active');
   // From D28 (growth loop) the page opens on Low Stock, where the restock card is (GL-2).
   const [stock, setStock] = useState(g ? 'low_stock' : 'all_stock');
@@ -130,7 +135,7 @@ function InventoryView({ g }: { g: GrowthView | null }) {
     <CrystalPage className="h-screen flex flex-col">
       <Header />
       <StatusTabs tabs={statusTabs} active={status} onChange={setStatus}>
-        <CoachMark text="Find all your live catalogs here" className="top-11 left-4" />
+        {day <= COACH_MARK_UNTIL_DAY && <CoachMark text="Find all your live catalogs here" className="top-11 left-4" />}
       </StatusTabs>
       <StockTabs
         tabs={stockTabs}

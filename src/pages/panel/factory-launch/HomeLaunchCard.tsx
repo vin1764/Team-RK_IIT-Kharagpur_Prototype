@@ -1,6 +1,8 @@
 // LW-6: Home step 3 "Get your first order" gains a Factory Launch card. Before committing:
 // "Next Factory Launch · n slots left · Join"; after: "You're in … · live dates"; during the live
 // week: "Live now · n orders today"; after it: "Launch week ended · orders continue".
+// From D28 the ended card counts sales as the restock plan does (to the end of D27, useGrowth); after
+// a price edit that no longer qualifies (PI-3), it says the launch slot was removed.
 // Returns null when there is nothing to show (no order book for the maker, not eligible).
 import { useNavigate } from 'react-router';
 import { paths } from '../../../app/paths';
@@ -10,10 +12,12 @@ import { PinkTag } from '../catalog/BulkTemplatePanel';
 import { FL } from './copy';
 import { LAUNCH, liveDates, liveDayIndex } from './launch';
 import { useLaunchView } from './useLaunchView';
+import { useGrowth, shortDate } from '../growth-loop/useGrowth';
+import { usePriceHold } from '../manage-pricing/priceHold';
 
-function Shell({ tag, title, line, body, button, onClick, state }: { tag?: boolean; title: string; line?: string; body: string; button: string; onClick: () => void; state: string }) {
+function Shell({ tag, title, line, body, button, onClick, state, c2m = 'LW-6' }: { tag?: boolean; title: string; line?: string; body: string; button: string; onClick: () => void; state: string; c2m?: string }) {
   return (
-    <div className="mt-0.5 p-6 bg-white" data-c2m="LW-6" data-home-launch={state}>
+    <div className="mt-0.5 p-6 bg-white" data-c2m={c2m} data-home-launch={state}>
       <div className="flex items-start gap-7.5 rounded border border-solid border-brand-secondary-border bg-brand-secondary-bg p-4">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
@@ -40,6 +44,8 @@ export function useHasHomeLaunchCard(): boolean {
 export function HomeLaunchCard() {
   const navigate = useNavigate();
   const v = useLaunchView();
+  const g = useGrowth();
+  const hold = usePriceHold();
   if (v.eligibility.status === 'notEligible' || !v.hasBook) return null;
   const row = v.rows.find((r) => r.typeId === v.ownType);
   if (!row) return null;
@@ -47,6 +53,14 @@ export function HomeLaunchCard() {
   const toLive = () => navigate(paths.factoryLaunchLive);
   const live = liveDayIndex(v.day);
 
+  if (v.commit && hold?.slotRemoved) {
+    // PI-3: the edited price no longer qualifies; the sales so far stay as they were.
+    const sold = g ? g.soldBefore : (v.progress?.soldToDate ?? 0);
+    const body = g ? FL.homeEndedBody(FL.ofLot(sold, v.commit.units), shortDate(g.weekTo), g.onHand) : FL.homeLiveBody(FL.ofLot(sold, v.commit.units));
+    return (
+      <Shell state="slotRemoved" c2m="PI-3" title={FL.homeSlotRemoved} line={FL.homeSlotRemovedLine} body={body} button={FL.toPricePosition} onClick={() => navigate(paths.pricePosition)} />
+    );
+  }
   if (v.commit && live && v.progress) {
     return (
       <Shell
@@ -60,7 +74,11 @@ export function HomeLaunchCard() {
     );
   }
   if (v.commit && v.phase === 'ended' && v.progress) {
-    return <Shell state="ended" title={FL.homeEnded} body={FL.homeLiveBody(FL.ofLot(v.progress.soldToDate, v.commit.units))} button={FL.viewLive} onClick={toLive} />;
+    // D28+: the restock plan's count, sales to the end of the snapshot week (77 of 150, 73 left).
+    const body = g
+      ? FL.homeEndedBody(FL.ofLot(g.soldBefore, v.commit.units), shortDate(g.weekTo), g.onHand)
+      : FL.homeLiveBody(FL.ofLot(v.progress.soldToDate, v.commit.units));
+    return <Shell state="ended" title={FL.homeEnded} body={body} button={FL.viewLive} onClick={toLive} />;
   }
   if (v.commit) {
     return <Shell state="in" title={FL.homeIn(LAUNCH.name, liveDates())} body={FL.homeInBody(dayLabel(LAUNCH.stockAtNodeDay))} button={FL.viewLive} onClick={toLive} />;

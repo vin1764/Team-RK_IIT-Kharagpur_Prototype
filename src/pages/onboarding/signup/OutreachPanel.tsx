@@ -3,7 +3,8 @@
 // Every number comes from src/engine/ui.ts for the persona's product type.
 import { Button } from '../../../components/ui';
 import { onboarding } from '../../../app/paths';
-import { costStack, demandForType, productTypeName, qualifyingPriceExists, takeHomeAt } from '../../../engine/ui';
+import { costStack, productTypeName, qualifyingPriceExists, takeHomeAt } from '../../../engine/ui';
+import { costCheckMode, demandOrNull } from './guards';
 import { useOnboarding, usePersona } from '../../../store/onboarding';
 import { GenericPanel } from './GenericPanel';
 import { plural, rupeeRange, useDemoLink } from './nav';
@@ -20,7 +21,7 @@ function CostCheckResult({ onContinue }: { onContinue: () => void }) {
   const persona = usePersona();
   const cc = useOnboarding((s) => s.costCheck)!;
   const marginPct = persona.product?.type === cc.type ? persona.product.marginPct : 0;
-  const stack = costStack(cc.type, cc.makingCost, marginPct, 'selfShip');
+  const stack = costStack(cc.type, cc.makingCost, marginPct, costCheckMode(persona, cc.type));
   return (
     <>
       <div className="mt-4 rounded-lg border border-solid border-tertiary-border bg-secondary-bg p-4" data-c2m="FO-5">
@@ -59,15 +60,18 @@ export function OutreachPanel({ onContinue }: { onContinue: () => void }) {
     );
 
   const { type } = persona.product;
-  const demand = demandForType(type);
-  const band = demand.priceBand;
+  // No demand gap seeded for some types (Samar's sneakers, team Q4): the teaser line is left out, never invented.
+  const demand = demandOrNull(type);
+  const band = demand?.priceBand ?? null;
 
   return (
     <div className="mt-[44px] rounded-lg border border-solid border-brand-primary-border bg-white p-5" data-c2m="FO-4">
       <h2 className="m-0 font-heading text-2xl leading-6">For {plural(productTypeName(type))}</h2>
-      <p className="m-0 mt-2 text-xl leading-6">
-        About {demand.gapPerWeek.low} orders a week go unserved in your region{band ? ` at ${rupeeRange(band.low, band.high)}` : ''}
-      </p>
+      {demand && (
+        <p className="m-0 mt-2 text-xl leading-6">
+          About {demand.gapPerWeek.low} orders a week go unserved in your region{band ? ` at ${rupeeRange(band.low, band.high)}` : ''}
+        </p>
+      )}
       <div className="mt-3 text-lg leading-5">
         <p className="m-0 font-button">Factory Launch Week · manufacturers only</p>
         <p className="m-0 text-secondary-text">No ads, no listing fee</p>

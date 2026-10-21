@@ -14,6 +14,7 @@ export const paths = {
   claims: `${P}/fulfillment/${SID}/claims`,
   warehouse: `${P}/fulfillment/${SID}/warehouse`,
   managePricing: `${P}/services/${SID}/ipp/allproducts`,
+  pricePosition: `${P}/services/${SID}/ipp/price-position`, // ours (C2M PI-2)
   reduceRto: `${P}/services/${SID}/ipp/reduce-rto-and-returns/discounts-applied`,
   reduceRtoAdd: `${P}/services/${SID}/ipp/reduce-rto-and-returns/add-discount`, // ours
   inventory: `${P}/services/${SID}/inventory`,
