@@ -8,7 +8,7 @@ describe('dayToDate', () => {
     expect(dayToDate(21)).toBe('2026-11-14');
     expect(dayToDate(25)).toBe('2026-11-18');
   });
-  it('restock starts D31 = 24 Nov', () => expect(dayToDate(31)).toBe('2026-11-24'));
+  it('restock moment D28 = 21 Nov (team, Phase 4)', () => expect(dayToDate(28)).toBe('2026-11-21'));
 });
 
 describe('dayLabel', () => {

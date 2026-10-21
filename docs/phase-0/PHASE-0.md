@@ -234,19 +234,19 @@ The plan wins in each case below, as instructed; these are flagged so the deck o
 | # | Needed by | Question |
 | --- | --- | --- |
 | Q1 | ✅ answered | D0 = 24 Oct 2026, so the launch is live 14–18 Nov and restock starts D31 = 24 Nov. |
-| Q2 | Phase 4–5 | How many units does Jasmeet commit at D5? 84 on hand at D31 doesn't fit 150 (see §6.5). |
+| Q2 | Phase 4–5 | **Answered:** Jasmeet commits 150 at D5; daily orders D21–D30 = 12, 10, 11, 11, 12, 11, 10, 11, 11, 11; restock moved to D28 (73 on hand). |
 | Q3 | ✅ answered | Pack Point drops packaging ₹6 and adds the ₹30 fee (GST included, at 40 makers); ₹32 / ₹8 / ₹7 unchanged. Bottle break-even ₹157, which is why Jasmeet self-ships. Storage shows only on the Warehouse page. Samar's footwear is the Pack Point demo. |
 | Q4 | Phase 6 | **Answered:** men's casual slip-on sneakers (Men Fashion → Footwear → Casual Shoes), Agra (live Pack Point, 40 makers), making ₹200, margin 15% → ₹30; break-even ₹305, list ₹336 (GST ₹16); hidden B ₹370; 5–8 orders a day → lot 90 pairs (≈ ₹18,000), sizes 6–10 = 10/20/25/20/15; D50 inbound 90/90, ~650 g ±5%, storage free 30 days then ₹0.29/unit/day. |
 | Q5 | Phase 5 | **Answered:** chip + one-line reason, no numbers. Lunch box is "Fix" (coach card); sipper is "Stop", reason "Sell-through low for 2+ weeks". |
-| Q6 | Phase 3 | OK to define "Make more" as "restock should start today", and "start by" as today plus whole days until on-hand reaches the reorder point? |
+| Q6 | Phase 3 | **Resolved:** "Make more" uses the deck rule (cover < lead + safety days); "start by" = today + whole days until on-hand reaches the reorder point. D28 data: start 21 Nov. |
 | Q7 | ✅ answered | N = 30: a listing needs at least 30 delivered orders to count toward B. |
-| Q8 | Phase 3 | Price-position thirds: by share of comparable orders priced below yours (my proposal: 147 → 0% low, 165 → 50% mid), or by listing count? |
-| Q9 | Phase 4 | Order book: how many of the 5 slots are taken, for the "slots left" card? Is 600 committed "crowded"? (The rule compares units with a weekly gap, so I need the horizon.) |
+| Q8 | Phase 3 | **Answered (Phase 6 review):** share of comparable orders priced below: < 1/3 Low, 1/3–2/3 Mid, > 2/3 High; ₹165–190 split ₹165×150, ₹170×100, ₹175×100, ₹180×80, ₹190×70. |
+| Q9 | Phase 4 | **Answered:** 5 slots, 4 taken → "1 slot left", not crowded; after Jasmeet commits, 5/5 and crowded for others. |
 | Q10 | Phase 5 | **Answered:** 4.2% is the median click rate of similar listings (shown). Trigger: click rate below 2.5% (bottom quarter), internal, never shown. No views floor. |
 | Q11 | ✅ answered | Only the two "I have a manufacturing unit…" options pass; every other type sells normally but isn't eligible for Factory Launch. Was: Which business types pass the seller-type check: just the two "manufacturing unit" options, or also "handcrafted products at home"? |
-| Q12 | Phase 4 | Live launch view: orders on D21, D22, D24, D25 (D23 = 11 is given), and units sold of the lot. |
+| Q12 | Phase 4 | **Answered:** use the D21–D30 series (see Q2). |
 | Q13 | Phase 5 | **Answered:** bottle, last 7 days at D28: 19,250 views, 770 clicks (4.0%), 77 orders, 10.0% conversion, ₹11,319 sales, 1 return (1.3%). The 2,400 / 38 funnel is the lunch box's. |
-| Q14 | Phase 4 | Quality listing score "Building": show order and return counts, or only the label? |
+| Q14 | Phase 4 | **Answered:** label only ("Building"). |
 | Q15 | ✅ answered | Claude drafts the Hindi copy; the team reviews it. Was: Hindi copy for the bot screens and coach card: should I draft it for your review, or will you supply it? |
 | Q16 | ✅ answered | Real panel URLs, with `{sid}` = `demo`; see §4. |
 | Q17 | ✅ answered | Adapt existing layouts; Jasmeet sees the GSTIN version with fake values. Was: Can you capture Business Details with a **GSTIN**, and the pickup address entry form? Otherwise I'll adapt the existing layouts. |
