@@ -69,7 +69,9 @@ function ShowcasePage() {
   // Displayed demo values follow the frame (the judge can click around inside it); a control change
   // shows at once and is confirmed by the next 'state'.
   const [optimistic, setOptimistic] = useState<Partial<FrameDemo>>({});
-  useEffect(() => setOptimistic({}), [state]);
+  useEffect(() => {
+    setOptimistic({});
+  }, [state]);
   const base: FrameDemo = state ? { persona: state.persona, day: state.day, lang: state.lang, c2m: state.c2m } : demoFromRoute(src);
   const shown: FrameDemo = { ...base, ...optimistic };
   const route = state?.route ?? src;

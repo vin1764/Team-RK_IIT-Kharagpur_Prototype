@@ -50,7 +50,9 @@ export default function BotFlow() {
     }
     if (d.botStep !== step) d.setBot({ botStep: step });
   }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => window.scrollTo(0, 0), [step]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
 
   if (leaving.current || (draftJump.pending && !d.images.length)) return null;
   if (!d.images.length || !m.type) return <Navigate to={`${paths.addSingleCategory}?${BOT_QUERY}`} replace />;

@@ -115,7 +115,9 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   const [submitted, setSubmitted] = useState(false);
   const [tab, setTab] = useState<BotTab>('product');
   const leaving = useRef(false);
-  useEffect(() => window.scrollTo(0, 0), []);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const values = d.values;
   const sizes = values.size ? [values.size] : [];

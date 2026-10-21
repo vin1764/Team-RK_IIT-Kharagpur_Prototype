@@ -125,7 +125,9 @@ function JumpSection({ api }: { api: SidebarApi }) {
   const prev = active ? nextFeature(active.id, -1) : undefined;
   const next = nextFeature(active?.id, 1);
   const activeRef = useRef<HTMLButtonElement>(null);
-  useEffect(() => activeRef.current?.scrollIntoView({ block: 'nearest' }), [api.activeF]);
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: 'nearest' });
+  }, [api.activeF]);
 
   return (
     <section className="sc-sec">
