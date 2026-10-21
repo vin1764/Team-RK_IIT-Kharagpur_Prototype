@@ -155,9 +155,9 @@ The day drives what each page shows (empty states before go-live, launch view du
 | `likelyShare(type)` | share + orders/day range | ~20% → 9–13/day |
 | `suggestedLot(type)` | units ≈ 14 days of expected sales | 150 (≈ ₹12,000 at cost) |
 | `restock(runRate, onHand, lead, safety)` | cover, reorder point, next batch (21 days, rounded to nearest 10), dates | 11/day, 73 → 6.6 days, reorder 77, next 230 (≈ ₹18,400), start 21 Nov, land 26 Nov |
-| `verdict(sku)` | Make more / Keep / Fix / Stop / Switch | bottle Make more, lunch box Keep, sipper Stop |
+| `verdict(sku)` | Make more / Keep / Fix / Stop / Switch | bottle Make more, lunch box Fix (coach card), sipper Stop (team, Phase 5) |
 | `switchSuggestions(line)` | open-gap products for the same line | 1.5 L casserole ~200/wk High; 500 ml flask ~120/wk Medium |
-| `coachFix(funnel, categoryBands)` | one fix (trigger stays internal) | 2,400 views, 38 clicks, 1.6% vs 4.2% → "change the main photo" |
+| `coachFix(funnel, categoryBands)` | one fix (trigger stays internal: click rate below 2.5%, never shown) | lunch box: 2,400 views, 38 clicks, 1.6% vs 4.2% (median of similar listings) → "change the main photo" |
 | `eligibility(maker)` | eligible / pending / not eligible + failed checks | Jasmeet eligible; reseller not |
 | `packPointFee(makersPooled)` | fee per delivered order | 20→₹44, 40→₹30, 60→₹26, 80→₹23 |
 
@@ -178,7 +178,8 @@ The day drives what each page shows (empty states before go-live, launch view du
 | Suggested lot | ~11 a day × 14 days = 154, rounded to nearest 10 | 150 units, ₹12,000 at cost |
 | Restock (D28, 21 Nov) | run-rate D21–27 = 77 ÷ 7 = 11/day; cover 73 ÷ 11 = 6.6 days; reorder point 11 × (5 + 2) = 77 (73 < 77 → start today); next batch 11 × 21 = 231 → 230; 230 × ₹80 = ₹18,400; 21 Nov + 5 days; 73 − 11 × 5 = 18 left on landing | lands 26 Nov |
 | Launch sales (lot 150, committed D5) | daily orders D21–D30 = 12, 10, 11, 11, 12, 11, 10, 11, 11, 11 | D23: 11 today, 33 sold, 117 left · D27: 77 sold, 73 left · D30: 110 sold = 73% sell-through |
-| Coach | 38 ÷ 2,400 clicks per view | 1.6% vs 4.2% |
+| Coach (lunch box, last 7 days at D28) | 38 ÷ 2,400 clicks per view; 3 ÷ 38 conversion | 1.6% vs 4.2%; 7.9% |
+| Business Dashboard (bottle, last 7 days at D28) | 770 ÷ 19,250 = 4.0%; 77 ÷ 770 = 10.0%; 77 × ₹147 = ₹11,319; 1 ÷ 77 = 1.3% returns | every tile filled |
 | Pack Point fee | (monthly cost ÷ orders) × 1.18 ÷ (1 − 0.178): ₹1,26,444 ÷ 6,000 = ₹21.07 → ₹24.87 → ₹30.3 | ₹30 at 40 makers (₹44 at 20, ₹26 at 60, ₹23 at 80) |
 
 ---

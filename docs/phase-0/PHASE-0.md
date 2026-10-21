@@ -206,7 +206,7 @@ To check the tests themselves, I ran them against a throwaway implementation in 
 | `likelyShare(type)` | `demand.ts` | 20% → 60–90/wk → 9–13/day |
 | `suggestedLot(type, makingCost)` | `demand.ts` | 11 × 14 = 154 → 150 units, ₹12,000 |
 | `restock({…})` | `restock.ts` | 7.6 days, reorder 77, next 230, ₹18,400, start 24 Nov, land 29 Nov; never below min run |
-| `verdict(sku)` | `verdict.ts` | bottle → Make more; lunch box / sipper are to-do (Q5) |
+| `verdict(sku)` | `verdict.ts` | bottle → Make more; lunch box → Fix; sipper → Stop (Q5, answered) |
 | `switchSuggestions(line, current)` | `demand.ts` | casserole ~200 High, then flask ~120 Medium |
 | `coachFix(funnel, bands)` | `coach.ts` | 2,400 views, 38 clicks → 1.6% vs 4.2% → change the main photo; trigger never returned |
 | `eligibility(maker)` | `eligibility.ts` | Jasmeet eligible; reseller not (seller type, GST nature, Udyam); no Udyam → pending; Enrolment ID → not factory-track |
@@ -237,15 +237,15 @@ The plan wins in each case below, as instructed; these are flagged so the deck o
 | Q2 | Phase 4–5 | How many units does Jasmeet commit at D5? 84 on hand at D31 doesn't fit 150 (see §6.5). |
 | Q3 | ✅ answered | Pack Point drops packaging ₹6 and adds the ₹30 fee (GST included, at 40 makers); ₹32 / ₹8 / ₹7 unchanged. Bottle break-even ₹157, which is why Jasmeet self-ships. Storage shows only on the Warehouse page. Samar's footwear is the Pack Point demo. |
 | Q4 | Phase 6 | Samar's footwear: product, making cost, margin and pickup city (Rajkot?). The plan only fixes his lot (150 received, every unit weighed). |
-| Q5 | Phase 5 | Lunch box and sipper metrics for "Keep" and "Stop": sell-through, weeks below p25, margin and returns, or just the labels to show? |
+| Q5 | Phase 5 | **Answered:** chip + one-line reason, no numbers. Lunch box is "Fix" (coach card); sipper is "Stop", reason "Sell-through low for 2+ weeks". |
 | Q6 | Phase 3 | OK to define "Make more" as "restock should start today", and "start by" as today plus whole days until on-hand reaches the reorder point? |
 | Q7 | ✅ answered | N = 30: a listing needs at least 30 delivered orders to count toward B. |
 | Q8 | Phase 3 | Price-position thirds: by share of comparable orders priced below yours (my proposal: 147 → 0% low, 165 → 50% mid), or by listing count? |
 | Q9 | Phase 4 | Order book: how many of the 5 slots are taken, for the "slots left" card? Is 600 committed "crowded"? (The rule compares units with a weekly gap, so I need the horizon.) |
-| Q10 | Phase 5 | Coach thresholds: is 4.2% the similar-listing median or the p25 cut-off? And what views floor counts as "impressions normal"? |
+| Q10 | Phase 5 | **Answered:** 4.2% is the median click rate of similar listings (shown). Trigger: click rate below 2.5% (bottom quarter), internal, never shown. No views floor. |
 | Q11 | ✅ answered | Only the two "I have a manufacturing unit…" options pass; every other type sells normally but isn't eligible for Factory Launch. Was: Which business types pass the seller-type check: just the two "manufacturing unit" options, or also "handcrafted products at home"? |
 | Q12 | Phase 4 | Live launch view: orders on D21, D22, D24, D25 (D23 = 11 is given), and units sold of the lot. |
-| Q13 | Phase 5 | Business Dashboard tiles beyond 2,400 views and 38 clicks: orders, conversion, sales, return %? |
+| Q13 | Phase 5 | **Answered:** bottle, last 7 days at D28: 19,250 views, 770 clicks (4.0%), 77 orders, 10.0% conversion, ₹11,319 sales, 1 return (1.3%). The 2,400 / 38 funnel is the lunch box's. |
 | Q14 | Phase 4 | Quality listing score "Building": show order and return counts, or only the label? |
 | Q15 | ✅ answered | Claude drafts the Hindi copy; the team reviews it. Was: Hindi copy for the bot screens and coach card: should I draft it for your review, or will you supply it? |
 | Q16 | ✅ answered | Real panel URLs, with `{sid}` = `demo`; see §4. |

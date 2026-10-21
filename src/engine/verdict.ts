@@ -2,8 +2,8 @@ export type Verdict = 'makeMore' | 'keep' | 'fix' | 'stop' | 'switch';
 
 export interface SkuHealth {
   sku: string;
-  /** on hand ÷ run-rate (from restock) */
-  coverDays: number;
+  /** on hand ÷ run-rate (from restock); null when the SKU has no tracked stock in the demo, so "make more" can't fire */
+  coverDays: number | null;
   leadTimeDays: number;
   safetyDays: number;
   /** metrics outside the category band; one with a clear cause → fix */
@@ -24,7 +24,7 @@ export interface SkuHealth {
 export function verdict(sku: SkuHealth): Verdict {
   if (sku.stopped) return 'switch';
   if (sku.weeksSellThroughBelowP25 >= 2 && sku.typeDemandSteady) return 'stop';
-  if (sku.coverDays < sku.leadTimeDays + sku.safetyDays) return 'makeMore';
+  if (sku.coverDays !== null && sku.coverDays < sku.leadTimeDays + sku.safetyDays) return 'makeMore';
   if (sku.outOfBand.length === 1) return 'fix';
   return 'keep';
 }

@@ -24,6 +24,7 @@ describe('verdict', () => {
   it('one metric out of band → Fix', () => expect(verdict({ ...base, outOfBand: ['clickThrough'] })).toBe('fix'));
   it('in band on everything → Keep', () => expect(verdict(base)).toBe('keep'));
 
-  it.todo('lunch box → Keep: needs the lunch box SKU metrics (Q5)');
-  it.todo('sipper → Stop: needs the sipper SKU metrics (Q5)');
+  it('no tracked stock (coverDays null) never gives Make more', () =>
+    expect(verdict({ ...base, coverDays: null, leadTimeDays: 5 })).toBe('keep'));
+  // lunch box Fix and sipper Stop from the seed: growth.test.ts
 });

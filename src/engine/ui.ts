@@ -10,7 +10,9 @@ export { demandForType, likelyShare, productTypeName, slots, suggestedLot, switc
 export { restock, type Restock } from './restock';
 export { launchProgress, trailingRunRate, type LaunchProgress } from './launch';
 export { verdict, type Verdict, type SkuHealth } from './verdict';
-export { coachFix } from './coach';
+export { coachFix, type CoachFix } from './coach';
+export { funnelStats, pctDisplay, type FunnelStats } from './funnel';
+export { growthAt, type GrowthView, type MakerInputs, type SkuVerdict, type CoachCard, type VerdictReason } from './growth';
 export {
   eligibility,
   BUSINESS_TYPES,

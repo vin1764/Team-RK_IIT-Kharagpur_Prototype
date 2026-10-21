@@ -1,4 +1,4 @@
-import { NotImplemented } from './types';
+import { pctDisplay } from './funnel';
 
 export interface Funnel {
   views: number;
@@ -6,13 +6,11 @@ export interface Funnel {
   orders: number | null;
 }
 
-export interface CategoryBands {
-  /** shown to the maker as "vs X% for similar listings" */
+export interface CoachBands {
+  /** median click rate of similar listings; shown to the maker as "vs 4.2% for similar listings" */
   ctrSimilar: number;
-  /** trigger cut-off, internal only (value missing, Q10) */
-  ctrP25: number;
-  /** below this, impressions aren't "normal" and the weak-listing trigger can't fire (Q10) */
-  viewsP25: number;
+  /** trigger: click rate below this (bottom quarter of similar listings). Internal only, never shown (team Q10). */
+  ctrTrigger: number;
 }
 
 export type CoachFixId = 'changeMainPhoto';
@@ -26,7 +24,10 @@ export interface CoachFix {
   similarDisplay: string;
 }
 
-/** SKU Health Coach: one fix a week (GL-3, GL-4). Returns null when nothing fires. */
-export function coachFix(funnel: Funnel, bands: CategoryBands): CoachFix | null {
-  throw new NotImplemented('coachFix');
+/** SKU Health Coach: one fix a week (GL-3, GL-4). Weak-listing trigger only. Returns null when nothing fires. */
+export function coachFix(funnel: Funnel, bands: CoachBands): CoachFix | null {
+  if (funnel.views <= 0) return null;
+  const ctr = funnel.clicks / funnel.views;
+  if (ctr >= bands.ctrTrigger) return null;
+  return { fix: 'changeMainPhoto', ctrDisplay: pctDisplay(ctr), similarDisplay: pctDisplay(bands.ctrSimilar) };
 }

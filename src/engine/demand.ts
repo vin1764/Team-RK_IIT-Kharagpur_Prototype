@@ -94,10 +94,11 @@ export function typicalForType(type: ProductTypeId): { minRun: number; leadTimeD
   return record(type).typical ?? null;
 }
 
-/** "What to make instead": open-gap types on the same line, excluding `current`, largest gap first. */
-export function switchSuggestions(line: string, current: ProductTypeId): SwitchSuggestion[] {
+/** "What to make instead": open-gap types on the same line the maker doesn't already make, largest gap first. */
+export function switchSuggestions(line: string, alreadyMaking: ProductTypeId | ProductTypeId[]): SwitchSuggestion[] {
+  const skip = new Set<string>(Array.isArray(alreadyMaking) ? alreadyMaking : [alreadyMaking]);
   return (Object.keys(TYPES) as ProductTypeId[])
-    .filter((k) => !k.startsWith('_') && TYPES[k]!.line === line && k !== current)
+    .filter((k) => !k.startsWith('_') && TYPES[k]!.line === line && !skip.has(k))
     .map((k) => {
       const t = TYPES[k]!;
       return { type: k, name: t.name, gapPerWeek: t.demand.gapPerWeek, confidence: t.demand.confidence };

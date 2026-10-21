@@ -1,0 +1,49 @@
+{
+  "_source": "Team Phase 5 answers (coach option a, Q5, Q10, Q13). Never invent other values.",
+  "asOfDay": 28,
+  "_asOfDaySource": "team Q13: 'last 7 days at D28'. The growth-loop cards show this week (D21–D27) from D28 on.",
+  "safetyDays": 2,
+  "_safetyDaysSource": "plan §8b restock: reorder point = run-rate × (lead time + 2 safety days)",
+  "coachBands": {
+    "_source": "team Q10: 4.2% is the median click rate of similar listings (shown). Trigger = click rate below 2.5%, the bottom quarter of similar listings (internal, never shown).",
+    "ctrSimilar": 0.042,
+    "ctrTrigger": 0.025
+  },
+  "dashboard": {
+    "_source": "team Q13: Business Dashboard, 1 L bottle, last 7 days at D28. Orders must equal the launch series D21–D27 (77); sales = orders × list price.",
+    "sku": "bottle",
+    "views": 19250,
+    "clicks": 770,
+    "returns": 1
+  },
+  "skus": [
+    {
+      "id": "bottle",
+      "name": "1 L steel water bottle",
+      "productType": "steel-bottle-1l",
+      "_source": "team Phase 5: 'Make more' from the D28 restock card, no coach. Funnel = dashboard block above; cover from the restock engine."
+    },
+    {
+      "id": "lunchbox",
+      "name": "Steel lunch box, 2-tier",
+      "_source": "team Phase 5 (coach option a): 'Fix' + SKU Health Coach card. Last-7-days funnel at D28.",
+      "funnel": {
+        "views": 2400,
+        "clicks": 38,
+        "orders": 3
+      },
+      "weeksSellThroughBelowP25": 0,
+      "typeDemandSteady": true,
+      "stopped": false
+    },
+    {
+      "id": "sipper",
+      "name": "Steel sipper 750 ml",
+      "_source": "team Phase 5 + Q5: 'Stop' with reason 'Sell-through low for 2+ weeks'; chip and reason only, no numbers shown. 2 = the least value that matches '2+ weeks'.",
+      "weeksSellThroughBelowP25": 2,
+      "typeDemandSteady": true,
+      "stopped": false,
+      "line": "steel-kitchenware"
+    }
+  ]
+}
