@@ -77,6 +77,17 @@ export interface PageInfo {
   onlyOurs?: boolean;
   /** for unchanged pages (and as a fallback): the nearest new feature to link to */
   nearest?: string;
+  /**
+   * Pages we changed by taking something away (nothing left to highlight): one line on what moved,
+   * shown in "On this screen" instead of "Unchanged Meesho page".
+   */
+  changed?: string;
+  /**
+   * Our additions show on this page only in some states (a later day, a persona, after a step). Derived for
+   * pages a feature lands on; set it for the others. With none on screen, "On this screen" then says
+   * "nothing of ours right now" instead of "Unchanged Meesho page".
+   */
+  addsLater?: boolean;
 }
 
 export interface Registry {

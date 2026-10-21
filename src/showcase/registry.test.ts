@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import { onboarding, paths } from '../app/paths';
 import calendar from '../data/calendar.json';
 import { BEHIND } from './behind';
-import { REGISTRY, elementInfo, featureById, featureHref, featuresByPart, nextFeature, pageFor } from './registry';
+import { REGISTRY, elementInfo, featureById, featureHref, featuresByPart, laterFeature, nextFeature, pageFor } from './registry';
 import type { BehindCtx, Prep } from './types';
 
 const SRC = fileURLToPath(new URL('..', import.meta.url));
@@ -232,6 +232,15 @@ describe('pages ("On this screen", "Today vs ours")', () => {
 
   it('every page’s nearest feature exists', () => {
     for (const p of REGISTRY.pages) if (p.nearest) expect(featureById(p.nearest), p.id).toBeDefined();
+  });
+
+  it('pages with additions in another state point to them; unchanged pages do not', () => {
+    const page = (id: string) => REGISTRY.pages.find((p) => p.id === id)!;
+    expect(laterFeature(page('business-details'))?.id).toBe('fo-checks-maker');
+    expect(laterFeature(page('inventory'))?.id).toBe('gl-restock');
+    expect(laterFeature(page('manage-pricing'))?.id).toBe('pi-position');
+    for (const id of ['notices', 'orders', 'claims', 'payments', 'bank-details', 'signup']) expect(laterFeature(page(id)), id).toBeUndefined();
+    for (const p of REGISTRY.pages) if (p.addsLater) expect(p.nearest, p.id).toBeDefined();
   });
 
   it('every match is a valid regex anchored at the start', () => {

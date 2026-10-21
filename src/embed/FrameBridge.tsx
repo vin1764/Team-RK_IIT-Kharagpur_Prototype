@@ -21,6 +21,29 @@ const FOCUS_TRY_MS = 3000;
 const FOCUS_SETTLE_MS = 250;
 /** A jump whose route never became current (e.g. a redirect) is applied directly after this. */
 const LAND_MS = 3000;
+/** How often a jump in flight checks whether its route is current. */
+const LAND_POLL_MS = 100;
+
+/** Room above a tall focus target for the concept strip and the page's sticky header (CSS px). */
+const TALL_TOP = 84;
+
+/**
+ * Scroll a target into view: centred, or — when it is taller than the viewport — with its top (and so its
+ * badge) just under the page's sticky header. scroll-margin is read when the scroll starts, so it is restored at once.
+ */
+function reveal(el: HTMLElement) {
+  const r = el.getBoundingClientRect();
+  // Already in full view: leave the page where it is.
+  if (r.top >= TALL_TOP && r.bottom <= window.innerHeight) return;
+  if (r.height <= window.innerHeight - TALL_TOP) {
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    return;
+  }
+  const prev = el.style.scrollMarginTop;
+  el.style.scrollMarginTop = `${TALL_TOP}px`;
+  el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  el.style.scrollMarginTop = prev;
+}
 
 const SHOW_TYPES = new Set(['navigate', 'demo', 'c2m', 'highlight', 'pulse']);
 const post = (msg: FrameMsg) => window.parent.postMessage(msg, window.location.origin);
@@ -95,7 +118,7 @@ export function FrameBridge() {
       if (el) {
         if (!seenAt) seenAt = now;
         else if (now - seenAt >= FOCUS_SETTLE_MS) {
-          el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+          reveal(el);
           pulseEls([el]);
           return;
         }
@@ -126,8 +149,18 @@ export function FrameBridge() {
       const run = ++navRun.current;
       startJump({ label: 'showcase', persona: m.persona, day: m.day, lang, path: to });
       navigate(href);
-      window.setTimeout(() => {
+      // Normally DemoUrlSync adopts the jump when its route becomes current. It can't when the router never
+      // sees the location change (the frame's first page redirected, and the jump goes back to that same
+      // first URL); the jump would then stay pending and undo the next persona/day/language change. So as
+      // soon as the route is current (or after LAND_MS, e.g. a redirect elsewhere), apply it here.
+      const start = performance.now();
+      const land = () => {
         if (run !== navRun.current) return;
+        const current = window.location.pathname + window.location.search === href;
+        if (!current && performance.now() - start < LAND_MS) {
+          window.setTimeout(land, LAND_POLL_MS);
+          return;
+        }
         endDraftJump();
         const j = clearPendingJump();
         if (!j) return;
@@ -135,7 +168,8 @@ export function FrameBridge() {
         st.setPersona(m.persona);
         st.setDay(m.day);
         st.setLang(lang);
-      }, LAND_MS);
+      };
+      window.setTimeout(land, LAND_POLL_MS);
     }
     window.scrollTo(0, 0);
     if (m.focus) focusWhenReady(m.focus, path);
@@ -168,7 +202,7 @@ export function FrameBridge() {
         break;
       case 'pulse': {
         const els = nodesFor(m.docId);
-        if (m.focus) els[0]?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        if (m.focus && els[0]) reveal(els[0]);
         pulseEls(els);
         break;
       }

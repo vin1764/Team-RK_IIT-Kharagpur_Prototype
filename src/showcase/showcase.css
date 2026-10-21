@@ -179,6 +179,7 @@
 .sc-muted { margin: 0; color: var(--sc-muted); font-size: 12px; }
 .sc-empty { border: 1px dashed var(--sc-line); border-radius: 8px; padding: 8px 10px; }
 .sc-empty p { margin: 0 0 6px; font-size: 12.5px; }
+.sc-empty .sc-btn { max-width: 100%; white-space: normal; text-align: left; }
 .sc-h3 { margin: 8px 0 4px; font-size: 12px; font-weight: 700; }
 .sc-els { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .sc-el { display: flex; gap: 8px; width: 100%; text-align: left; border: 0; background: none; padding: 6px; border-radius: 6px; cursor: pointer; }

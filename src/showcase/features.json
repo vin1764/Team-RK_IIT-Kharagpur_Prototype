@@ -683,14 +683,16 @@
       "title": "Promotions",
       "match": "^/panel/v3/new/promotions/demo/list(\\?|$)",
       "today": "Sale Events, Deals and Flash Events: dated, discount-led events you opt into.",
-      "nearest": "lw-order-book"
+      "nearest": "lw-order-book",
+      "addsLater": true
     },
     {
       "id": "sale-opt-in",
       "title": "Promotions · Sales",
       "match": "^/panel/v3/new/promotions/demo/sale/list(\\?|$)",
       "today": "Opt into Sale Events and Flash Events by setting your own discount.",
-      "nearest": "lw-order-book"
+      "nearest": "lw-order-book",
+      "addsLater": true
     },
     {
       "id": "offer-opt-in",
@@ -719,7 +721,8 @@
       "title": "Manage Pricing",
       "match": "^/panel/v3/new/services/demo/ipp/",
       "today": "Price performance tabs: All Products, Losing Orders (“reduce price, get more orders”), Losing Views and Best Priced.",
-      "nearest": "pi-position"
+      "nearest": "pi-position",
+      "addsLater": true
     },
     {
       "id": "inventory",
@@ -854,7 +857,8 @@
       "title": "Supplier Details",
       "match": "^/onboarding/supplier-details(\\?|$)",
       "today": "Store name, email, a self-declared business type and a WhatsApp opt-in.",
-      "nearest": "fo-checks-maker"
+      "nearest": "fo-checks-maker",
+      "changed": "The business-type question is no longer on this step: it moved to step 1, Business Details (FO-6), where the checks use it. Switch to “Today on Meesho” to see it here."
     }
   ]
 }

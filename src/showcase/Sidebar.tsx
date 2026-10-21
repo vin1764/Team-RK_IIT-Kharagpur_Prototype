@@ -6,7 +6,7 @@ import { dayLabel } from '../engine/ui';
 import { DEMO_GUIDE, stepDayLabel, type GuideJump } from '../layout/demoGuide';
 import type { Lang, Persona } from '../store/demo';
 import { nearestMeeshoRoute } from './meeshoNearest';
-import { BEHIND, REGISTRY, elementInfo, featureById, featuresByPart, nextFeature, pageFor } from './source';
+import { BEHIND, REGISTRY, elementInfo, featureById, featuresByPart, laterFeature, nextFeature, pageFor } from './source';
 import type { Feature, PartId } from './types';
 import type { FrameDemo } from './urlState';
 
@@ -242,7 +242,8 @@ function Tour({ api }: { api: SidebarApi }) {
 function ScreenSection({ api }: { api: SidebarApi }) {
   const page = pageFor(api.route);
   const ctx = { persona: api.shown.persona, day: api.shown.day, lang: api.shown.lang, route: api.route };
-  const nearest = (page?.nearest && featureById(page.nearest)) || REGISTRY.features.find((f) => f.id !== api.activeF) || undefined;
+  const later = page && !page.changed ? laterFeature(page) : undefined;
+  const nearest = later || (page?.nearest && featureById(page.nearest)) || REGISTRY.features.find((f) => f.id !== api.activeF) || undefined;
   const behind = (key?: string): string[] => {
     const fn = key ? BEHIND[key] : undefined;
     if (!fn) return [];
@@ -271,9 +272,19 @@ function ScreenSection({ api }: { api: SidebarApi }) {
             <p className="sc-muted">Showing Meesho as it is today: our additions are hidden. Switch to “Ours” below to see them.</p>
           ) : api.elements.length === 0 ? (
             <div className="sc-empty">
-              <p>
-                <b>Unchanged Meesho page.</b> Nothing of ours on this screen.
-              </p>
+              {page.changed ? (
+                <p>
+                  <b>Changed, nothing to highlight.</b> {page.changed}
+                </p>
+              ) : later ? (
+                <p>
+                  <b>Nothing of ours on screen right now.</b> Our additions to this page show on another day, for another persona or after a step.
+                </p>
+              ) : (
+                <p>
+                  <b>Unchanged Meesho page.</b> Nothing of ours on this screen.
+                </p>
+              )}
               {nearest && (
                 <button type="button" className="sc-btn" onClick={() => api.jump(nearest)}>
                   See {nearest.title} ({nearest.docId}) →

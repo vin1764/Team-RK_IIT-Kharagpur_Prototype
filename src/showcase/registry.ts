@@ -16,6 +16,16 @@ export function pageFor(route: string): PageInfo | undefined {
   return PAGE_RE.find(({ re }) => re.test(route))?.page;
 }
 
+/**
+ * For a page with none of our additions on screen: the feature that shows them on this page in another
+ * state (a later day, a persona, after a step), or undefined when the page is unchanged Meesho.
+ */
+export function laterFeature(page: PageInfo): Feature | undefined {
+  const landing = REGISTRY.features.find((f) => pageFor(f.route)?.id === page.id);
+  if (landing) return landing;
+  return page.addsLater && page.nearest ? FEATURES.get(page.nearest) : undefined;
+}
+
 /** What we added, for a data-c2m-id value. */
 export function elementInfo(docId: string): ElementInfo | undefined {
   return ELEMENTS.get(docId);
