@@ -33,7 +33,7 @@ import { BotStrip, type BotTab } from './catalog/BotStrip';
 import { CatalogHeader, NeedHelp, SingleStepper } from './catalog/CatalogHeader';
 import { DetailsForm, FieldGrid, type BotView, type FormState } from './catalog/DetailsForm';
 import { DetailsRail } from './catalog/DetailsRail';
-import { EMPTY_PRICE_ROW, useDraft, type PriceRow } from './catalog/draftStore';
+import { draftJump, EMPTY_PRICE_ROW, useDraft, type PriceRow } from './catalog/draftStore';
 import { FIELDS, missingFields, PACKER_FROM_MANUFACTURER, type FieldDef } from './catalog/fields';
 import { Checkbox } from './catalog/FormBits';
 import { filesToImages, useFilePicker } from './catalog/ImageTiles';
@@ -157,7 +157,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   }, [bot, values, d.botFilled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // The details step needs the images picked on step 1.
-  if (!d.images.length) return leaving.current ? null : <Navigate to={bot ? `${paths.addSingleCategory}?${BOT_QUERY}` : paths.addSingleCategory} replace />;
+  if (!d.images.length) return leaving.current || draftJump.pending ? null : <Navigate to={bot ? `${paths.addSingleCategory}?${BOT_QUERY}` : paths.addSingleCategory} replace />;
 
   const missing = new Set(missingFields(values));
   const priceMissing = sizes.some((s) => missingPrices(d.prices[s]).length > 0);

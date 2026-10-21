@@ -49,9 +49,11 @@ describe('C2M elements carry data-c2m-id', () => {
   });
 
   it('no data-c2m-id without its data-c2m (the in-code convention, CLAUDE.md)', () => {
-    const bad = files.flatMap((f) =>
-      [...text(f).matchAll(/(\S+)\s+data-c2m-id=/g)].filter((m) => !m[1]!.startsWith('data-c2m=')).map((m) => `${relative(SRC, f)}: ${m[0]}`),
-    );
+    const bad = files.filter((f) => {
+      const ids = text(f).match(/data-c2m-id=/g)?.length ?? 0;
+      const paired = text(f).match(/data-c2m(?:="[^"]*"|=\{[^{}]*\})\s+data-c2m-id=/g)?.length ?? 0;
+      return ids !== paired;
+    });
     expect(bad).toEqual([]);
   });
 

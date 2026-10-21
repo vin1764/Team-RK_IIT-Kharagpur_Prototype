@@ -1,7 +1,7 @@
 // Inventory. Faithful replica of reference/html/meesho-inventory.html in its captured empty state
 // (Active tab, All Stock), including the first-visit coach-mark under the Active tab.
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { notInPrototype } from '../../components/Toast';
 import { cx } from '../../components/ui';
@@ -118,15 +118,19 @@ function NoCatalogs() {
 export default function Inventory() {
   // Null before D28 and in plain mode ("Today vs ours"): the captured empty page.
   const g = useGrowth();
-  // Remount when the growth loop switches on or off (demo day / persona), so the default tab follows.
-  return <InventoryView key={g ? 'growth' : 'captured'} g={g} />;
+  // ?stock=<tab id> opens that stock tab (showcase jumps, e.g. the verdicts on All Stock).
+  const [params] = useSearchParams();
+  const asked = params.get('stock');
+  const stockParam = asked && STOCK_TABS.some((t) => t.id === asked) ? asked : null;
+  // Remount when the growth loop switches on or off (demo day / persona) or ?stock= changes, so the tab follows.
+  return <InventoryView key={`${g ? 'growth' : 'captured'}-${stockParam ?? ''}`} g={g} stockParam={stockParam} />;
 }
 
-function InventoryView({ g }: { g: GrowthView | null }) {
+function InventoryView({ g, stockParam }: { g: GrowthView | null; stockParam: string | null }) {
   const day = useDemo((s) => s.day);
   const [status, setStatus] = useState('active');
   // From D28 (growth loop) the page opens on Low Stock, where the restock card is (GL-2).
-  const [stock, setStock] = useState(g ? 'low_stock' : 'all_stock');
+  const [stock, setStock] = useState(stockParam ?? (g ? 'low_stock' : 'all_stock'));
   // D28+ (Jasmeet): her live SKUs fill Active; the tab counts follow the rows shown (C2M, GL-2/GL-5).
   const rows = g ? stockTabRows(g) : null;
   const statusTabs = rows ? STATUS_TABS.map((t) => ({ ...t, count: t.id === 'active' ? rows.all_stock.length : 0 })) : STATUS_TABS;

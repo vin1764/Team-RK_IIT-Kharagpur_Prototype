@@ -9,6 +9,7 @@ import { clearPendingJump, startJump } from '../layout/DemoGuide';
 import { useDemo, withDemoParams } from '../store/demo';
 import { isShowcaseMsg, type FrameMsg, type ShowMsg } from '../showcase/types';
 import { HighlightOverlay, PULSE_DURATION, type Pulse } from './HighlightOverlay';
+import { draftJump, endDraftJump } from '../pages/panel/catalog/draftStore';
 import { resetInteractive, runPrep } from './prep';
 import { findFocus, nodesFor, OVERLAY_ATTR, scanC2m, type C2mTarget } from './scan';
 
@@ -105,12 +106,19 @@ export function FrameBridge() {
   };
 
   const onNavigate = (m: Extract<ShowMsg, { type: 'navigate' }>) => {
-    const to = runPrep(m.prep, m.persona, m.to);
     const lang = m.lang ?? 'en';
-    const [path, query = ''] = to.split('?') as [string, string?];
     const s = useDemo.getState();
-    const href = `${path}${withDemoParams(query, { persona: m.persona, day: m.day, lang, c2m: s.c2m })}`;
-    if (href === window.location.pathname + window.location.search) {
+    const hrefFor = (to: string) => {
+      const [path, query = ''] = to.split('?') as [string, string?];
+      return { path, href: `${path}${withDemoParams(query, { persona: m.persona, day: m.day, lang, c2m: s.c2m })}` };
+    };
+    const here = window.location.pathname + window.location.search;
+    // The prep may clear the draft under the current page: hold its redirect until the jump lands.
+    if (m.prep?.length && hrefFor(m.to).href !== here) draftJump.pending = true;
+    const to = runPrep(m.prep, m.persona, m.to);
+    const { path, href } = hrefFor(to);
+    if (href === here) {
+      endDraftJump();
       s.setPersona(m.persona);
       s.setDay(m.day);
       s.setLang(lang);
@@ -120,6 +128,7 @@ export function FrameBridge() {
       navigate(href);
       window.setTimeout(() => {
         if (run !== navRun.current) return;
+        endDraftJump();
         const j = clearPendingJump();
         if (!j) return;
         const st = useDemo.getState();
@@ -196,6 +205,8 @@ export function FrameBridge() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(schedule, [loc.pathname, loc.search, persona, day, lang, c2m]); // eslint-disable-line react-hooks/exhaustive-deps
+  // A jump's route is current: the draft pages may redirect again.
+  useEffect(endDraftJump, [loc.pathname, loc.search]);
 
   return <HighlightOverlay on={highlight && c2m} targets={targets} pulses={pulses} />;
 }

@@ -12,6 +12,7 @@ import { useT } from '../../../../i18n';
 import { useCatalog } from '../../../../store/catalog';
 import { useDemo } from '../../../../store/demo';
 import { BOT_QUERY, BOT_STEPS, isBotStep, numberIn, reachableStep, type BotStep } from '../bot';
+import { draftJump } from '../draftStore';
 import { BotLayout } from './BotLayout';
 import { CompareFormsModal } from './CompareFormsModal';
 import { PriceStep } from './PriceStep';
@@ -41,7 +42,7 @@ export default function BotFlow() {
   const idx = BOT_STEPS.indexOf(step);
 
   useEffect(() => {
-    if (leaving.current) return;
+    if (leaving.current || (draftJump.pending && !d.images.length)) return;
     if (params.get('step') !== step) {
       const next = new URLSearchParams(params);
       next.set('step', step);
@@ -51,7 +52,7 @@ export default function BotFlow() {
   }, [step]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => window.scrollTo(0, 0), [step]);
 
-  if (leaving.current) return null;
+  if (leaving.current || (draftJump.pending && !d.images.length)) return null;
   if (!d.images.length || !m.type) return <Navigate to={`${paths.addSingleCategory}?${BOT_QUERY}`} replace />;
   const type = m.type;
 

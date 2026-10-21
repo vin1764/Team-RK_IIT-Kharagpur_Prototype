@@ -125,6 +125,20 @@ export const useDraft = create<DraftState>()(
   ),
 );
 
+/**
+ * Set while a showcase jump with prep is in flight (src/embed/FrameBridge.tsx): the prep clears or replaces the
+ * draft before the new route is current, so the details pages' "no images → back to step 1" redirect waits instead
+ * of racing the jump (their own `leaving` refs do the same for Discard and Go live).
+ */
+export const draftJump = { pending: false };
+
+/** The jump landed: lift the hold and let the draft's pages re-check their redirect. */
+export function endDraftJump() {
+  if (!draftJump.pending) return;
+  draftJump.pending = false;
+  useDraft.setState({});
+}
+
 /** Empties the draft and removes its localStorage key ("Reset demo"). */
 export function resetDraft() {
   useDraft.getState().reset();

@@ -6,7 +6,7 @@ import { dayLabel } from '../engine/ui';
 import { DEMO_GUIDE, stepDayLabel, type GuideJump } from '../layout/demoGuide';
 import type { Lang, Persona } from '../store/demo';
 import { nearestMeeshoRoute } from './meeshoNearest';
-import { BEHIND, REGISTRY, elementInfo, featureById, pageFor } from './source';
+import { BEHIND, REGISTRY, elementInfo, featureById, featuresByPart, nextFeature, pageFor } from './source';
 import type { Feature, PartId } from './types';
 import type { FrameDemo } from './urlState';
 
@@ -114,16 +114,16 @@ function Header({ api }: { api: SidebarApi }) {
 }
 
 function JumpSection({ api }: { api: SidebarApi }) {
-  const features = REGISTRY.features;
-  const groups = useMemo(() => REGISTRY.parts.map((p) => ({ part: p, items: features.filter((f) => f.part === p.id) })).filter((g) => g.items.length), [features]);
+  const groups = useMemo(() => featuresByPart().filter((g) => g.features.length), []);
   const active = api.activeF ? featureById(api.activeF) : undefined;
-  const [open, setOpen] = useState<Set<PartId>>(() => new Set([active?.part ?? groups[0]?.part.id].filter(Boolean) as PartId[]));
+  // Parts start folded (six lines with counts) and open one at a time, so "On this screen" stays near;
+  // the active feature's part opens.
+  const [open, setOpen] = useState<Set<PartId>>(() => new Set(active ? [active.part] : []));
   useEffect(() => {
-    if (active) setOpen((s) => (s.has(active.part) ? s : new Set(s).add(active.part)));
+    if (active) setOpen((s) => (s.has(active.part) ? s : new Set([active.part])));
   }, [active]);
-  const idx = active ? features.findIndex((f) => f.id === active.id) : -1;
-  const prev = idx > 0 ? features[idx - 1] : undefined;
-  const next = idx < 0 ? features[0] : features[idx + 1];
+  const prev = active ? nextFeature(active.id, -1) : undefined;
+  const next = nextFeature(active?.id, 1);
   const activeRef = useRef<HTMLButtonElement>(null);
   useEffect(() => activeRef.current?.scrollIntoView({ block: 'nearest' }), [api.activeF]);
 
@@ -131,7 +131,7 @@ function JumpSection({ api }: { api: SidebarApi }) {
     <section className="sc-sec">
       <h2>Jump to what’s new</h2>
       <div className="sc-groups">
-        {groups.map(({ part, items }) => {
+        {groups.map(({ part, features: items }) => {
           const isOpen = open.has(part.id);
           return (
             <div key={part.id} className="sc-group">
@@ -139,14 +139,7 @@ function JumpSection({ api }: { api: SidebarApi }) {
                 type="button"
                 className="sc-group-h"
                 aria-expanded={isOpen}
-                onClick={() =>
-                  setOpen((s) => {
-                    const n = new Set(s);
-                    if (n.has(part.id)) n.delete(part.id);
-                    else n.add(part.id);
-                    return n;
-                  })
-                }
+                onClick={() => setOpen((s) => new Set(s.has(part.id) ? [] : [part.id]))}
               >
                 <span className="sc-caret" aria-hidden="true">
                   ▸
@@ -354,6 +347,9 @@ function ToggleSection({ api }: { api: SidebarApi }) {
   );
 }
 
+/** page.today minus a leading "This screen/tab doesn't exist on Meesho today." (the overlay's heading says it). */
+const todayDetail = (t: string) => t.replace(/^This [a-z ]+ doesn[’']t exist on Meesho today\.\s*/i, '') || t;
+
 /** Over the frame in "Today on Meesho" when the screen exists only in ours. */
 export function TodayOverlay({ route, onBack, onNearest }: { route: string; onBack: () => void; onNearest: (to: string) => void }) {
   const page = pageFor(route);
@@ -363,7 +359,7 @@ export function TodayOverlay({ route, onBack, onNearest }: { route: string; onBa
     <div className="sc-overlay" role="dialog" aria-label="Not on Meesho today">
       <div className="sc-overlay-card">
         <h3>This screen doesn’t exist on Meesho today</h3>
-        <p>{page.today}</p>
+        <p>{todayDetail(page.today)}</p>
         <div className="sc-row">
           <button type="button" className="sc-btn sc-btn-accent" onClick={onBack}>
             Back to ours

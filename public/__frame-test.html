@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><link rel="icon" href="/favicon.svg"><title>frame test (temporary)</title>
+<style>html,body{margin:0;padding:0;background:#ddd}iframe{border:0;width:1366px;height:768px;display:block}</style></head>
+<body>
+<iframe id="f" src="about:blank"></iframe>
+<script>
+  window.log = [];
+  window.addEventListener('message', (e) => {
+    if (e.origin !== location.origin || !e.data || e.data.rk !== 'showcase') return;
+    window.log.push(e.data);
+  });
+  window.send = (msg) => document.getElementById('f').contentWindow.postMessage({ rk: 'showcase', ...msg }, location.origin);
+  window.load = (src) => { window.log = []; document.getElementById('f').src = src; };
+  window.lastState = () => [...window.log].reverse().find((m) => m.type === 'state');
+</script>
+</body>
+</html>

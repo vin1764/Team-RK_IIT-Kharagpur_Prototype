@@ -62,7 +62,8 @@
 }
 
 .sc-overlay {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 16px;
+  /* leaves the frame's own concept strip (20px × k) uncovered */
+  position: absolute; inset: calc(20px * var(--sc-k, 1)) 0 0; display: flex; align-items: center; justify-content: center; padding: 16px;
   background: rgba(233, 235, 239, 0.86); backdrop-filter: blur(2px);
 }
 .sc-overlay-card {
@@ -72,7 +73,7 @@
 .sc-overlay-card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 700; }
 .sc-overlay-card p { margin: 0 0 12px; color: var(--sc-muted); }
 .sc-stale {
-  position: absolute; left: 8px; right: 8px; top: 8px; padding: 6px 10px; border-radius: 6px;
+  position: absolute; left: 8px; right: 8px; bottom: 8px; padding: 6px 10px; border-radius: 6px;
   background: #fff8e1; border: 1px solid #f0d78a; font-size: 12px; text-align: center;
 }
 .sc-stale button { border: 0; background: none; padding: 0; color: var(--sc-accent); font-weight: 600; cursor: pointer; text-decoration: underline; }
@@ -129,12 +130,12 @@
 .sc-seg-wide { display: flex; }
 .sc-seg-wide button { flex: 1; padding: 5px 8px; }
 
-.sc-tag { display: inline-block; font-size: 10px; font-weight: 700; line-height: 1; padding: 3px 5px; border-radius: 4px; vertical-align: 1px; }
+.sc-tag { flex: none; white-space: nowrap; display: inline-block; font-size: 10px; font-weight: 700; line-height: 1; padding: 3px 5px; border-radius: 4px; vertical-align: 1px; }
 .sc-tag-new { background: var(--sc-accent-soft); color: var(--sc-accent); }
 .sc-tag-ext { background: #eef1f4; color: #4c5566; }
 .sc-chip {
-  display: inline-block; font-size: 10px; font-weight: 600; line-height: 1; padding: 3px 5px; border-radius: 4px;
-  border: 1px solid var(--sc-line); color: var(--sc-muted); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  flex: none; white-space: nowrap; display: inline-block; font-size: 10px; font-weight: 600; line-height: 1; padding: 3px 5px; border-radius: 4px;
+  border: 1px solid var(--sc-line); color: var(--sc-muted); font-variant-numeric: tabular-nums;
 }
 
 /* Jump list */
@@ -228,6 +229,7 @@
     width: 100%; border: 0; background: none; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--sc-ink);
   }
   .sc-where { text-align: left; }
+  .sc-laptop { margin: 0 auto auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .sc-side, .sc-caret, .sc-switch-ui, .sc-switch-ui::after { transition: none; }
