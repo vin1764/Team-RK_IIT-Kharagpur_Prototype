@@ -1,6 +1,10 @@
 // The draft catalog that travels from the category step to the details step.
 // Phase 3 ("Create from photos") pre-fills `values` and marks the keys it filled in `botFilled`.
+// The in-progress draft is kept across reloads in localStorage (DRAFT_STORAGE_KEY), minus the object URLs of
+// files the maker picked (they die with the page); the bundled demo photo paths are kept.
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { DRAFT_STORAGE_KEY, safeJSONStorage } from '../../../store/catalog';
 
 export interface DraftImage {
   id: string;
@@ -55,9 +59,9 @@ interface DraftState {
 const INITIAL = {
   categoryPath: [] as string[],
   images: [] as DraftImage[],
-  values: {},
-  prices: {},
-  extraImages: {},
+  values: {} as Record<string, string>,
+  prices: {} as Record<string, PriceRow>,
+  extraImages: {} as Record<string, DraftImage[]>,
   botFilled: [] as string[],
   photos: [] as DraftImage[],
   categoryConfirmed: false,
@@ -73,19 +77,52 @@ export const nextImageId = () => `img-${++seq}`;
 /** The team's own product photo, offered as the first image so the demo needs no file at hand. */
 export const DEMO_IMAGE: DraftImage = { id: 'demo-1', url: '/brand/local/catalog/demo-product-bottle.jpg', name: 'Product 1' };
 
-export const useDraft = create<DraftState>((set) => ({
-  ...INITIAL,
-  setCategoryPath: (categoryPath) => set({ categoryPath }),
-  setImages: (images) => set({ images }),
-  setValue: (id, v) => set((s) => ({ values: { ...s.values, [id]: v } })),
-  setValues: (v) => set((s) => ({ values: { ...s.values, ...v } })),
-  setPrice: (size, row) => set((s) => ({ prices: { ...s.prices, [size]: { ...EMPTY_PRICE_ROW, ...s.prices[size], ...row } } })),
-  setExtraImages: (productId, imgs) => set((s) => ({ extraImages: { ...s.extraImages, [productId]: imgs } })),
-  setBot: (patch) => set(patch),
-  unmarkBot: (id) => set((s) => (s.botFilled.includes(id) ? { botFilled: s.botFilled.filter((x) => x !== id) } : {})),
-  reset: () => {
-    const s = useDraft.getState();
-    [...s.images, ...s.photos, ...Object.values(s.extraImages).flat()].forEach((i) => i.url.startsWith('blob:') && URL.revokeObjectURL(i.url));
-    set({ ...INITIAL });
-  },
-}));
+type DraftData = typeof INITIAL;
+
+/** Picked files are object URLs that don't survive a reload, so only bundled images are persisted. */
+const keepable = (imgs: DraftImage[]) => imgs.filter((i) => !i.url.startsWith('blob:'));
+
+export const useDraft = create<DraftState>()(
+  persist(
+    (set) => ({
+      ...INITIAL,
+      setCategoryPath: (categoryPath) => set({ categoryPath }),
+      setImages: (images) => set({ images }),
+      setValue: (id, v) => set((s) => ({ values: { ...s.values, [id]: v } })),
+      setValues: (v) => set((s) => ({ values: { ...s.values, ...v } })),
+      setPrice: (size, row) => set((s) => ({ prices: { ...s.prices, [size]: { ...EMPTY_PRICE_ROW, ...s.prices[size], ...row } } })),
+      setExtraImages: (productId, imgs) => set((s) => ({ extraImages: { ...s.extraImages, [productId]: imgs } })),
+      setBot: (patch) => set(patch),
+      unmarkBot: (id) => set((s) => (s.botFilled.includes(id) ? { botFilled: s.botFilled.filter((x) => x !== id) } : {})),
+      reset: () => {
+        const s = useDraft.getState();
+        [...s.images, ...s.photos, ...Object.values(s.extraImages).flat()].forEach((i) => i.url.startsWith('blob:') && URL.revokeObjectURL(i.url));
+        set({ ...INITIAL });
+      },
+    }),
+    {
+      name: DRAFT_STORAGE_KEY,
+      version: 1,
+      storage: safeJSONStorage<DraftData>(),
+      partialize: (s): DraftData => ({
+        categoryPath: s.categoryPath,
+        images: keepable(s.images),
+        values: s.values,
+        prices: s.prices,
+        extraImages: Object.fromEntries(Object.entries(s.extraImages).map(([k, v]) => [k, keepable(v)])),
+        botFilled: s.botFilled,
+        photos: keepable(s.photos),
+        categoryConfirmed: s.categoryConfirmed,
+        netQtyConfirmed: s.netQtyConfirmed,
+        retailPacked: s.retailPacked,
+        sameAsManufacturer: s.sameAsManufacturer,
+      }),
+    },
+  ),
+);
+
+/** Empties the draft and removes its localStorage key ("Reset demo"). */
+export function resetDraft() {
+  useDraft.getState().reset();
+  useDraft.persist.clearStorage();
+}

@@ -151,7 +151,10 @@ export function botPrefill(type: ProductTypeId, persona: PersonaRecord, mode: 's
   };
 }
 
-/** "Fill demo values": the doc's values for the maker's fields; the rest stay for the presenter to type. */
+/**
+ * "Fill demo values": every maker field in one click (team, Phase 3 review) so the demo never stalls. `mrp` is a
+ * price-table cell; the rest are form values. The Net Quantity confirmation stays with the maker.
+ */
 export function demoValues(type: ProductTypeId, persona: PersonaRecord, typical: { minRun: number; leadTimeDays: number } | null): Record<string, string> {
   const t = botTypeFor(type);
   const out: Record<string, string> = { ...(t?.demo ?? {}) };

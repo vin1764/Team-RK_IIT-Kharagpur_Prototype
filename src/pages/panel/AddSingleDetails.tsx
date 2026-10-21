@@ -91,6 +91,7 @@ export default function AddSingleDetails() {
   const persona = usePersona();
   const fulfilmentChoice = useOnboarding((s) => s.fulfilment);
   const day = useDemo((s) => s.day);
+  const personaId = useDemo((s) => s.persona);
   const t = useT();
   const type = persona.product?.type ?? null;
   // "Create from photos" needs a product type with bot data (Jasmeet); otherwise the plain flow runs.
@@ -345,6 +346,7 @@ export default function AddSingleDetails() {
       marginPct: margin,
       fulfilment: mode,
       createdDay: day,
+      persona: personaId,
     });
     toast(t('check.toast'));
     leave(paths.catalogUploadsSingle);
@@ -352,8 +354,9 @@ export default function AddSingleDetails() {
 
   const fillDemo = () => {
     if (!type) return;
-    const v = demoValues(type, persona, typical);
+    const { mrp, ...v } = demoValues(type, persona, typical);
     d.setValues(v);
+    if (mrp && size) d.setPrice(size, { mrp });
   };
 
   const backToStep1 = bot ? `${paths.addSingleCategory}?${BOT_QUERY}` : paths.addSingleCategory;

@@ -25,21 +25,22 @@ export interface FieldDef {
 
 const NUM = (xs: number[]) => xs.map(String);
 
-/** Placeholder option sets (assumption: real lists not captured). */
+/** Placeholder option sets (assumption: real lists not captured). Navy Blue, Lid, 7.5, 27 and 360 were added so the
+ *  team's demo values (botListing.json, Phase 3 review) can be selected. */
 export const PLACEHOLDER_OPTIONS: Record<string, string[]> = {
   size: ['Free Size'], // captured
-  addOns: ['None', 'Cover', 'Strap'],
+  addOns: ['None', 'Cover', 'Lid', 'Strap'],
   capacity: ['0.5', '0.75', '1', '1.5', '2'],
-  color: ['Black', 'Blue', 'Green', 'Grey', 'Pink', 'Red', 'Silver', 'White', 'Yellow', 'Multicolor'],
+  color: ['Black', 'Blue', 'Green', 'Grey', 'Navy Blue', 'Pink', 'Red', 'Silver', 'White', 'Yellow', 'Multicolor'],
   genericName: ['Bottle', 'Water Bottle'],
   leakProof: ['Yes', 'No'],
   material: ['Plastic', 'Stainless Steel', 'Glass', 'Copper', 'Aluminium'],
   netQuantity: NUM([1, 2, 3, 4, 6]),
-  breadth: NUM([5, 6, 7, 8, 10, 12, 15, 20, 25, 30]),
-  height: NUM([5, 6, 7, 8, 10, 12, 15, 20, 25, 30]),
-  length: NUM([5, 6, 7, 8, 10, 12, 15, 20, 25, 30]),
+  breadth: NUM([5, 6, 7, 7.5, 8, 10, 12, 15, 20, 25, 30]),
+  height: NUM([5, 6, 7, 8, 10, 12, 15, 20, 25, 27, 30]),
+  length: NUM([5, 6, 7, 7.5, 8, 10, 12, 15, 20, 25, 30]),
   productUnit: ['cm', 'inch'],
-  productWeight: NUM([100, 200, 250, 300, 400, 500, 750, 1000]),
+  productWeight: NUM([100, 200, 250, 300, 360, 400, 500, 750, 1000]),
   productWeightUnit: ['g', 'kg'],
   type: ['Sports Bottle', 'Fridge Bottle', 'Insulated Bottle', 'Kids Bottle'],
   volumeUnit: ['ml', 'L'],

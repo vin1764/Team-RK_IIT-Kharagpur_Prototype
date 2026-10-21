@@ -3,13 +3,18 @@
   "types": {
     "steel-bottle-1l": {
       "_source": "doc pp.14-18: p.14 mock-up (title, colour, pack, material, capacity, weight) and the who-fills-what table",
-      "categoryPath": ["Home & Kitchen", "Kitchen & Dining", "Kitchen Storage", "Water Bottles"],
+      "categoryPath": [
+        "Home & Kitchen",
+        "Kitchen & Dining",
+        "Kitchen Storage",
+        "Water Bottles"
+      ],
       "_categoryPathSource": "doc p.14 'Recognised: 1 L steel water bottle · Kitchen Storage / Water Bottles'; full path as in src/data/categories.json",
       "bot": {
         "productName": "Stainless Steel Water Bottle 1 L, Leak-proof",
         "genericName": "Water Bottle",
         "type": "Sports Bottle",
-        "color": "Silver",
+        "color": "Navy Blue",
         "size": "Free Size",
         "netQuantity": "1",
         "productUnit": "cm",
@@ -20,8 +25,8 @@
       "_botSource": {
         "productName": "doc p.14 mock-up title",
         "genericName": "doc table 'From category'; 'Water Bottle' is one of the placeholder options",
-        "type": "ASSUMPTION: the doc gives no Type value. 'Sports Bottle' is the first placeholder option and makes no claim the photo can't show (insulation, kids). Team to confirm.",
-        "color": "doc p.14 mock-up (Silver)",
+        "type": "ASSUMPTION: the doc gives no Type value. 'Sports Bottle' is the first placeholder option and makes no claim the photo can't show (insulation, kids). Confirmed by the team (Phase 3 review).",
+        "color": "team, Phase 3 review: the bot reads colour from the photo, and the demo photo is a navy bottle (replaces the doc p.14 mock-up's Silver)",
         "size": "doc table: Water Bottles' only size is Free Size",
         "netQuantity": "doc p.14 mock-up 'Pack 1 unit'; the maker must confirm",
         "units": "doc table: category defaults, shown as unit pickers (L for capacity, g for weights, cm for L/B/H)",
@@ -30,10 +35,19 @@
       "demo": {
         "capacity": "1",
         "material": "Stainless Steel",
-        "productWeight": "320",
-        "leakProof": "Yes"
+        "leakProof": "Yes",
+        "length": "7.5",
+        "breadth": "7.5",
+        "height": "27",
+        "productWeight": "360",
+        "netWeight": "320",
+        "addOns": "Lid",
+        "mrp": "299"
       },
-      "_demoSource": "doc p.14 mock-up (Capacity 1 L, Material Stainless steel, Weight 320 g, 'Leak-proof' in the title). Making cost and margin come from the persona; minimum run and lead time from typicalForType(). Length, Breadth, Height, Net Weight, Add Ons and MRP have no value in the plan or doc, so the presenter types them."
+      "_demoSource": {
+        "_source": "team, Phase 3 review",
+        "note": "Fill demo values fills every maker field so the demo never stalls. Capacity, material and 'Leak-proof' match the doc p.14 mock-up; Length/Breadth/Height, Product Weight 360 g (was 320 g), Net Weight 320 g, Add Ons and MRP are the team's values. Making cost and margin come from the persona; minimum run and lead time from typicalForType(). The Net Quantity confirmation is left for the maker."
+      }
     }
   },
   "packPointPartner": {

@@ -1,5 +1,5 @@
 {
-  "_review": "DRAFT Hindi by Claude (Phase 3), for the team to review before the demo. Simple, everyday Hindi for a small manufacturer; ₹ amounts, units (L, g, cm), numbers and the product name stay as numerals/English, as Meesho does. Field labels that Meesho stores in English (option values like Yes / Silver / Free Size) are not translated. Any key missing here falls back to en.json.",
+  "_review": "DRAFT Hindi by Claude (Phase 3), for the team to review before the demo. Simple, everyday Hindi for a small manufacturer; ₹ amounts, units (L, g, cm), numbers and the product name stay as numerals/English, as Meesho does. Field labels that Meesho stores in English (option values like Yes / Navy Blue / Free Size) are not translated; when speaking, Navy Blue is नेवी ब्लू. Any key missing here falls back to en.json.",
 
   "bot.new": "नया",
   "bot.title": "फ़ोटो से कैटलॉग बनाएं",

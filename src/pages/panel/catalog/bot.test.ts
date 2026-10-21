@@ -19,7 +19,7 @@ import {
   packerFor,
   PACK_POINT_PARTNER,
 } from './bot';
-import { missingFields } from './fields';
+import { FIELDS, missingFields } from './fields';
 
 const P = personas as unknown as Record<string, PersonaRecord>;
 const jasmeet = P.jasmeet!;
@@ -49,6 +49,10 @@ describe('botPrefill', () => {
     expect(missingFields(pf.values).sort()).toEqual(
       ['addOns', 'breadth', 'capacity', 'height', 'leakProof', 'length', 'material', 'netWeight', 'productWeight'].sort(),
     );
+  });
+  it('reads Navy Blue from the photo, an option of the Color select', () => {
+    expect(pf.values.color).toBe('Navy Blue');
+    expect(FIELDS.find((f) => f.id === 'color')?.options).toContain('Navy Blue');
   });
   it('takes the manufacturer from the GST record and India as origin', () => {
     expect(pf.values.manufacturerName).toBe(jasmeet.legalName);
@@ -86,9 +90,23 @@ describe('describeListing', () => {
 });
 
 describe('demoValues', () => {
-  it('uses the doc / persona / typical values and leaves L, B, H, net weight, add-ons and MRP empty', () => {
-    const v = demoValues('steel-bottle-1l', jasmeet, typicalForType('steel-bottle-1l'));
-    expect(v).toEqual({ capacity: '1', material: 'Stainless Steel', productWeight: '320', leakProof: 'Yes', makingCost: '80', marginPct: '17.5', minRun: '100', leadTimeDays: '5' });
+  const v = demoValues('steel-bottle-1l', jasmeet, typicalForType('steel-bottle-1l'));
+  it('uses the team / persona / typical values for every maker field', () => {
+    expect(v).toEqual({
+      capacity: '1', material: 'Stainless Steel', leakProof: 'Yes',
+      length: '7.5', breadth: '7.5', height: '27', productWeight: '360', netWeight: '320', addOns: 'Lid', mrp: '299',
+      makingCost: '80', marginPct: '17.5', minRun: '100', leadTimeDays: '5',
+    });
+  });
+  it('covers all 14 maker fields', () => {
+    expect(Object.keys(v).sort()).toEqual([...MAKER_FIELDS].sort());
+  });
+  it('every select value is one of that field’s options', () => {
+    for (const f of FIELDS.filter((x) => x.kind === 'select' && v[x.id] !== undefined)) expect(f.options).toContain(v[f.id]);
+  });
+  it('after bot pre-fill + demo values no mandatory form field is missing', () => {
+    const pf = botPrefill('steel-bottle-1l', jasmeet, 'selfShip', true);
+    expect(missingFields({ ...pf.values, ...v })).toEqual([]);
   });
   it('no bot data for personas without a product type', () => {
     expect(botTypeFor(P.samar!.product?.type)).toBeNull();
