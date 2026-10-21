@@ -1,9 +1,11 @@
 // Home (growth/home). Two captured states:
 //   default    → reference/screens/home.png: step 1 "Upload catalogs to get started"
 //   ?state=qc  → reference/html/meesho-home.html: step 2 with the QC status table
+//   live       → (C2M, LB-8) after "Go live" from photos: step 2 shows the live catalog
 // Later phases will pick the state from the demo day instead of the query string.
 import { useSearchParams } from 'react-router';
 import { notInPrototype } from '../../components/Toast';
+import { useCatalog } from '../../store/catalog';
 import { HomeRail } from './home/HomeRail';
 import { HomeSteps, type HomeState } from './home/HomeSteps';
 
@@ -44,5 +46,6 @@ export function HomeView({ state }: { state: HomeState }) {
 
 export default function Home() {
   const [params] = useSearchParams();
-  return <HomeView state={params.get('state') === 'qc' ? 'qc' : 'start'} />;
+  const live = useCatalog((s) => s.listings.length > 0);
+  return <HomeView state={params.get('state') === 'qc' ? 'qc' : live ? 'live' : 'start'} />;
 }

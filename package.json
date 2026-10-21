@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "description": "Concept prototype \u00b7 Team RK \u00b7 synthetic data \u00b7 not affiliated with Meesho",
+  "description": "Concept prototype · Team RK · synthetic data · not affiliated with Meesho",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
@@ -28,6 +28,7 @@
   "dependencies": {
     "@fontsource/dm-sans": "^5.3.0",
     "@fontsource/figtree": "^5.3.0",
+    "@fontsource/noto-sans-devanagari": "^5.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router": "^7.18.4",

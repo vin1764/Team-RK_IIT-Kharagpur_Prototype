@@ -28,18 +28,43 @@ interface DraftState {
   prices: Record<string, PriceRow>;
   /** Extra (non-front) images per product id, added from "Uploaded Images". */
   extraImages: Record<string, DraftImage[]>;
-  /** Field ids pre-filled by the bot (Phase 3); empty in Phase 1. */
+  /** Field ids pre-filled by the bot ("Create from photos", LB-4); empty in the plain flow. A maker edit removes the id. */
   botFilled: string[];
+  /** Bot mode: the 1-5 photos of the one product (cover first), before they become the product's images. */
+  photos: DraftImage[];
+  /** Bot mode: the maker confirmed the recognised category breadcrumb. */
+  categoryConfirmed: boolean;
+  /** Bot mode: the maker confirmed the pre-filled Net Quantity (go-live needs it). */
+  netQtyConfirmed: boolean;
+  /** Bot mode, Pack Point makers: units arrive in their retail pack (packer = manufacturer). */
+  retailPacked: boolean;
+  /** Bot mode: initial state of "Same as Manufacturer Details" (set by the packer rule). */
+  sameAsManufacturer: boolean;
   setCategoryPath: (p: string[]) => void;
   setImages: (imgs: DraftImage[]) => void;
   setValue: (id: string, v: string) => void;
   setValues: (v: Record<string, string>) => void;
   setPrice: (size: string, row: Partial<PriceRow>) => void;
   setExtraImages: (productId: string, imgs: DraftImage[]) => void;
+  setBot: (patch: Partial<Pick<DraftState, 'botFilled' | 'photos' | 'categoryConfirmed' | 'netQtyConfirmed' | 'retailPacked' | 'sameAsManufacturer'>>) => void;
+  /** The maker edited a bot-filled field: it is no longer marked "Filled by bot". */
+  unmarkBot: (id: string) => void;
   reset: () => void;
 }
 
-const INITIAL = { categoryPath: [] as string[], images: [] as DraftImage[], values: {}, prices: {}, extraImages: {}, botFilled: [] as string[] };
+const INITIAL = {
+  categoryPath: [] as string[],
+  images: [] as DraftImage[],
+  values: {},
+  prices: {},
+  extraImages: {},
+  botFilled: [] as string[],
+  photos: [] as DraftImage[],
+  categoryConfirmed: false,
+  netQtyConfirmed: false,
+  retailPacked: true,
+  sameAsManufacturer: false,
+};
 
 let seq = 0;
 /** Deterministic ids (no Math.random / Date.now). */
@@ -56,9 +81,11 @@ export const useDraft = create<DraftState>((set) => ({
   setValues: (v) => set((s) => ({ values: { ...s.values, ...v } })),
   setPrice: (size, row) => set((s) => ({ prices: { ...s.prices, [size]: { ...EMPTY_PRICE_ROW, ...s.prices[size], ...row } } })),
   setExtraImages: (productId, imgs) => set((s) => ({ extraImages: { ...s.extraImages, [productId]: imgs } })),
+  setBot: (patch) => set(patch),
+  unmarkBot: (id) => set((s) => (s.botFilled.includes(id) ? { botFilled: s.botFilled.filter((x) => x !== id) } : {})),
   reset: () => {
     const s = useDraft.getState();
-    [...s.images, ...Object.values(s.extraImages).flat()].forEach((i) => i.url.startsWith('blob:') && URL.revokeObjectURL(i.url));
+    [...s.images, ...s.photos, ...Object.values(s.extraImages).flat()].forEach((i) => i.url.startsWith('blob:') && URL.revokeObjectURL(i.url));
     set({ ...INITIAL });
   },
 }));

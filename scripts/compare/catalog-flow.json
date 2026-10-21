@@ -302,5 +302,75 @@
         "wait": 400
       }
     ]
+  },
+  {
+    "name": "bot-product",
+    "_note": "C2M LB-4 (no reference exists): rendered next to the plain category screenshot so the bot screen can be judged against the panel around it",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category?mode=photos&persona=jasmeet&day=3&lang=en",
+    "ref": "catalog-select-category-water-bottles.png",
+    "width": 1518,
+    "oursCss": ":root{--concept-strip-h:0px}",
+    "steps": [
+      {
+        "click": "Continue",
+        "exact": true
+      },
+      {
+        "click": "Confirm category"
+      },
+      {
+        "wait": 300
+      }
+    ]
+  },
+  {
+    "name": "bot-details",
+    "_note": "C2M LB-4 pre-filled form beside the plain details screenshot",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category?mode=photos&persona=jasmeet&day=3&lang=en",
+    "ref": "catalog-product-details-1.png",
+    "oursCss": ":root{--concept-strip-h:0px} #mainWrapper{margin-left:62px!important}",
+    "steps": [
+      {
+        "click": "Continue",
+        "exact": true
+      },
+      {
+        "click": "Confirm category"
+      },
+      {
+        "click": "Continue to details"
+      },
+      {
+        "wait": 400
+      }
+    ]
+  },
+  {
+    "name": "bot-price",
+    "_note": "C2M LB-5/LB-6/LB-8 price table + checklist after Fill demo values, beside the plain price-table screenshot",
+    "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category?mode=photos&persona=jasmeet&day=3&lang=en",
+    "ref": "catalog-price-table.png",
+    "oursCss": ":root{--concept-strip-h:0px}",
+    "steps": [
+      {
+        "click": "Continue",
+        "exact": true
+      },
+      {
+        "click": "Confirm category"
+      },
+      {
+        "click": "Continue to details"
+      },
+      {
+        "click": "Fill demo values"
+      },
+      {
+        "wait": 400
+      }
+    ],
+    "scroll": 900,
+    "width": 1536,
+    "height": 864
   }
 ]

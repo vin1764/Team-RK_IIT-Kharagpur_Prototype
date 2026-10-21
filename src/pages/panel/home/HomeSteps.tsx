@@ -6,9 +6,15 @@ import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { paths } from '../../../app/paths';
 import { notInPrototype } from '../../../components/Toast';
-import { Button } from '../../../components/ui';
+import { Button, Pill } from '../../../components/ui';
+import { tEn } from '../../../i18n';
+import { useCatalog } from '../../../store/catalog';
+import { PinkTag } from '../catalog/BulkTemplatePanel';
+import { BOT_QUERY } from '../catalog/bot';
+import { DEMO_IMAGE } from '../catalog/draftStore';
 
-export type HomeState = 'start' | 'qc';
+/** start / qc = the two captured states; live = a catalog created from photos is live (LB-8). */
+export type HomeState = 'start' | 'qc' | 'live';
 type StepStatus = 'done' | 'current' | 'todo';
 
 const STEPS = ['Upload catalogs to get started', 'Catalogs go live on Meesho', 'Get your first order'] as const;
@@ -17,6 +23,7 @@ const STEPS = ['Upload catalogs to get started', 'Catalogs go live on Meesho', '
 const STATUS: Record<HomeState, StepStatus[]> = {
   start: ['current', 'todo', 'todo'],
   qc: ['done', 'current', 'todo'],
+  live: ['done', 'done', 'current'],
 };
 
 function StepTab({ n, label, status, active, onClick }: { n: number; label: string; status: StepStatus; active: boolean; onClick: () => void }) {
@@ -49,15 +56,35 @@ function TickRow({ children }: { children: ReactNode }) {
   );
 }
 
-function UploadOption({ title, video, points, button }: { title: string; video: string; points: [string, string]; button: ReactNode }) {
+function UploadOption({
+  title,
+  video,
+  points,
+  button,
+  tag,
+  thumb,
+  c2m,
+}: {
+  title: string;
+  video?: string;
+  points: [string, string];
+  button: ReactNode;
+  tag?: ReactNode;
+  /** C2M option: its own thumbnail instead of a video still. */
+  thumb?: ReactNode;
+  c2m?: string;
+}) {
   return (
-    <div className="w-60 shrink-0">
-      <div className="border-0 border-l-2 border-solid border-brand-primary-text pl-2.5">
+    <div className="w-60 min-w-0 shrink" data-c2m={c2m}>
+      <div className="flex items-center gap-2 border-0 border-l-2 border-solid border-brand-primary-text pl-2.5">
         <span className="m-0 p-0 font-semibold font-button text-xl leading-6 text-black">{title}</span>
+        {tag}
       </div>
-      <div className="relative mt-3 cursor-pointer" role="button" aria-label={`Play video: ${title}`} onClick={() => notInPrototype('Video tutorial')}>
-        <img src={video} alt="" width="240" height="126" className="block w-60 h-auto" />
-      </div>
+      {thumb ?? (
+        <div className="relative mt-3 cursor-pointer" role="button" aria-label={`Play video: ${title}`} onClick={() => notInPrototype('Video tutorial')}>
+          <img src={video} alt="" width="240" height="126" className="block w-60 max-w-full h-auto" />
+        </div>
+      )}
       <div className="flex flex-col gap-1 mt-3.5">
         {points.map((p) => (
           <TickRow key={p}>{p}</TickRow>
@@ -68,12 +95,23 @@ function UploadOption({ title, video, points, button }: { title: string; video: 
   );
 }
 
+/** Thumbnail of the "Create from photos" option: a phone photo becoming a clean QC cover. */
+function PhotosThumb() {
+  return (
+    <div className="mt-3 flex aspect-[240/126] w-60 max-w-full items-center justify-center gap-3 rounded-sm bg-brand-secondary-bg" aria-hidden="true">
+      <img src={DEMO_IMAGE.url} alt="" className="block size-16 rounded-sm object-cover" />
+      <img src="/brand/msa/merlin/lined/chevron-right-grey.svg" alt="" width="20" height="20" className="size-5" />
+      <img src="/brand/local/catalog/demo-product-bottle-cleaned.png" alt="" className="box-border block size-16 rounded-sm border border-solid border-brand-secondary-border bg-white object-contain" />
+    </div>
+  );
+}
+
 function UploadChoice() {
   const navigate = useNavigate();
   return (
     <div className="mt-0.5 p-6 bg-white">
       <h3 className="m-0 p-0 text-primary-text font-bold font-heading text-2xl leading-6">Choose how you would like to upload your catalog</h3>
-      <div className="flex items-start gap-20 mt-5.5">
+      <div className="flex items-start justify-between gap-3 mt-5.5">
         <UploadOption
           title="Upload Single Catalog"
           video="/brand/local/home/upload-single-video.png"
@@ -90,6 +128,50 @@ function UploadChoice() {
             </Button>
           }
         />
+        <UploadOption
+          c2m="LB-3"
+          title={tEn('home.photos.title')}
+          tag={<PinkTag>{tEn('bot.new')}</PinkTag>}
+          thumb={<PhotosThumb />}
+          points={[tEn('home.photos.point1'), tEn('home.photos.point2')]}
+          button={
+            <Button variant="outline" onClick={() => navigate(`${paths.addSingleCategory}?${BOT_QUERY}`)}>
+              {tEn('home.photos.button')}
+            </Button>
+          }
+        />
+      </div>
+    </div>
+  );
+}
+
+// ── Step 2 after go-live from photos (LB-8): same box as the QC status, one live row ──
+function LiveStatus() {
+  const navigate = useNavigate();
+  const n = useCatalog((s) => s.listings.length);
+  return (
+    <div className="mt-0.5 p-6 bg-white" data-c2m="LB-8">
+      <div className="flex items-start gap-7.5">
+        <div className="flex-1 min-w-0 min-h-32.75 rounded bg-secondary-bg px-2 pbs-2.5 pbe-1.25">
+          <div className="px-2 mb-1.75 flex items-center">
+            <div className="flex-1 min-w-0">
+              <p className="m-0 p-0 font-normal font-body text-lg leading-5 text-secondary-text">{tEn('home.live.header')}</p>
+            </div>
+            <p className="m-0 p-0 font-normal font-body text-lg leading-5 text-secondary-text">{tEn('home.live.status')}</p>
+          </div>
+          <div className="w-full h-[0.0625rem] border-b border-solid border-b-secondary-border border-l-0" role="separator" aria-orientation="horizontal" />
+          <div className="px-0.75">
+            <QcRow className="mt-2" label={tEn('home.live.count', { n })} pill={<Pill tone="success">{tEn('home.live.pill')}</Pill>} />
+          </div>
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center mb-2.5">
+            <img src="/brand/msa/merlin/filled/success-green.svg" alt="" width="24" height="24" />
+            <h3 className="m-0 p-0 text-primary-text font-bold font-heading text-2xl leading-6 ml-3">{tEn('home.live.title')}</h3>
+          </div>
+          <p className="m-0 p-0 font-normal font-body text-lg leading-5 text-secondary-text mb-3">{tEn('home.live.body')}</p>
+          <Button onClick={() => navigate(paths.catalogUploadsSingle)}>{tEn('home.live.button')}</Button>
+        </div>
       </div>
     </div>
   );
@@ -163,11 +245,14 @@ function QcStatus() {
 const CONTENT: Record<HomeState, Partial<Record<number, () => ReactNode>>> = {
   start: { 1: () => <UploadChoice /> },
   qc: { 1: () => <UploadChoice />, 2: () => <QcStatus /> },
+  live: { 1: () => <UploadChoice />, 2: () => <LiveStatus /> },
 };
 
 export function HomeSteps({ state }: { state: HomeState }) {
   const status = STATUS[state];
-  const initial = status.indexOf('current') + 1;
+  // Open on the current step; when it has no captured content, on the latest step before it that has.
+  let initial = status.indexOf('current') + 1;
+  while (initial > 1 && !CONTENT[state][initial]) initial--;
   const [active, setActive] = useState(initial);
   const [shown, setShown] = useState(initial);
   const select = (n: number) => {

@@ -1,0 +1,128 @@
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { describe, expect, it } from 'vitest';
+import personas from '../../../data/personas.json';
+import { typicalForType } from '../../../engine/ui';
+import type { PersonaRecord } from '../../../store/onboarding';
+import {
+  BOT_FORM_FIELDS,
+  BOT_PRICE_FIELDS,
+  botPrefill,
+  botTypeFor,
+  countBotMandatory,
+  demoValues,
+  describeListing,
+  goLiveChecks,
+  MAKER_FIELDS,
+  MANDATORY_IDS,
+  packerFor,
+  PACK_POINT_PARTNER,
+} from './bot';
+import { missingFields } from './fields';
+
+const P = personas as unknown as Record<string, PersonaRecord>;
+const jasmeet = P.jasmeet!;
+
+describe('who fills what (doc pp.15-18, plan §7)', () => {
+  it('today’s Water Bottles form has 31 mandatory fields', () => {
+    expect(MANDATORY_IDS).toHaveLength(31);
+  });
+  it('the bot pre-fills 21 of them', () => {
+    expect(countBotMandatory([...BOT_FORM_FIELDS, ...BOT_PRICE_FIELDS])).toBe(21);
+  });
+  it('the maker types exactly 14 values: 10 of today’s mandatory fields + 4 new inputs', () => {
+    expect(MAKER_FIELDS).toHaveLength(14);
+    expect(MAKER_FIELDS.filter((id) => MANDATORY_IDS.includes(id))).toHaveLength(10);
+  });
+  it('bot + maker cover every mandatory field, with no overlap', () => {
+    const bot = new Set<string>([...BOT_FORM_FIELDS, ...BOT_PRICE_FIELDS]);
+    const maker = new Set<string>(MAKER_FIELDS);
+    expect(MANDATORY_IDS.every((id) => bot.has(id) !== maker.has(id))).toBe(true);
+  });
+});
+
+describe('botPrefill', () => {
+  const pf = botPrefill('steel-bottle-1l', jasmeet, 'selfShip', true);
+  it('fills the category and every bot form field, leaving only the maker’s', () => {
+    expect(pf.categoryPath.at(-1)).toBe('Water Bottles');
+    expect(missingFields(pf.values).sort()).toEqual(
+      ['addOns', 'breadth', 'capacity', 'height', 'leakProof', 'length', 'material', 'netWeight', 'productWeight'].sort(),
+    );
+  });
+  it('takes the manufacturer from the GST record and India as origin', () => {
+    expect(pf.values.manufacturerName).toBe(jasmeet.legalName);
+    expect(pf.values.manufacturerPincode).toBe(jasmeet.address.pincode);
+    expect(pf.values.countryOfOrigin).toBe('India');
+  });
+  it('suggests 150 units of inventory', () => {
+    expect(pf.price.inventory).toBe('150');
+  });
+  it('self-ship packer = manufacturer, box ticked', () => {
+    expect(pf.sameAsManufacturer).toBe(true);
+    expect(pf.values.packerName).toBe(jasmeet.legalName);
+  });
+});
+
+describe('packer rule', () => {
+  it('Pack Point, retail-packed → manufacturer', () => {
+    expect(packerFor('packPoint', true, jasmeet).values.packerName).toBe(jasmeet.legalName);
+  });
+  it('Pack Point, node packs → Pack Point partner', () => {
+    const p = packerFor('packPoint', false, jasmeet);
+    expect(p.sameAsManufacturer).toBe(false);
+    expect(p.values.packerName).toBe(PACK_POINT_PARTNER.name);
+  });
+});
+
+describe('describeListing', () => {
+  it('writes the description from the filled attributes only', () => {
+    const d = describeListing({ productName: 'Bottle 1 L', material: 'Stainless Steel', capacity: '1', volumeUnit: 'L', netQuantity: '1' });
+    expect(d).toBe('Bottle 1 L. Material: Stainless Steel. Capacity: 1 L. Pack of 1.');
+  });
+  it('is empty when nothing is filled', () => {
+    expect(describeListing({})).toBe('');
+  });
+});
+
+describe('demoValues', () => {
+  it('uses the doc / persona / typical values and leaves L, B, H, net weight, add-ons and MRP empty', () => {
+    const v = demoValues('steel-bottle-1l', jasmeet, typicalForType('steel-bottle-1l'));
+    expect(v).toEqual({ capacity: '1', material: 'Stainless Steel', productWeight: '320', leakProof: 'Yes', makingCost: '80', marginPct: '17.5', minRun: '100', leadTimeDays: '5' });
+  });
+  it('no bot data for personas without a product type', () => {
+    expect(botTypeFor(P.samar!.product?.type)).toBeNull();
+  });
+});
+
+describe('goLiveChecks', () => {
+  const ok = {
+    hasFrontImage: true,
+    missingFields: [],
+    missingPrices: [],
+    netQtyConfirmed: true,
+    inputs: { makingCost: '80', marginPct: '17.5', minRun: '100', leadTimeDays: '5' },
+    status: 'qualifies' as const,
+    inventory: 150,
+  };
+  it('all pass', () => expect(goLiveChecks(ok).all).toBe(true));
+  it('Net Quantity must be confirmed', () => expect(goLiveChecks({ ...ok, netQtyConfirmed: false }).details).toBe(false));
+  it('price must qualify', () => expect(goLiveChecks({ ...ok, status: 'aboveCap' }).price).toBe(false));
+  it('any lot above zero passes, even below the minimum run', () => expect(goLiveChecks({ ...ok, inventory: 20 }).lot).toBe(true));
+});
+
+// B guard for the bot screens: no catalog/home/uploads UI file may read the benchmark seed directly.
+describe('B stays out of the listing-bot UI', () => {
+  const ROOT = fileURLToPath(new URL('../', import.meta.url));
+  const files = (dir: string): string[] =>
+    readdirSync(dir).flatMap((n) => {
+      const p = join(dir, n);
+      return statSync(p).isDirectory() ? files(p) : /\.(ts|tsx)$/.test(n) && !n.endsWith('.test.ts') ? [p] : [];
+    });
+  // Built from parts so this test file itself doesn't match the engine-wide guard.
+  const pattern = new RegExp(['productTypes\\.json', 'engine/bench' + 'mark', 'bench' + 'markB'].join('|'));
+  it('no panel file imports productTypes.json or the benchmark', () => {
+    const offenders = files(ROOT).filter((f) => pattern.test(readFileSync(f, 'utf8')));
+    expect(offenders).toEqual([]);
+  });
+});

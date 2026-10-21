@@ -1,0 +1,57 @@
+{
+  "_note": "Listing-bot values (LB-3/LB-4). Only values the doc gives are here; anything the doc leaves blank stays blank. Numbers that the engine owns (price, take-home, lot, demand, typical minimum run / lead time) are NOT here: they come from src/engine/ui.ts.",
+  "types": {
+    "steel-bottle-1l": {
+      "_source": "doc pp.14-18: p.14 mock-up (title, colour, pack, material, capacity, weight) and the who-fills-what table",
+      "categoryPath": ["Home & Kitchen", "Kitchen & Dining", "Kitchen Storage", "Water Bottles"],
+      "_categoryPathSource": "doc p.14 'Recognised: 1 L steel water bottle · Kitchen Storage / Water Bottles'; full path as in src/data/categories.json",
+      "bot": {
+        "productName": "Stainless Steel Water Bottle 1 L, Leak-proof",
+        "genericName": "Water Bottle",
+        "type": "Sports Bottle",
+        "color": "Silver",
+        "size": "Free Size",
+        "netQuantity": "1",
+        "productUnit": "cm",
+        "volumeUnit": "L",
+        "productWeightUnit": "g",
+        "countryOfOrigin": "India"
+      },
+      "_botSource": {
+        "productName": "doc p.14 mock-up title",
+        "genericName": "doc table 'From category'; 'Water Bottle' is one of the placeholder options",
+        "type": "ASSUMPTION: the doc gives no Type value. 'Sports Bottle' is the first placeholder option and makes no claim the photo can't show (insulation, kids). Team to confirm.",
+        "color": "doc p.14 mock-up (Silver)",
+        "size": "doc table: Water Bottles' only size is Free Size",
+        "netQuantity": "doc p.14 mock-up 'Pack 1 unit'; the maker must confirm",
+        "units": "doc table: category defaults, shown as unit pickers (L for capacity, g for weights, cm for L/B/H)",
+        "countryOfOrigin": "doc table: India, from the GST address"
+      },
+      "demo": {
+        "capacity": "1",
+        "material": "Stainless Steel",
+        "productWeight": "320",
+        "leakProof": "Yes"
+      },
+      "_demoSource": "doc p.14 mock-up (Capacity 1 L, Material Stainless steel, Weight 320 g, 'Leak-proof' in the title). Making cost and margin come from the persona; minimum run and lead time from typicalForType(). Length, Breadth, Height, Net Weight, Add Ons and MRP have no value in the plan or doc, so the presenter types them."
+    }
+  },
+  "packPointPartner": {
+    "_source": "Fake record for the Packer rule (doc p.17): used only when a Pack Point maker's units do not arrive retail-packed.",
+    "name": "Rajkot Pack Point partner (demo)",
+    "address": "Unit 0, Demo Pack Point, Demo Industrial Estate, Rajkot, Gujarat",
+    "pincode": "360000"
+  },
+  "importerNotApplicable": {
+    "_source": "doc p.17: Importer marked not applicable when origin is India",
+    "name": "Not applicable (made in India)",
+    "address": "Not applicable (made in India)",
+    "pincode": "Not applicable"
+  },
+  "cleanedImages": {
+    "_source": "White-background cut-out of the team's demo photo, made offline with OpenCV GrabCut (see Phase 3 report). No runtime ML.",
+    "demo-1": "/brand/local/catalog/demo-product-bottle-cleaned.png"
+  },
+  "maxPhotos": 5,
+  "_maxPhotosSource": "doc LB-4: 3-5 phone photos"
+}

@@ -3,7 +3,10 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
-import { CATALOG_UPLOADS_DEFAULT, CATALOG_UPLOADS_SNAPSHOT, STATUS_TABS, type StatusTabId } from './catalog-uploads/data';
+import { dayLabel } from '../../engine/ui';
+import { useCatalog } from '../../store/catalog';
+import { botTypeFor } from './catalog/bot';
+import { CATALOG_UPLOADS_DEFAULT, CATALOG_UPLOADS_SNAPSHOT, listingRows, STATUS_TABS, type StatusTabId } from './catalog-uploads/data';
 import { AddCatalogActions, BannerCarousel, FilterBar, Header, MainTabs, NoResults, Overview, QcTip, SubTabs, UploadsTable } from './catalog-uploads/parts';
 
 export default function CatalogUploads() {
@@ -11,7 +14,19 @@ export default function CatalogUploads() {
   const kind = kindParam === 'single' ? 'single' : 'bulk';
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const data = params.get('state') === 'qc' ? CATALOG_UPLOADS_SNAPSHOT : CATALOG_UPLOADS_DEFAULT;
+  const seed = params.get('state') === 'qc' ? CATALOG_UPLOADS_SNAPSHOT : CATALOG_UPLOADS_DEFAULT;
+  // Catalogs that went live from photos (LB-8) join the Single Uploads list.
+  const listings = useCatalog((s) => s.listings);
+  const data = useMemo(
+    () => ({
+      bulk: seed.bulk,
+      single: [
+        ...listingRows(listings, (typeId) => botTypeFor(typeId as Parameters<typeof botTypeFor>[0])?.categoryPath.at(-1) ?? typeId, dayLabel).reverse(),
+        ...seed.single,
+      ],
+    }),
+    [seed, listings],
+  );
 
   const [status, setStatus] = useState<StatusTabId>('ALL');
   const [category, setCategory] = useState<string | null>(null);

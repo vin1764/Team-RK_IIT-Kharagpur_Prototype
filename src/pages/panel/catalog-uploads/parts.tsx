@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router';
 import { paths } from '../../../app/paths';
 import { notInPrototype } from '../../../components/Toast';
 import { cx } from '../../../components/ui';
+import { tEn } from '../../../i18n';
+import { PinkTag } from '../catalog/BulkTemplatePanel';
+import { BOT_QUERY } from '../catalog/bot';
 import type { QcStatus, UploadRow } from './data';
 
 const BTN =
@@ -116,6 +119,15 @@ export function AddCatalogActions() {
             </button>
             <button type="button" className={`${BTN_OUTLINE} h-9 px-4 text-xl`} onClick={() => navigate(paths.addSingleCategory)}>
               Add Single Catalog
+            </button>
+            <button
+              type="button"
+              data-c2m="LB-3"
+              className={`${BTN_OUTLINE} h-9 px-4 text-xl ml-4 gap-2`}
+              onClick={() => navigate(`${paths.addSingleCategory}?${BOT_QUERY}`)}
+            >
+              {tEn('uploads.photos.button')}
+              <PinkTag>{tEn('bot.new')}</PinkTag>
             </button>
           </div>
         </div>

@@ -55,3 +55,8 @@ export const STATUS_TABS = [
 ] as const;
 
 export type StatusTabId = (typeof STATUS_TABS)[number]['id'];
+
+/** Catalogs put live from "Create from photos" (LB-8), shown as Single Uploads rows. Ids are fake. */
+export function listingRows(listings: { id: string; typeId: string; createdDay: number }[], categoryOf: (typeId: string) => string, dateOf: (day: number) => string): UploadRow[] {
+  return listings.map((l) => ({ category: categoryOf(l.typeId), id: l.id, created: dateOf(l.createdDay), status: 'QC Pass' as const }));
+}
