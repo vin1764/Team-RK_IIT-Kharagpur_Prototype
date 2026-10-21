@@ -99,4 +99,4 @@ export const ASIDES: Record<'business' | 'pickup' | 'bank' | 'supplier', Aside> 
 };
 
 /** Meesho's public supplier support line, as printed on every onboarding step. */
-export const SUPPORT_PHONE = '080 - 61799601';
+export const SUPPORT_PHONE = '000 - 00000000';

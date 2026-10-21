@@ -180,7 +180,8 @@ export default function InfluencerMarketing() {
             ))}
           </div>
         </div>
-        <button type="button" className="fixed bottom-1/50 right-1/20 z-10 cursor-pointer p-0 border-0 bg-transparent" onClick={() => notInPrototype('Request Callback')}>
+        {/* bottom-1/50 in the snapshot; lifted by the room the Prototype controls pill takes (0 in compares). */}
+        <button type="button" className="fixed bottom-[calc(2%+var(--demo-controls-room))] right-1/20 z-10 cursor-pointer p-0 border-0 bg-transparent" onClick={() => notInPrototype('Request Callback')}>
           <img src="/brand/mimg/images/marketing/1725517041174.png" alt="callback-bg" className="block h-14 w-45" />
         </button>
       </div>

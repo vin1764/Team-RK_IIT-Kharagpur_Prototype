@@ -50,5 +50,5 @@ export function PanelShell() {
 
 /** Full-width pages without the sidebar (catalog flows). */
 export function BareShell({ children }: { children?: ReactNode }) {
-  return <div className="min-h-[calc(100vh-var(--concept-strip-h))] bg-secondary-bg">{children ?? <Outlet />}</div>;
+  return <div className="min-h-[calc(100vh-var(--concept-strip-h))] bg-secondary-bg max-[767px]:overflow-x-auto">{children ?? <Outlet />}</div>;
 }

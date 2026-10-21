@@ -16,7 +16,7 @@ export function SignupLogo() {
 export function SplitLayout({ left, right, leftFooter }: { left: ReactNode; right: ReactNode; leftFooter?: ReactNode }) {
   const { href } = useDemoLink();
   return (
-    <div className="relative flex min-h-[calc(100vh-var(--concept-strip-h))] overflow-hidden bg-[#F0F1FB] font-body text-primary-text">
+    <div className="relative flex min-h-[calc(100vh-var(--concept-strip-h))] overflow-hidden bg-[#F0F1FB] font-body text-primary-text max-[767px]:bg-secondary-bg">
       {/* left half background + dotted decoration */}
       <div className="absolute inset-y-0 left-0 w-[45%] bg-secondary-bg max-[767px]:hidden" aria-hidden />
 
@@ -28,7 +28,7 @@ export function SplitLayout({ left, right, leftFooter }: { left: ReactNode; righ
           <div className="flex w-[418px] flex-1 flex-col max-[1104px]:w-full max-[1104px]:max-w-[418px] max-[767px]:mx-auto">
             <SignupLogo />
             {left}
-            <div className="mt-auto">{leftFooter}</div>
+            <div className="mt-auto max-[767px]:pt-6">{leftFooter}</div>
           </div>
         </div>
         {/* right column */}
