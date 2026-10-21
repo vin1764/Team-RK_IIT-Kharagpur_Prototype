@@ -26,6 +26,8 @@ export const BOT_QUERY = 'mode=photos';
 
 export const PACK_POINT_PARTNER = data.packPointPartner;
 export const MAX_PHOTOS = data.maxPhotos;
+/** Images today's form asks for, beside its 31 mandatory fields (the 35-field comparison). */
+export const TODAY_IMAGE_SLOTS = data.todayImageSlots;
 
 /** The cleaned (white-background) version of a photo, if one was prepared offline. */
 export function cleanedFor(img: DraftImage | undefined): DraftImage | null {
@@ -212,4 +214,78 @@ export function goLiveChecks(x: GoLiveInput): GoLiveChecks {
   const price = x.status === 'qualifies';
   const lot = (x.inventory ?? 0) > 0;
   return { images, details, price, lot, all: images && details && price && lot };
+}
+
+// ── Three short screens (team redesign spec, Phase 3 review 2) ───────────────────────────────────────────────
+
+export type BotStep = 'product' | 'quantity' | 'price';
+export const BOT_STEPS: BotStep[] = ['product', 'quantity', 'price'];
+export const isBotStep = (s: string | null | undefined): s is BotStep => !!s && (BOT_STEPS as string[]).includes(s);
+
+/** Mandatory fields the bot fills (21) and values the maker adds (14): the "Meesho filled … · you add …" line. */
+export const BOT_FILLED_COUNT = countBotMandatory([...BOT_FORM_FIELDS, ...BOT_PRICE_FIELDS]);
+export const MAKER_COUNT = MAKER_FIELDS.length;
+
+/** The bot-filled mandatory fields, in today's form order (the collapsed "We filled … for you" card). */
+export const FILLED_CARD_IDS: string[] = MANDATORY_IDS.filter((id) => (BOT_FORM_FIELDS as readonly string[]).includes(id) || (BOT_PRICE_FIELDS as readonly string[]).includes(id));
+
+/** Bot values set on a later screen: shown in the card once known, else "set on Quantity / Price". */
+export const SET_ON: Record<string, BotStep> = { inventory: 'quantity', meeshoPrice: 'price' };
+
+/**
+ * The questions on each screen, one inner array per row on screen (at most 5 rows). Ids are field ids; `inventory`
+ * (First lot) is the bot's suggested lot, editable on Quantity. Every maker field sits on exactly one screen.
+ */
+export const STEP_ROWS: Record<BotStep, string[][]> = {
+  product: [['material', 'capacity'], ['leakProof'], ['addOns'], ['length', 'breadth', 'height'], ['netWeight', 'productWeight']],
+  quantity: [['minRun', 'leadTimeDays'], ['inventory']],
+  price: [['makingCost', 'marginPct'], ['mrp']],
+};
+const MAKER_SET = new Set<string>(MAKER_FIELDS);
+/** Maker fields asked on a screen. */
+export const makerFieldsOn = (step: BotStep) => STEP_ROWS[step].flat().filter((id) => MAKER_SET.has(id));
+
+/** Number fields of the short screens; these allow decimals. */
+export const DECIMAL_IDS = new Set(['capacity', 'length', 'breadth', 'height', 'makingCost', 'marginPct']);
+export const NUMBER_IDS = new Set([...DECIMAL_IDS, 'netWeight', 'productWeight', 'minRun', 'leadTimeDays', 'mrp', 'inventory', 'meeshoPrice']);
+/** Keeps digits (and one dot where decimals are allowed). */
+export const cleanNumberInput = (id: string, v: string) =>
+  DECIMAL_IDS.has(id) ? v.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1') : v.replace(/[^\d]/g, '');
+
+/** "What comes with it?" chips. None clears the others; picking another clears None. Stored comma-joined. */
+export const ADD_ON_CHIPS = ['Lid', 'Strap', 'Cover', 'None'] as const;
+export const addOnsOf = (v: string | undefined) => (v ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+export function toggleAddOn(current: string | undefined, chip: string): string {
+  const on = addOnsOf(current);
+  if (on.includes(chip)) return on.filter((c) => c !== chip).join(', ');
+  if (chip === 'None') return 'None';
+  return [...on.filter((c) => c !== 'None'), chip].sort((a, b) => ADD_ON_CHIPS.indexOf(a as never) - ADD_ON_CHIPS.indexOf(b as never)).join(', ');
+}
+
+export interface StepState {
+  values: Record<string, string>;
+  price: Partial<PriceRow>;
+  netQtyConfirmed: boolean;
+}
+
+const pos = (v: string | undefined) => (numberIn(v) ?? 0) > 0;
+const has = (v: string | undefined) => !!(v ?? '').trim();
+
+/** A screen's maker fields are done (Next is enabled). Price also needs the list price to exist. */
+export function stepDone(step: BotStep, s: StepState): boolean {
+  const v = s.values;
+  if (step === 'product')
+    return (
+      ['material', 'leakProof', 'addOns', 'volumeUnit', 'productUnit', 'productWeightUnit', 'netQuantity'].every((k) => has(v[k])) &&
+      ['capacity', 'length', 'breadth', 'height', 'netWeight', 'productWeight'].every((k) => pos(v[k])) &&
+      s.netQtyConfirmed
+    );
+  if (step === 'quantity') return pos(v.minRun) && pos(v.leadTimeDays) && pos(s.price.inventory);
+  const margin = numberIn(v.marginPct);
+  return pos(v.makingCost) && margin !== null && margin >= 0 && pos(s.price.mrp);
+}
+
+/** The furthest screen the maker may open: every screen before it is done. */
+export function reachableStep(s: StepState): BotStep {
+  return BOT_STEPS.find((step) => !stepDone(step, s)) ?? 'price';
 }

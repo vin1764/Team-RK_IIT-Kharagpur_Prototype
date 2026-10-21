@@ -1,7 +1,8 @@
 // Add Single Catalog · step 2 "Add Product Details" (no snapshot: built from
 // catalog-product-details-1/2/3.png, catalog-other-attributes.png, catalog-price-table*.png).
-// ?mode=photos = "Create from photos" (LB-4 … LB-10): bot pre-fill per plan §7, demand card, cost inputs,
-// take-home and status in the price table, and the go-live checklist instead of "Submit Catalog".
+// ?mode=photos = "Create from photos" (LB-4 … LB-10) runs as three short screens (catalog/bot/BotFlow.tsx).
+// ?mode=photos&view=form = "Switch to full form": this page on the same draft, with the bot pre-fill per plan §7,
+// demand card, cost inputs, take-home and status in the price table, and the go-live checklist instead of "Submit Catalog".
 import { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
@@ -38,6 +39,7 @@ import { Checkbox } from './catalog/FormBits';
 import { filesToImages, useFilePicker } from './catalog/ImageTiles';
 import { missingPrices, suggestWdrp } from './catalog/pricing';
 import { PriceTable, type BotPriceView } from './catalog/PriceTable';
+import BotFlow, { botStepUrl } from './catalog/bot/BotFlow';
 
 /** Bot inputs accept a number only (margin may have decimals). */
 const cleanNumber = (id: string, v: string) => (id === 'marginPct' || id === 'makingCost' ? v.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1') : v.replace(/[^\d]/g, ''));
@@ -85,6 +87,13 @@ function ProductStrip({ selected, onSelect }: { selected: string; onSelect: (id:
 }
 
 export default function AddSingleDetails() {
+  const [params] = useSearchParams();
+  const persona = usePersona();
+  const short = params.get('mode') === 'photos' && params.get('view') !== 'form' && !!botTypeFor(persona.product?.type);
+  return short ? <BotFlow /> : <DetailsPage />;
+}
+
+function DetailsPage() {
   const navigate = useNavigate();
   const d = useDraft();
   const [params] = useSearchParams();
@@ -359,7 +368,7 @@ export default function AddSingleDetails() {
     if (mrp && size) d.setPrice(size, { mrp });
   };
 
-  const backToStep1 = bot ? `${paths.addSingleCategory}?${BOT_QUERY}` : paths.addSingleCategory;
+  const backToStep1 = bot ? botStepUrl('product') : paths.addSingleCategory;
   const front = d.images.find((i) => i.id === selected) ?? d.images[0];
 
   return (
@@ -372,6 +381,7 @@ export default function AddSingleDetails() {
         </div>
         {bot && (
           <BotStrip
+            onShort={() => navigate(botStepUrl('product'))}
             active={tab}
             onTab={(x) => {
               setTab(x);

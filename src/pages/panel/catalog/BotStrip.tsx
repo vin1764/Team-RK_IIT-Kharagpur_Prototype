@@ -31,7 +31,7 @@ export function LangToggle() {
   );
 }
 
-export function BotStrip({ active, done = [], onTab }: { active: BotTab; done?: BotTab[]; onTab?: (t: BotTab) => void }) {
+export function BotStrip({ active, done = [], onTab, onShort }: { active: BotTab; done?: BotTab[]; onTab?: (t: BotTab) => void; onShort?: () => void }) {
   const t = useT();
   return (
     <div className="mt-2.5 flex items-center justify-between bg-white pr-4 pl-5" data-c2m="LB-4" data-testid="botStrip">
@@ -66,7 +66,14 @@ export function BotStrip({ active, done = [], onTab }: { active: BotTab; done?: 
           })}
         </div>
       </div>
-      <LangToggle />
+      <div className="flex items-center gap-4">
+        {onShort && (
+          <button type="button" onClick={onShort} className="cursor-pointer border-0 bg-transparent p-0 font-button text-lg leading-5 text-brand-primary-text" data-testid="backToShort">
+            {t('flow.short')}
+          </button>
+        )}
+        <LangToggle />
+      </div>
     </div>
   );
 }

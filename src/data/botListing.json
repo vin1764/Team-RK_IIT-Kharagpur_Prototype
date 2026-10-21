@@ -67,5 +67,7 @@
     "demo-1": "/brand/local/catalog/demo-product-bottle-cleaned.png"
   },
   "maxPhotos": 5,
-  "_maxPhotosSource": "doc LB-4: 3-5 phone photos"
+  "_maxPhotosSource": "doc LB-4: 3-5 phone photos",
+  "todayImageSlots": 4,
+  "_todayImageSlotsSource": "team, Phase 3 redesign spec: today's Add Single Catalog asks for 31 mandatory fields + 4 images = 35 (the 'See today's form' comparison)"
 }

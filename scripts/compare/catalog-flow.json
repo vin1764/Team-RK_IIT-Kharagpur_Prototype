@@ -305,7 +305,7 @@
   },
   {
     "name": "bot-product",
-    "_note": "C2M LB-4 (no reference exists): rendered next to the plain category screenshot so the bot screen can be judged against the panel around it",
+    "_note": "C2M LB-4 short screen 1 (Product, after Fill demo values + Pack of 1 Yes; no reference exists) beside the plain category screenshot",
     "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category?mode=photos&persona=jasmeet&day=3&lang=en",
     "ref": "catalog-select-category-water-bottles.png",
     "width": 1518,
@@ -316,7 +316,11 @@
         "exact": true
       },
       {
-        "click": "Confirm category"
+        "click": "Fill demo values"
+      },
+      {
+        "click": "Yes",
+        "exact": true
       },
       {
         "wait": 300
@@ -325,7 +329,7 @@
   },
   {
     "name": "bot-details",
-    "_note": "C2M LB-4 pre-filled form beside the plain details screenshot",
+    "_note": "C2M LB-4 'Switch to full form': today's details form on the bot draft, beside the plain details screenshot",
     "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category?mode=photos&persona=jasmeet&day=3&lang=en",
     "ref": "catalog-product-details-1.png",
     "oursCss": ":root{--concept-strip-h:0px} #mainWrapper{margin-left:62px!important}",
@@ -335,10 +339,7 @@
         "exact": true
       },
       {
-        "click": "Confirm category"
-      },
-      {
-        "click": "Continue to details"
+        "click": "Switch to full form"
       },
       {
         "wait": 400
@@ -347,7 +348,7 @@
   },
   {
     "name": "bot-price",
-    "_note": "C2M LB-5/LB-6/LB-8 price table + checklist after Fill demo values, beside the plain price-table screenshot",
+    "_note": "C2M LB-6/LB-8 short screen 3 (Price) after Fill demo values, beside the plain price-table screenshot",
     "route": "/panel/v3/new/cataloging/demo/catalogs/single/select-category?mode=photos&persona=jasmeet&day=3&lang=en",
     "ref": "catalog-price-table.png",
     "oursCss": ":root{--concept-strip-h:0px}",
@@ -357,19 +358,27 @@
         "exact": true
       },
       {
-        "click": "Confirm category"
-      },
-      {
-        "click": "Continue to details"
-      },
-      {
         "click": "Fill demo values"
+      },
+      {
+        "click": "Yes",
+        "exact": true
+      },
+      {
+        "click": "Next",
+        "exact": true
+      },
+      {
+        "wait": 200
+      },
+      {
+        "click": "Next",
+        "exact": true
       },
       {
         "wait": 400
       }
     ],
-    "scroll": 900,
     "width": 1536,
     "height": 864
   }

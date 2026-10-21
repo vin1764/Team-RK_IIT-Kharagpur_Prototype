@@ -6,7 +6,17 @@ import personas from '../../../data/personas.json';
 import { typicalForType } from '../../../engine/ui';
 import type { PersonaRecord } from '../../../store/onboarding';
 import {
+  BOT_FILLED_COUNT,
   BOT_FORM_FIELDS,
+  BOT_STEPS,
+  FILLED_CARD_IDS,
+  MAKER_COUNT,
+  makerFieldsOn,
+  reachableStep,
+  STEP_ROWS,
+  stepDone,
+  toggleAddOn,
+  TODAY_IMAGE_SLOTS,
   BOT_PRICE_FIELDS,
   botPrefill,
   botTypeFor,
@@ -127,6 +137,73 @@ describe('goLiveChecks', () => {
   it('Net Quantity must be confirmed', () => expect(goLiveChecks({ ...ok, netQtyConfirmed: false }).details).toBe(false));
   it('price must qualify', () => expect(goLiveChecks({ ...ok, status: 'aboveCap' }).price).toBe(false));
   it('any lot above zero passes, even below the minimum run', () => expect(goLiveChecks({ ...ok, inventory: 20 }).lot).toBe(true));
+});
+
+describe('three short screens (redesign)', () => {
+  const pf = botPrefill('steel-bottle-1l', jasmeet, 'selfShip', true);
+  const demo = demoValues('steel-bottle-1l', jasmeet, typicalForType('steel-bottle-1l'));
+  const { mrp, ...demoForm } = demo;
+  const filledState = (netQtyConfirmed: boolean) => ({ values: { ...pf.values, ...demoForm }, price: { ...pf.price, mrp }, netQtyConfirmed });
+
+  it('the progress line still reads 21 filled · 14 to add, and the card lists the 21', () => {
+    expect(BOT_FILLED_COUNT).toBe(21);
+    expect(MAKER_COUNT).toBe(14);
+    expect(FILLED_CARD_IDS).toHaveLength(21);
+    expect(FILLED_CARD_IDS).toContain('netQuantity');
+    expect(FILLED_CARD_IDS).toEqual(expect.arrayContaining(['meeshoPrice', 'inventory']));
+  });
+  it('today’s form = 31 mandatory fields + 4 images = 35', () => {
+    expect(MANDATORY_IDS.length + TODAY_IMAGE_SLOTS).toBe(35);
+  });
+  it('each screen has at most 5 maker rows', () => {
+    for (const s of BOT_STEPS) expect(STEP_ROWS[s].length).toBeLessThanOrEqual(5);
+    expect(STEP_ROWS.product).toHaveLength(5);
+  });
+  it('every maker field is asked on exactly one screen', () => {
+    const asked = BOT_STEPS.flatMap(makerFieldsOn);
+    expect(asked.sort()).toEqual([...MAKER_FIELDS].sort());
+    expect(makerFieldsOn('product')).toHaveLength(9);
+    expect(makerFieldsOn('quantity')).toEqual(['minRun', 'leadTimeDays']);
+    expect(makerFieldsOn('price')).toEqual(['makingCost', 'marginPct', 'mrp']);
+  });
+  it('right after pre-fill no screen is done and only Product opens', () => {
+    const st = { values: pf.values, price: pf.price, netQtyConfirmed: false };
+    for (const s of BOT_STEPS) expect(stepDone(s, st)).toBe(false);
+    expect(reachableStep(st)).toBe('product');
+  });
+  it('Fill demo values completes all 14; only “Pack of 1 — Yes” is left', () => {
+    expect(stepDone('product', filledState(false))).toBe(false);
+    expect(stepDone('quantity', filledState(false))).toBe(true);
+    expect(stepDone('price', filledState(false))).toBe(true);
+    expect(stepDone('product', filledState(true))).toBe(true);
+    expect(reachableStep(filledState(true))).toBe('price');
+  });
+  it('Product needs every one of its answers', () => {
+    for (const id of makerFieldsOn('product')) {
+      const st = filledState(true);
+      expect(stepDone('product', { ...st, values: { ...st.values, [id]: '' } })).toBe(false);
+    }
+  });
+  it('Quantity needs minimum run, lead time and a lot above zero', () => {
+    const st = filledState(true);
+    expect(stepDone('quantity', { ...st, values: { ...st.values, minRun: '' } })).toBe(false);
+    expect(stepDone('quantity', { ...st, values: { ...st.values, leadTimeDays: '0' } })).toBe(false);
+    expect(stepDone('quantity', { ...st, price: { ...st.price, inventory: '' } })).toBe(false);
+    expect(stepDone('quantity', { ...st, price: { ...st.price, inventory: '20' } })).toBe(true);
+  });
+  it('Price needs making cost, a margin ≥ 0 and the MRP', () => {
+    const st = filledState(true);
+    expect(stepDone('price', { ...st, values: { ...st.values, makingCost: '' } })).toBe(false);
+    expect(stepDone('price', { ...st, values: { ...st.values, marginPct: '0' } })).toBe(true);
+    expect(stepDone('price', { ...st, price: { ...st.price, mrp: '' } })).toBe(false);
+  });
+  it('add-on chips: multi-select, None clears the others', () => {
+    expect(toggleAddOn('', 'Lid')).toBe('Lid');
+    expect(toggleAddOn('Lid', 'Strap')).toBe('Lid, Strap');
+    expect(toggleAddOn('Lid, Strap', 'None')).toBe('None');
+    expect(toggleAddOn('None', 'Cover')).toBe('Cover');
+    expect(toggleAddOn('Lid, Cover', 'Lid')).toBe('Cover');
+  });
 });
 
 // B guard for the bot screens: no catalog/home/uploads UI file may read the benchmark seed directly.

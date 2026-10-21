@@ -36,7 +36,7 @@ interface DraftState {
   botFilled: string[];
   /** Bot mode: the 1-5 photos of the one product (cover first), before they become the product's images. */
   photos: DraftImage[];
-  /** Bot mode: the maker confirmed the recognised category breadcrumb. */
+  /** Bot mode: the bot's pre-fill has run for these photos (the recognised category is accepted). */
   categoryConfirmed: boolean;
   /** Bot mode: the maker confirmed the pre-filled Net Quantity (go-live needs it). */
   netQtyConfirmed: boolean;
@@ -44,13 +44,15 @@ interface DraftState {
   retailPacked: boolean;
   /** Bot mode: initial state of "Same as Manufacturer Details" (set by the packer rule). */
   sameAsManufacturer: boolean;
+  /** Bot mode: the short screen the maker is on (Product → Quantity → Price), kept across reloads. */
+  botStep: 'product' | 'quantity' | 'price';
   setCategoryPath: (p: string[]) => void;
   setImages: (imgs: DraftImage[]) => void;
   setValue: (id: string, v: string) => void;
   setValues: (v: Record<string, string>) => void;
   setPrice: (size: string, row: Partial<PriceRow>) => void;
   setExtraImages: (productId: string, imgs: DraftImage[]) => void;
-  setBot: (patch: Partial<Pick<DraftState, 'botFilled' | 'photos' | 'categoryConfirmed' | 'netQtyConfirmed' | 'retailPacked' | 'sameAsManufacturer'>>) => void;
+  setBot: (patch: Partial<Pick<DraftState, 'botFilled' | 'photos' | 'categoryConfirmed' | 'netQtyConfirmed' | 'retailPacked' | 'sameAsManufacturer' | 'botStep'>>) => void;
   /** The maker edited a bot-filled field: it is no longer marked "Filled by bot". */
   unmarkBot: (id: string) => void;
   reset: () => void;
@@ -68,6 +70,7 @@ const INITIAL = {
   netQtyConfirmed: false,
   retailPacked: true,
   sameAsManufacturer: false,
+  botStep: 'product' as 'product' | 'quantity' | 'price',
 };
 
 let seq = 0;
@@ -116,6 +119,7 @@ export const useDraft = create<DraftState>()(
         netQtyConfirmed: s.netQtyConfirmed,
         retailPacked: s.retailPacked,
         sameAsManufacturer: s.sameAsManufacturer,
+        botStep: s.botStep,
       }),
     },
   ),
