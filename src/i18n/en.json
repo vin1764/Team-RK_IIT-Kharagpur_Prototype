@@ -130,8 +130,6 @@
   "stack.gst": "GST ({rate}%, in price) ₹{v}",
   "stack.breakEven": "break-even ₹{v}",
   "stack.waiting": "Enter making cost and margin: the bot fills packaging, shipping + fixed fee, returns and GST, then the Meesho Price.",
-  "lot.hint": "Lot: {units} suggested · ≈ {weeks} weeks of sales (≈ ₹{atCost} at cost) · any number",
-  "lot.hintNoCost": "Lot: {units} suggested · ≈ {weeks} weeks of sales · any number",
   "lot.belowMinRun": "{units} units is below your minimum run of {minRun}. You can still go live with this number.",
   "check.title": "Go-live checklist",
   "check.images": "Images",
@@ -186,8 +184,6 @@
   "qty.lot": "First lot",
   "unit.units": "units",
   "unit.days": "days",
-  "lot.suggest": "suggested ≈ {weeks} weeks of sales (≈ ₹{atCost} at cost) · any number",
-  "lot.suggestNoCost": "suggested ≈ {weeks} weeks of sales · any number",
   "lot.suggestUnits": "suggested {units}",
   "price.yours": "Your numbers",
   "price.makingCost": "Making cost",
@@ -364,5 +360,10 @@
   "pp.lot.size": "Size",
   "pp.lot.uk": "UK {size}",
   "pp.lot.pairs": "Pairs",
-  "pp.lot.storage": "Storage is free until {date}, then ₹{rate} per pair per day: ₹{perDay} a day for {n} pairs."
+  "pp.lot.storage": "Storage is free until {date}, then ₹{rate} per pair per day: ₹{perDay} a day for {n} pairs.",
+  "lot.basis": "≈ {weeks} weeks of sales ({low}–{high} orders a day × 14 days)",
+  "lot.basisMinRun": "your minimum run ({weeks} weeks of sales would be {twoWeeks})",
+  "lot.atCost": "≈ ₹{atCost} at cost",
+  "lot.any": "any number",
+  "lot.hintHead": "Lot: {units} suggested"
 }

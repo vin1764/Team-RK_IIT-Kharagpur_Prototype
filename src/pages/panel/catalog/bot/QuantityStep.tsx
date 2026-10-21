@@ -4,7 +4,7 @@ import { Banner } from '../../../../components/ui';
 import type { ProductTypeId } from '../../../../engine/ui';
 import { fmt, useT } from '../../../../i18n';
 import { numberIn } from '../bot';
-import { DemandCard } from '../BotPrice';
+import { DemandCard, lotBasis } from '../BotPrice';
 import { NumberBox, QField, QRow, StepCard } from './Bits';
 import type { BotModel } from './useBotModel';
 
@@ -35,10 +35,7 @@ export function QuantityStep({ m, type }: { m: BotModel; type: ProductTypeId }) 
             <NumberBox value={m.row.inventory} onChange={(x) => m.setPrice({ inventory: x })} suffix={t('unit.units')} width="w-40" ariaLabel={t('qty.lot')} testId="in-inventory" />
             {lot && (
               <p className="m-0 min-w-0 flex-1 font-body text-lg leading-5 text-secondary-text" data-testid="lotLine">
-                {inventory !== lot.units && <span className="font-button">{t('lot.suggestUnits', { units: fmt(lot.units) })} · </span>}
-                {m.makingCost
-                  ? t('lot.suggest', { units: fmt(lot.units), weeks: fmt(lot.days / 7), atCost: fmt(lot.atCost) })
-                  : t('lot.suggestNoCost', { units: fmt(lot.units), weeks: fmt(lot.days / 7) })}
+                <span className={inventory !== lot.units ? 'font-button' : undefined}>{t('lot.suggestUnits', { units: fmt(lot.units) })}</span> · {lotBasis(t, lot, m.makingCost)}
               </p>
             )}
           </div>

@@ -16,11 +16,20 @@ export interface LikelyShare {
 }
 
 export interface SuggestedLot {
+  /** likely orders a day for this listing (from the share of the open gap) */
+  perDay: Range;
   /** run-rate = midpoint of the rounded daily range */
   dailyRunRate: number;
   days: 14;
-  /** run-rate × 14, rounded to nearest 10. No cap and no floor (Q19): the maker's own minimum run only triggers a soft warning in the UI. */
+  /** run-rate × 14, rounded to nearest 10: two weeks of expected sales (deck) */
+  twoWeeks: number;
+  /**
+   * The suggestion: two weeks of sales, raised to the maker's own minimum run when that is larger (the same
+   * "never below minimum run" rule as the restock batch). No cap; the maker may still commit any number (Q19).
+   */
   units: number;
+  /** true when the minimum run, not two weeks of sales, set the suggestion */
+  raisedToMinRun: boolean;
   atCost: number;
 }
 
@@ -92,12 +101,14 @@ export function likelyOrdersPerDay(type: ProductTypeId): Range {
   return direct ? { low: direct.low, high: direct.high } : likelyShare(type).ordersPerDay;
 }
 
-/** First lot ≈ 14 days of expected sales, in units. */
-export function suggestedLot(type: ProductTypeId, makingCost: number): SuggestedLot {
-  const day = likelyOrdersPerDay(type);
-  const dailyRunRate = (day.low + day.high) / 2;
-  const units = Math.round((dailyRunRate * 14) / 10) * 10;
-  return { dailyRunRate, days: 14, units, atCost: units * makingCost };
+/** First lot ≈ 14 days of expected sales, in units, never below the maker's minimum run (when given). */
+export function suggestedLot(type: ProductTypeId, makingCost: number, minRun?: number | null): SuggestedLot {
+  const perDay = likelyOrdersPerDay(type);
+  const dailyRunRate = (perDay.low + perDay.high) / 2;
+  const twoWeeks = Math.round((dailyRunRate * 14) / 10) * 10;
+  const raisedToMinRun = !!minRun && minRun > twoWeeks;
+  const units = raisedToMinRun ? minRun! : twoWeeks;
+  return { perDay, dailyRunRate, days: 14, twoWeeks, units, raisedToMinRun, atCost: units * makingCost };
 }
 
 /** Typical minimum run and lead time for a type — placeholder hints only (the maker enters their own). */

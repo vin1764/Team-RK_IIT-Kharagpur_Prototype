@@ -51,15 +51,24 @@ export function StackLine({ stack, gst }: { stack: CostStack | null; gst: number
 }
 
 /** Lot hint (Q19: any number, no cap) + soft warning when below the maker's own minimum run. */
+/**
+ * Why the lot is what it is: "≈ 2 weeks of sales (9–13 orders a day × 14 days)", or, when the maker's minimum run is
+ * larger, "= your minimum run (2 weeks of sales would be 150)"; then the ₹ at cost and "any number" (Q19).
+ */
+export function lotBasis(t: ReturnType<typeof useT>, lot: SuggestedLotView, makingCost: number | null): string {
+  const weeks = fmt(lot.days / 7);
+  const basis = lot.raisedToMinRun
+    ? t('lot.basisMinRun', { weeks, twoWeeks: fmt(lot.twoWeeks) })
+    : t('lot.basis', { weeks, low: fmt(lot.perDay.low), high: fmt(lot.perDay.high) });
+  return [basis, makingCost ? t('lot.atCost', { atCost: fmt(lot.units * makingCost) }) : null, t('lot.any')].filter(Boolean).join(' · ');
+}
+
 export function LotLine({ lot, makingCost, inventory, minRun }: { lot: SuggestedLotView; makingCost: number | null; inventory: number | null; minRun: number | null }) {
   const t = useT();
-  const weeks = fmt(lot.days / 7);
   return (
     <div data-c2m="LB-5" data-c2m-id="LB-5">
       <p className="m-0 mt-1.5 font-body text-base leading-4 text-secondary-text" data-testid="lotLine">
-        {makingCost
-          ? t('lot.hint', { units: fmt(lot.units), weeks, atCost: fmt(lot.units * makingCost) })
-          : t('lot.hintNoCost', { units: fmt(lot.units), weeks })}
+        {t('lot.hintHead', { units: fmt(lot.units) })} · {lotBasis(t, lot, makingCost)}
       </p>
       {inventory !== null && inventory > 0 && minRun !== null && inventory < minRun && (
         <Banner tone="info" className="mt-3">

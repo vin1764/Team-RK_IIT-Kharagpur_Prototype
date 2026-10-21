@@ -153,7 +153,7 @@ The day drives what each page shows (empty states before go-live, launch view du
 | `pricePosition(price, comparables)` | `low` / `mid` / `high` third | ₹147 → low; ₹165 → mid |
 | `demandForType(type)` | gap range, price band, confidence, committed | 300–450/wk, ₹150–170, High, 600 committed |
 | `likelyShare(type)` | share + orders/day range | ~20% → 9–13/day |
-| `suggestedLot(type)` | units ≈ 14 days of expected sales | 150 (≈ ₹12,000 at cost) |
+| `suggestedLot(type, cost, minRun)` | units ≈ 14 days of expected sales (likely share × open gap), never below the maker's own minimum run (team, after Phase 7; same rule as the restock batch). Lead time sets when to start making, not how many | 150 (≈ ₹12,000 at cost); min run 200 → 200 |
 | `restock(runRate, onHand, lead, safety)` | cover, reorder point, next batch (21 days, rounded to nearest 10), dates | 11/day, 73 → 6.6 days, reorder 77, next 230 (≈ ₹18,400), start 21 Nov, land 26 Nov |
 | `verdict(sku)` | Make more / Keep / Fix / Stop / Switch | bottle Make more, lunch box Fix (coach card), sipper Stop (team, Phase 5) |
 | `switchSuggestions(line)` | open-gap products for the same line | 1.5 L casserole ~200/wk High; 500 ml flask ~120/wk Medium |

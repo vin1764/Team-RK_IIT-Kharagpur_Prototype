@@ -37,7 +37,7 @@ export function useBotModel() {
   const price = numberIn(row.meeshoPrice);
   const status = stack && type && price ? checkListingPrice(type, price, stack.breakEven) : null;
   const inventory = numberIn(row.inventory);
-  const lot = type ? suggestedLot(type, makingCost ?? 0) : null;
+  const lot = type ? suggestedLot(type, makingCost ?? 0, numberIn(values.minRun)) : null;
   const typical = type ? typicalForType(type) : null;
 
   // Bot-owned cells follow the inputs until the maker edits them (same rule as the full form).
@@ -48,13 +48,15 @@ export function useBotModel() {
       const v = stack ? String(stack.listPrice) : '';
       if (row.meeshoPrice !== v) patch.meeshoPrice = v;
     }
+    // The first lot is the bot's suggestion (it follows the maker's minimum run) until the maker types a number.
+    if (filled.has('inventory') && lot && row.inventory !== String(lot.units)) patch.inventory = String(lot.units);
     const p = Number(patch.meeshoPrice ?? row.meeshoPrice);
     if (filled.has('wdrp')) {
       const v = p ? String(suggestWdrp(p)) : '';
       if (row.wdrp !== v) patch.wdrp = v;
     }
     if (Object.keys(patch).length) d.setPrice(size, patch);
-  }, [size, stack?.listPrice, row.meeshoPrice, row.wdrp, d.botFilled]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [size, stack?.listPrice, row.meeshoPrice, row.wdrp, row.inventory, lot?.units, d.botFilled]); // eslint-disable-line react-hooks/exhaustive-deps
   // The description is regenerated from the filled attributes while it is still the bot's.
   useEffect(() => {
     if (!filled.has('description')) return;

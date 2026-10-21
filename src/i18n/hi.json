@@ -119,8 +119,6 @@
   "stack.gst": "GST ({rate}%, कीमत में शामिल) ₹{v}",
   "stack.breakEven": "बिना घाटे की कीमत ₹{v}",
   "stack.waiting": "बनाने की लागत और मुनाफ़ा लिखें: बॉट पैकेजिंग, शिपिंग + फ़िक्स्ड फ़ीस, रिटर्न और GST भरेगा, फिर Meesho कीमत।",
-  "lot.hint": "लॉट: {units} सुझाया गया · लगभग {weeks} हफ़्ते की बिक्री (लागत पर लगभग ₹{atCost}) · कोई भी संख्या चलेगी",
-  "lot.hintNoCost": "लॉट: {units} सुझाया गया · लगभग {weeks} हफ़्ते की बिक्री · कोई भी संख्या चलेगी",
   "lot.belowMinRun": "{units} यूनिट आपके कम से कम बैच {minRun} से कम है। फिर भी आप इसी संख्या के साथ लाइव हो सकते हैं।",
   "check.title": "लाइव होने से पहले की चेकलिस्ट",
   "check.images": "फ़ोटो",
@@ -169,8 +167,6 @@
   "qty.lot": "पहला लॉट",
   "unit.units": "यूनिट",
   "unit.days": "दिन",
-  "lot.suggest": "सुझाव: लगभग {weeks} हफ़्ते की बिक्री (लागत पर लगभग ₹{atCost}) · कोई भी संख्या चलेगी",
-  "lot.suggestNoCost": "सुझाव: लगभग {weeks} हफ़्ते की बिक्री · कोई भी संख्या चलेगी",
   "lot.suggestUnits": "सुझाया गया {units}",
   "price.yours": "आपके आंकड़े",
   "price.makingCost": "बनाने की लागत",
@@ -347,5 +343,10 @@
   "pp.lot.size": "साइज़",
   "pp.lot.uk": "UK {size}",
   "pp.lot.pairs": "जोड़ी",
-  "pp.lot.storage": "स्टोरेज {date} तक मुफ़्त, फिर ₹{rate} प्रति जोड़ी प्रति दिन: {n} जोड़ी के लिए ₹{perDay} रोज़।"
+  "pp.lot.storage": "स्टोरेज {date} तक मुफ़्त, फिर ₹{rate} प्रति जोड़ी प्रति दिन: {n} जोड़ी के लिए ₹{perDay} रोज़।",
+  "lot.basis": "लगभग {weeks} हफ़्ते की बिक्री (रोज़ {low}–{high} ऑर्डर × 14 दिन)",
+  "lot.basisMinRun": "आपका कम से कम बैच ({weeks} हफ़्ते की बिक्री {twoWeeks} होती)",
+  "lot.atCost": "लागत पर लगभग ₹{atCost}",
+  "lot.any": "कोई भी संख्या चलेगी",
+  "lot.hintHead": "लॉट: {units} सुझाया गया"
 }

@@ -31,7 +31,7 @@ describe('slots — 1 L steel bottle', () => {
 // plan §8 suggestedLot · §8b Suggested lot
 describe('suggestedLot — 1 L steel bottle at ₹80', () => {
   it('~11 a day × 14 = 154 → 150 units, ₹12,000 at cost', () => {
-    expect(suggestedLot('steel-bottle-1l', 80)).toEqual({ dailyRunRate: 11, days: 14, units: 150, atCost: 12000 });
+    expect(suggestedLot('steel-bottle-1l', 80)).toEqual({ perDay: { low: 9, high: 13 }, dailyRunRate: 11, days: 14, twoWeeks: 150, units: 150, raisedToMinRun: false, atCost: 12000 });
   });
 });
 
@@ -43,5 +43,20 @@ describe('switchSuggestions — steel kitchenware line', () => {
       ['1.5 L steel casserole', 200, 'High'],
       ['500 ml steel flask', 120, 'Medium'],
     ]);
+  });
+});
+
+// Team, after Phase 7: the suggestion follows the maker's own minimum run (never below it), share drives the rest
+describe('suggestedLot — follows the maker', () => {
+  it('min run 100 → still 150 (two weeks of sales is larger)', () => {
+    expect(suggestedLot('steel-bottle-1l', 80, 100)).toMatchObject({ twoWeeks: 150, units: 150, raisedToMinRun: false, atCost: 12000 });
+  });
+  it('min run 200 → 200, ₹16,000 at cost', () => {
+    expect(suggestedLot('steel-bottle-1l', 80, 200)).toMatchObject({ twoWeeks: 150, units: 200, raisedToMinRun: true, atCost: 16000 });
+  });
+  it('no min run entered → two weeks of sales', () => expect(suggestedLot('steel-bottle-1l', 80, null).units).toBe(150));
+  it('share sets the run-rate: 9–13 a day for the bottle, 5–8 for Samar → 150 vs 90', () => {
+    expect(suggestedLot('steel-bottle-1l', 80).perDay).toEqual({ low: 9, high: 13 });
+    expect(suggestedLot('sneakers-slip-on-men', 200).units).toBe(90);
   });
 });
