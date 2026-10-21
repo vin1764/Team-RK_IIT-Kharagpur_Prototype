@@ -3,7 +3,15 @@
 @import './tokens.css';
 
 @layer base {
-  :root { --concept-strip-h: 20px; }
+  :root {
+    --concept-strip-h: 20px;
+    /* Scroll room under the page so the fixed "Prototype controls" pill never covers the last line. */
+    --demo-controls-room: 3.5rem;
+  }
+  /* Phones: the concept strip wraps to two lines rather than being cut. */
+  @media (width < 560px) {
+    :root { --concept-strip-h: 32px; }
+  }
   /* Every panel page sets this on all elements (--letter-spacing-free). */
   * { letter-spacing: -0.1px; }
   body {
@@ -20,8 +28,10 @@
 @media (width >= 1280px) {
   .sidebar { display: block; }
   .sidebar-content-desktop { width: 14rem; }
-  .layout-main-dt-responsive[data-show-sidebar='true'] { width: calc(100vw - 14rem); }
+  /* The snapshot uses 100vw; 100% is the same without a classic scrollbar and avoids a
+     scrollbar-wide horizontal scroll on Windows laptops. */
+  .layout-main-dt-responsive[data-show-sidebar='true'] { width: calc(100% - 14rem); }
 }
 @media (width < 1280px) {
-  .layout-main-dt-responsive { width: 100vw; }
+  .layout-main-dt-responsive { width: 100%; }
 }

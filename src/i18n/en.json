@@ -41,7 +41,7 @@
   "bot.shot.inHand": "in hand",
   "bot.shot.inUse": "in use",
   "bot.continue": "Continue to details",
-  "bot.noType": "No matched product type for this persona — the listing bot needs a product type with demand data",
+  "bot.noType": "The listing bot isn't set up for your product type yet",
   "bot.noType.more": "Continue with the usual steps below.",
   "bot.summary": "Filled from your photos: the bot pre-filled {bot} of {total} mandatory fields. You enter {you} values, marked “you enter”. Every field stays editable.",
   "bot.fillDemo": "Fill demo values",

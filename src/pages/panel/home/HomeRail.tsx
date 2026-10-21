@@ -82,7 +82,7 @@ export function HomeRail() {
   // C2M (GL-3): from D28, "This week's one fix" tops the rail once the maker is live.
   const g = useGrowth();
   return (
-    <div className="w-[calc(33.333333%-0.375rem)] flex flex-col gap-2.5">
+    <div className="w-[calc(33.333333%-0.375rem)] flex flex-col gap-2.5 max-[767px]:w-full">
       {g && <HomeCoachCard g={g} />}
       <AccountSetupCard />
       <LearnGrowCard />

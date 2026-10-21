@@ -266,7 +266,7 @@ export function HomeSteps({ state }: { state: HomeState }) {
     if (content[n]) setShown(n);
   };
   return (
-    <div className="w-2/3 h-full rounded-lg overflow-hidden mr-3 overflow-visible">
+    <div className="w-2/3 h-full rounded-lg overflow-hidden mr-3 overflow-visible max-[767px]:w-full max-[767px]:mr-0">
       <div className="flex bg-white" role="tablist">
         {STEPS.map((label, i) => (
           <StepTab key={label} n={i + 1} label={label} status={status[i]!} active={active === i + 1} onClick={() => select(i + 1)} />

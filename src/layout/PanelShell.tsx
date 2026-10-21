@@ -39,7 +39,7 @@ export function PanelShell() {
         </div>
       )}
 
-      <main data-show-sidebar="true" className="grow min-w-0 layout-main-dt-responsive pt-12 xl:pt-0" key={pathname}>
+      <main data-show-sidebar="true" className="grow min-w-0 layout-main-dt-responsive pt-12 xl:pt-0 pb-[var(--demo-controls-room)] max-[1023px]:overflow-x-auto" key={pathname}>
         <div className="relative max-w-304 min-h-full mx-auto" id="mainWrapper">
           <Outlet />
         </div>

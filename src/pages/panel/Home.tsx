@@ -38,7 +38,7 @@ export function HomeView({ state }: { state: HomeState }) {
   return (
     <>
       <WelcomeHeader />
-      <div className="flex justify-between m-3">
+      <div className="flex justify-between m-3 max-[767px]:flex-col max-[767px]:gap-3">
         <HomeSteps key={state} state={state} />
         <HomeRail />
       </div>

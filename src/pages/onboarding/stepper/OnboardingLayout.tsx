@@ -60,7 +60,7 @@ function Stepper({ current }: { current: StepIndex }) {
             <span className={cx('flex size-6 items-center justify-center', isCurrent ? 'text-brand-primary-text' : 'text-secondary-text')}>
               {done ? <img src="/brand/msa/merlin/filled/success-green.svg" alt="" width="24" height="24" className="size-6" /> : s.icon(isCurrent)}
             </span>
-            <span className="mt-[9px] whitespace-nowrap">{s.label}</span>
+            <span className="mt-[9px] whitespace-nowrap max-[479px]:whitespace-normal max-[479px]:text-center">{s.label}</span>
             {isCurrent && <span className="absolute inset-x-0 -bottom-px h-0.5 bg-brand-primary-bg" />}
           </button>
         );
@@ -104,8 +104,8 @@ function Faq({ items }: { items: Aside['faqs'] }) {
 function AsideColumn({ aside }: { aside: Aside }) {
   return (
     <div data-onb-right className="min-w-0 flex-1 bg-[#F0F1FB]">
-      <aside className="sticky top-[var(--concept-strip-h)] h-[calc(100vh-var(--concept-strip-h)+var(--onb-shift,0px))] overflow-hidden pl-[63px] pr-6">
-        <div className="relative h-full w-full max-w-[560px] pt-[118px]">
+      <aside className="sticky top-[var(--concept-strip-h)] h-[calc(100vh-var(--concept-strip-h)+var(--onb-shift,0px))] overflow-hidden pl-[63px] pr-6 max-[1023px]:static max-[1023px]:h-auto max-[1023px]:px-4 max-[1023px]:pb-[var(--demo-controls-room)]">
+        <div className="relative h-full w-full max-w-[560px] pt-[118px] max-[1023px]:mx-auto max-[1023px]:pt-8 max-[1023px]:pb-[100px]">
           <div className="flex items-center gap-4 border-0 border-b border-solid border-tertiary-border pb-9">
             <img src={aside.icon} alt="" width="40" height="40" className="size-10 shrink-0 rounded-full" />
             <p className="m-0 text-xl leading-5 font-heading text-primary-text">{aside.headline}</p>
@@ -152,9 +152,9 @@ export function OnboardingLayout({
   return (
     <div
       data-onb-root
-      className="flex min-h-[calc(100vh-var(--concept-strip-h)+var(--onb-shift,0px))] items-stretch -mt-[var(--onb-shift,0px)]"
+      className="flex min-h-[calc(100vh-var(--concept-strip-h)+var(--onb-shift,0px))] items-stretch -mt-[var(--onb-shift,0px)] max-[1023px]:flex-col"
     >
-      <div data-onb-left className="relative flex w-[45%] shrink-0 justify-end bg-secondary-bg pr-[58px] pl-4">
+      <div data-onb-left className="relative flex w-[45%] shrink-0 justify-end bg-secondary-bg pr-[58px] pl-4 max-[1023px]:w-full max-[1023px]:justify-center max-[1023px]:pr-4 max-[1023px]:min-h-[calc(100vh-var(--concept-strip-h))]">
         <div className="flex w-[418px] max-w-full flex-col">
           <img src={`${IMG}/meesho-wordmark.png`} alt="meesho" width="98" height="25" className="mt-[11px] h-[25px] w-[98px] self-start" />
           <Stepper current={step} />

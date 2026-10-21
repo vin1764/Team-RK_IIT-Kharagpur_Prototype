@@ -1,5 +1,5 @@
 {
-  "_review": "DRAFT Hindi by Claude (Phase 3), for the team to review before the demo. Simple, everyday Hindi for a small manufacturer; ₹ amounts, units (L, g, cm), numbers and the product name stay as numerals/English, as Meesho does. Field labels that Meesho stores in English (option values like Yes / Navy Blue / Free Size) are not translated; when speaking, Navy Blue is नेवी ब्लू. Any key missing here falls back to en.json. The three-screen redesign keys (flow.*, filled.*, netQty.*, q.*, qty.*, price.*, how.*, compare.*) are draft too. Phase 5 growth-loop keys (gl.*: verdict chips, restock card, what to make instead, SKU Health Coach) are draft too. Phase 6 keys (pi.*: Manage Pricing price position and price-hold; pp.*: Warehouse Cluster Pack Point fee card, cost stack, clusters and lot inbound; gl.perf.product) are draft too. Phase 7: pp.selfShipNow, pp.switch, pp.switch.toast, pp.opening.note, pp.stack.selfShipNow (Pack Point offer for self-shipping makers) are draft too.",
+  "_review": "DRAFT Hindi by Claude (Phase 3), for the team to review before the demo. Simple, everyday Hindi for a small manufacturer; ₹ amounts, units (L, g, cm), numbers and the product name stay as numerals/English, as Meesho does. Field labels that Meesho stores in English (option values like Yes / Navy Blue / Free Size) are not translated; when speaking, Navy Blue is नेवी ब्लू. Any key missing here falls back to en.json. The three-screen redesign keys (flow.*, filled.*, netQty.*, q.*, qty.*, price.*, how.*, compare.*) are draft too. Phase 5 growth-loop keys (gl.*: verdict chips, restock card, what to make instead, SKU Health Coach) are draft too. Phase 6 keys (pi.*: Manage Pricing price position and price-hold; pp.*: Warehouse Cluster Pack Point fee card, cost stack, clusters and lot inbound; gl.perf.product) are draft too. Phase 7: pp.selfShipNow, pp.switch, pp.switch.toast, pp.opening.note, pp.stack.selfShipNow (Pack Point offer for self-shipping makers) and the reworded bot.noType are draft too.",
   "bot.new": "नया",
   "bot.title": "फ़ोटो से कैटलॉग बनाएं",
   "bot.tab.product": "प्रोडक्ट",
@@ -30,7 +30,7 @@
   "bot.shot.inHand": "हाथ में",
   "bot.shot.inUse": "इस्तेमाल में",
   "bot.continue": "जानकारी भरने के लिए आगे बढ़ें",
-  "bot.noType": "इस पर्सोना के लिए कोई प्रोडक्ट टाइप नहीं मिला — लिस्टिंग बॉट को ऐसा प्रोडक्ट टाइप चाहिए जिसका डिमांड डेटा हो",
+  "bot.noType": "लिस्टिंग बॉट अभी आपके प्रोडक्ट टाइप के लिए तैयार नहीं है",
   "bot.noType.more": "नीचे दिए गए सामान्य स्टेप से आगे बढ़ें।",
   "bot.summary": "आपकी फ़ोटो से भरा गया: बॉट ने {total} ज़रूरी फ़ील्ड में से {bot} पहले से भर दिए। आपको {you} चीज़ें भरनी हैं, जिन पर “आप भरें” लिखा है। हर फ़ील्ड बदला जा सकता है।",
   "bot.fillDemo": "डेमो वैल्यू भरें",
