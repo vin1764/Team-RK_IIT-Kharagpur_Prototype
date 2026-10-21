@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import { ToastHost } from '../components/Toast';
 import { ConceptStrip } from '../layout/ConceptStrip';
+import { ScreenErrorBoundary } from '../layout/ScreenErrorBoundary';
 import { DemoControls, DemoUrlSync } from '../layout/DemoControls';
 import { BareShell, PanelShell } from '../layout/PanelShell';
 import AddSingleCategory from '../pages/panel/AddSingleCategory';
@@ -49,6 +50,7 @@ export function App() {
       <OffShowcase>
         <DemoUrlSync />
       </OffShowcase>
+      <ScreenErrorBoundary>
       <Routes>
         <Route element={<PanelShell />}>
           <Route path={`${P}/growth/${SID}/home`} element={<Home />} />
@@ -95,6 +97,7 @@ export function App() {
         />
         <Route path="*" element={<Navigate to={paths.home} replace />} />
       </Routes>
+      </ScreenErrorBoundary>
       <OffShowcase>
         <DemoControls />
       </OffShowcase>

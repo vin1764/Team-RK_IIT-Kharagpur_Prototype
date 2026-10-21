@@ -82,6 +82,42 @@ export const DEMO_IMAGE: DraftImage = { id: 'demo-1', url: '/brand/local/catalog
 
 type DraftData = typeof INITIAL;
 
+/**
+ * A draft saved by an earlier version of the prototype (or edited by hand) is checked field by field when it is
+ * loaded: anything of the wrong shape falls back to the empty value, so an old draft can never crash a screen.
+ */
+export function sanitizeDraft(raw: unknown): Partial<DraftData> {
+  if (!raw || typeof raw !== 'object') return {};
+  const r = raw as Record<string, unknown>;
+  const isObj = (x: unknown): x is Record<string, unknown> => !!x && typeof x === 'object' && !Array.isArray(x);
+  const strings = (x: unknown) => (Array.isArray(x) ? x.filter((v): v is string => typeof v === 'string') : []);
+  const imgs = (x: unknown): DraftImage[] =>
+    Array.isArray(x)
+      ? x.filter((i): i is DraftImage => isObj(i) && typeof i.id === 'string' && typeof i.url === 'string' && !i.url.startsWith('blob:')).map((i) => ({ id: i.id, url: i.url, name: typeof i.name === 'string' ? i.name : '' }))
+      : [];
+  const textMap = (x: unknown) => (isObj(x) ? Object.fromEntries(Object.entries(x).filter(([, v]) => typeof v === 'string')) as Record<string, string> : {});
+  const prices = isObj(r.prices)
+    ? Object.fromEntries(Object.entries(r.prices).filter(([, v]) => isObj(v)).map(([k, v]) => [k, { ...EMPTY_PRICE_ROW, ...textMap(v) }]))
+    : {};
+  const extra = isObj(r.extraImages) ? Object.fromEntries(Object.entries(r.extraImages).map(([k, v]) => [k, imgs(v)])) : {};
+  const bool = (x: unknown, d: boolean) => (typeof x === 'boolean' ? x : d);
+  const step = r.botStep === 'quantity' || r.botStep === 'price' ? r.botStep : 'product';
+  return {
+    categoryPath: strings(r.categoryPath),
+    images: imgs(r.images),
+    values: textMap(r.values),
+    prices,
+    extraImages: extra,
+    botFilled: strings(r.botFilled),
+    photos: imgs(r.photos),
+    categoryConfirmed: bool(r.categoryConfirmed, INITIAL.categoryConfirmed),
+    netQtyConfirmed: bool(r.netQtyConfirmed, INITIAL.netQtyConfirmed),
+    retailPacked: bool(r.retailPacked, INITIAL.retailPacked),
+    sameAsManufacturer: bool(r.sameAsManufacturer, INITIAL.sameAsManufacturer),
+    botStep: step,
+  };
+}
+
 /** Picked files are object URLs that don't survive a reload, so only bundled images are persisted. */
 const keepable = (imgs: DraftImage[]) => imgs.filter((i) => !i.url.startsWith('blob:'));
 
@@ -105,8 +141,11 @@ export const useDraft = create<DraftState>()(
     }),
     {
       name: DRAFT_STORAGE_KEY,
-      version: 1,
+      version: 2,
       storage: safeJSONStorage<DraftData>(),
+      // v1 drafts (and anything malformed) are kept only where each field has the right shape.
+      migrate: (persisted) => sanitizeDraft(persisted) as DraftData,
+      merge: (persisted, current) => ({ ...current, ...sanitizeDraft(persisted) }),
       partialize: (s): DraftData => ({
         categoryPath: s.categoryPath,
         images: keepable(s.images),
