@@ -34,8 +34,10 @@ export interface SwitchSuggestion {
 interface TypeRecord {
   name: string;
   line: string;
-  demand: Demand & { _source?: string };
+  demand: (Demand & { _source?: string }) | null;
   likelyShare?: { share: number };
+  /** seeded directly when the team gave orders a day rather than a share of a gap */
+  likelyOrdersPerDay?: Range;
   typical?: { minRun: number; leadTimeDays: number };
 }
 
@@ -53,7 +55,9 @@ export function productTypeName(type: ProductTypeId): string {
 
 /** Demand teaser, order book and bot Quantity screen (FO-4, LW-3, LB-5). */
 export function demandForType(type: ProductTypeId): Demand {
-  const { gapPerWeek, priceBand, confidence, committedUnits } = record(type).demand;
+  const d = record(type).demand;
+  if (!d) throw new MissingPlanValue(`demand gap for ${type}`);
+  const { gapPerWeek, priceBand, confidence, committedUnits } = d;
   return { gapPerWeek, priceBand, confidence, committedUnits };
 }
 
@@ -62,6 +66,7 @@ export function likelyShare(type: ProductTypeId): LikelyShare {
   const t = record(type);
   if (!t.likelyShare) throw new MissingPlanValue(`likely share for ${type}`);
   const { share } = t.likelyShare;
+  if (!t.demand) throw new MissingPlanValue(`demand gap for ${type}`);
   const g = t.demand.gapPerWeek;
   const ordersPerWeek = { low: g.low * share, high: g.high * share };
   return {
@@ -73,7 +78,7 @@ export function likelyShare(type: ProductTypeId): LikelyShare {
 
 /** Launch slots = open gap ÷ expected orders per listing (low ÷ low; must equal high ÷ high). */
 export function slots(type: ProductTypeId): number {
-  const g = record(type).demand.gapPerWeek;
+  const g = demandForType(type).gapPerWeek;
   const w = likelyShare(type).ordersPerWeek;
   const low = g.low / w.low;
   const high = g.high / w.high;
@@ -81,9 +86,15 @@ export function slots(type: ProductTypeId): number {
   return Math.floor(low);
 }
 
+/** Likely orders a day for one new listing: seeded directly (team), else from the share of the gap. */
+export function likelyOrdersPerDay(type: ProductTypeId): Range {
+  const direct = record(type).likelyOrdersPerDay;
+  return direct ? { low: direct.low, high: direct.high } : likelyShare(type).ordersPerDay;
+}
+
 /** First lot ≈ 14 days of expected sales, in units. */
 export function suggestedLot(type: ProductTypeId, makingCost: number): SuggestedLot {
-  const day = likelyShare(type).ordersPerDay;
+  const day = likelyOrdersPerDay(type);
   const dailyRunRate = (day.low + day.high) / 2;
   const units = Math.round((dailyRunRate * 14) / 10) * 10;
   return { dailyRunRate, days: 14, units, atCost: units * makingCost };
@@ -98,10 +109,10 @@ export function typicalForType(type: ProductTypeId): { minRun: number; leadTimeD
 export function switchSuggestions(line: string, alreadyMaking: ProductTypeId | ProductTypeId[]): SwitchSuggestion[] {
   const skip = new Set<string>(Array.isArray(alreadyMaking) ? alreadyMaking : [alreadyMaking]);
   return (Object.keys(TYPES) as ProductTypeId[])
-    .filter((k) => !k.startsWith('_') && TYPES[k]!.line === line && !skip.has(k))
+    .filter((k) => !k.startsWith('_') && TYPES[k]!.line === line && !!TYPES[k]!.demand && !skip.has(k))
     .map((k) => {
       const t = TYPES[k]!;
-      return { type: k, name: t.name, gapPerWeek: t.demand.gapPerWeek, confidence: t.demand.confidence };
+      return { type: k, name: t.name, gapPerWeek: t.demand!.gapPerWeek, confidence: t.demand!.confidence };
     })
     .sort((a, b) => b.gapPerWeek.low - a.gapPerWeek.low);
 }

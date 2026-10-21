@@ -6,7 +6,7 @@ import { benchmarkB, priceCheck, pricePosition, type Comparable, type PricePosit
 import { MissingPlanValue, type ProductTypeId } from './types';
 
 export { costStack, gstAt, takeHomeAt, typeFees, type CostStack, type Fees } from './costStack';
-export { demandForType, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions, typicalForType } from './demand';
+export { demandForType, likelyOrdersPerDay, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions, typicalForType } from './demand';
 export { restock, type Restock } from './restock';
 export { launchProgress, trailingRunRate, type LaunchProgress } from './launch';
 export { verdict, type Verdict, type SkuHealth } from './verdict';
@@ -24,6 +24,7 @@ export {
   type MakerRecords,
 } from './eligibility';
 export { packPointFee } from './packPoint';
+export { lotInbound, sizeSplit, type LotInbound, type LotSeed } from './lot';
 export { dayToDate, dayLabel, formatDate } from './calendar';
 export type { PricePosition, PriceStatus, ProductTypeId };
 

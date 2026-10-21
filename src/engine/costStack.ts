@@ -31,7 +31,7 @@ export interface CostStack {
   listPrice: number;
 }
 
-export type TypeFees = { packaging: number; shippingAndFixed: number; returnsBuffer: number; gstRate: number };
+export type TypeFees = { packaging: number | null; shippingAndFixed: number; returnsBuffer: number; gstRate: number };
 
 const round2 = (x: number) => Math.round(x * 100) / 100;
 /** ceil that ignores floating-point dust (140 × 1.05 = 147.00000000000003 → 147). */
@@ -63,8 +63,9 @@ export function costStack(
   makersPooled = 40,
 ): CostStack {
   const t = typeFees(type);
+  if (mode === 'selfShip' && t.packaging === null) throw new MissingPlanValue(`self-ship packaging for ${type}`);
   const handling =
-    mode === 'selfShip' ? { packaging: t.packaging } : { packPointFee: packPointFee(makersPooled).feePerDeliveredOrder };
+    mode === 'selfShip' ? { packaging: t.packaging as number } : { packPointFee: packPointFee(makersPooled).feePerDeliveredOrder };
   const costBeforeGst =
     makingCost + (handling.packaging ?? 0) + (handling.packPointFee ?? 0) + t.shippingAndFixed + t.returnsBuffer;
   const breakEven = ceilRupee(costBeforeGst * (1 + t.gstRate));

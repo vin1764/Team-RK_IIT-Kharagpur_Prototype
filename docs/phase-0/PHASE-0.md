@@ -236,7 +236,7 @@ The plan wins in each case below, as instructed; these are flagged so the deck o
 | Q1 | ✅ answered | D0 = 24 Oct 2026, so the launch is live 14–18 Nov and restock starts D31 = 24 Nov. |
 | Q2 | Phase 4–5 | How many units does Jasmeet commit at D5? 84 on hand at D31 doesn't fit 150 (see §6.5). |
 | Q3 | ✅ answered | Pack Point drops packaging ₹6 and adds the ₹30 fee (GST included, at 40 makers); ₹32 / ₹8 / ₹7 unchanged. Bottle break-even ₹157, which is why Jasmeet self-ships. Storage shows only on the Warehouse page. Samar's footwear is the Pack Point demo. |
-| Q4 | Phase 6 | Samar's footwear: product, making cost, margin and pickup city (Rajkot?). The plan only fixes his lot (150 received, every unit weighed). |
+| Q4 | Phase 6 | **Answered:** men's casual slip-on sneakers (Men Fashion → Footwear → Casual Shoes), Agra (live Pack Point, 40 makers), making ₹200, margin 15% → ₹30; break-even ₹305, list ₹336 (GST ₹16); hidden B ₹370; 5–8 orders a day → lot 90 pairs (≈ ₹18,000), sizes 6–10 = 10/20/25/20/15; D50 inbound 90/90, ~650 g ±5%, storage free 30 days then ₹0.29/unit/day. |
 | Q5 | Phase 5 | **Answered:** chip + one-line reason, no numbers. Lunch box is "Fix" (coach card); sipper is "Stop", reason "Sell-through low for 2+ weeks". |
 | Q6 | Phase 3 | OK to define "Make more" as "restock should start today", and "start by" as today plus whole days until on-hand reaches the reorder point? |
 | Q7 | ✅ answered | N = 30: a listing needs at least 30 delivered orders to count toward B. |

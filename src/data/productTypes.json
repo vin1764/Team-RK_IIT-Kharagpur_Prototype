@@ -105,5 +105,53 @@
       "confidence": "Medium",
       "committedUnits": 0
     }
+  },
+  "sneakers-slip-on-men": {
+    "name": "Men's casual slip-on sneakers",
+    "_source": "team Q4 (Phase 6 answers): Samar's product. Never invent other values.",
+    "line": "footwear",
+    "unit": "pair",
+    "categoryPath": [
+      "Men Fashion",
+      "Footwear",
+      "Casual Shoes"
+    ],
+    "fees": {
+      "_source": "team Q4: Pack Point stack — fee ₹30 (Agra, 40 makers) + shipping and fixed ₹40 + returns buffer ₹20; GST 5% included in the price (footwear up to ₹2,500). Self-ship packaging was not given.",
+      "packaging": null,
+      "shippingAndFixed": 40,
+      "returnsBuffer": 20,
+      "gstRate": 0.05
+    },
+    "demand": null,
+    "likelyOrdersPerDay": {
+      "_source": "team Q4: likely orders 5–8 a day",
+      "low": 5,
+      "high": 8
+    },
+    "benchmark": {
+      "_source": "team Q4: hidden B for this type is ₹370 (never shown). Seeded as one comparable group at ₹370 with the minimum 30 delivered orders so benchmarkB() returns it; the order spread was not given.",
+      "minDeliveredOrders": 30,
+      "comparables": [
+        {
+          "id": "S",
+          "price": {
+            "from": 370,
+            "to": 370
+          },
+          "deliveredOrders": 30,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        }
+      ]
+    },
+    "sizeSplit": {
+      "_source": "team Q4: first lot of 90 pairs by UK size",
+      "6": 10,
+      "7": 20,
+      "8": 25,
+      "9": 20,
+      "10": 15
+    }
   }
 }

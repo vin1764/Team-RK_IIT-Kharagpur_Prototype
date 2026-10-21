@@ -181,6 +181,10 @@ The day drives what each page shows (empty states before go-live, launch view du
 | Coach (lunch box, last 7 days at D28) | 38 ÷ 2,400 clicks per view; 3 ÷ 38 conversion | 1.6% vs 4.2%; 7.9% |
 | Business Dashboard (bottle, last 7 days at D28) | 770 ÷ 19,250 = 4.0%; 77 ÷ 770 = 10.0%; 77 × ₹147 = ₹11,319; 1 ÷ 77 = 1.3% returns | every tile filled |
 | Pack Point fee | (monthly cost ÷ orders) × 1.18 ÷ (1 − 0.178): ₹1,26,444 ÷ 6,000 = ₹21.07 → ₹24.87 → ₹30.3 | ₹30 at 40 makers (₹44 at 20, ₹26 at 60, ₹23 at 80) |
+| Samar (sneakers, Agra Pack Point; team Q4) | 200 making + 30 fee + 40 shipping and fixed + 20 returns = 290; × 1.05 = 304.5; take-home 15% × 200 = 30; (290 + 30) × 1.05 | break-even ₹305 · list ₹336 · GST ₹16 |
+| Samar vs B (hidden ₹370) | 370 − 336 = 34 = 9.2% of B | qualifies; drop ₹34 |
+| Samar first lot | (5 + 8) ÷ 2 = 6.5 a day × 14 = 91 → 90; sizes 6–10 = 10/20/25/20/15 | 90 pairs, ₹18,000 at cost |
+| Samar D50 inbound (Agra) | 90 expected, 90 received; 650 g ± 5%; storage free 30 days, then 90 × ₹0.29 | 617.5–682.5 g · free to D80 · ₹26.10 a day after |
 
 ---
 
@@ -229,7 +233,7 @@ Demo controls, concept label, responsive check, README (what's real vs simulated
 5. D23 · Live launch: 11 orders today, expected 9–13, 33 of 150 sold; listing score building.
 6. D28 · Inventory: "Start 230 by 21 Nov"; coach: "change the main photo"; what to make instead.
 7. D40 · Raises price to ₹165 → "Doesn't qualify · slot removed", position Mid.
-8. D50 · Samar: Warehouse → Cluster Pack Point → sends first lot, every unit weighed.
+8. D50 · Samar (Agra): Warehouse → Cluster Pack Point → first lot of 90 pairs in, every pair weighed.
 
 ---
 

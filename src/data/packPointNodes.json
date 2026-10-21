@@ -1,7 +1,20 @@
 {
-  "_source": "doc PP-4 mock-up: Rajkot live; Moradabad opening at 40 makers",
+  "_source": "doc PP-4 mock-up: Rajkot live; Moradabad opening at 40 makers. Agra live at 40 makers: team Q4.",
   "nodes": [
-    { "city": "Rajkot", "status": "live", "makersPooled": 40 },
-    { "city": "Moradabad", "status": "opening", "opensAtMakers": 40 }
+    {
+      "city": "Agra",
+      "status": "live",
+      "makersPooled": 40
+    },
+    {
+      "city": "Rajkot",
+      "status": "live",
+      "makersPooled": 40
+    },
+    {
+      "city": "Moradabad",
+      "status": "opening",
+      "opensAtMakers": 40
+    }
   ]
 }

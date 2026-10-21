@@ -62,5 +62,12 @@ describe('growthAt', () => {
     expect((d.returnRate * 100).toFixed(1)).toBe('1.3');
   });
 
+  it('Home and restock agree: 77 sold by end of D27, 73 left', () => expect([g.soldBefore, g.onHand]).toEqual([77, 73]));
+
+  it('week daily orders D21–D27 = 12, 10, 11, 11, 12, 11, 10 (14–20 Nov)', () => {
+    expect(g.weekDaily.map((d) => d.orders)).toEqual([12, 10, 11, 11, 12, 11, 10]);
+    expect([g.weekDaily[0]!.date, g.weekDaily[6]!.date]).toEqual(['2026-11-14', '2026-11-20']);
+  });
+
   it('after D28 the D28 week stays', () => expect(growthAt(35, jasmeet)).toEqual(g));
 });

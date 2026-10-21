@@ -1,6 +1,6 @@
 // Shared engine types. Rupees are whole numbers unless a field says "exact".
 
-export type ProductTypeId = 'steel-bottle-1l' | 'steel-casserole-1-5l' | 'steel-flask-500ml';
+export type ProductTypeId = 'steel-bottle-1l' | 'steel-casserole-1-5l' | 'steel-flask-500ml' | 'sneakers-slip-on-men';
 export type Confidence = 'High' | 'Medium' | 'Low';
 export type FulfilmentMode = 'selfShip' | 'packPoint';
 

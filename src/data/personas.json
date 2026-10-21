@@ -10,13 +10,33 @@
     "gstin": "24AAAAA0000A1Z0",
     "legalName": "SHARMA STEELWARE (DEMO)",
     "pan": "AAAAA0000A",
-    "address": { "building": "Plot 0", "street": "Demo Industrial Estate", "landmark": "-", "pincode": "360000", "city": "Rajkot", "state": "Gujarat" },
-    "gstNatureOfBusiness": ["Factory / Manufacturing"],
-    "udyam": { "number": "UDYAM-GJ-00-0000001", "majorActivity": "Manufacturing" },
+    "address": {
+      "building": "Plot 0",
+      "street": "Demo Industrial Estate",
+      "landmark": "-",
+      "pincode": "360000",
+      "city": "Rajkot",
+      "state": "Gujarat"
+    },
+    "gstNatureOfBusiness": [
+      "Factory / Manufacturing"
+    ],
+    "udyam": {
+      "number": "UDYAM-GJ-00-0000001",
+      "majorActivity": "Manufacturing"
+    },
     "businessType": "I have a manufacturing unit and sell directly to customers online",
     "fulfilment": "selfShip",
-    "product": { "type": "steel-bottle-1l", "makingCost": 80, "marginPct": 17.5, "_source": "plan §8b / doc personas" },
-    "bank": { "account": "000000000001", "ifsc": "DEMO0000001" }
+    "product": {
+      "type": "steel-bottle-1l",
+      "makingCost": 80,
+      "marginPct": 17.5,
+      "_source": "plan §8b / doc personas"
+    },
+    "bank": {
+      "account": "000000000001",
+      "ifsc": "DEMO0000001"
+    }
   },
   "samar": {
     "name": "Samar Biswas",
@@ -25,17 +45,37 @@
     "phone": "+91 90000 00002",
     "email": "samar@example.com",
     "taxId": "GSTIN",
-    "gstin": "24BBBBB0000B1Z0",
+    "gstin": "09BBBBB0000B1Z0",
     "legalName": "BISWAS FOOTWEAR (DEMO)",
     "pan": "BBBBB0000B",
-    "address": { "building": "Shed 0", "street": "Demo Footwear Cluster", "landmark": "-", "pincode": "360000", "city": "Rajkot", "state": "Gujarat" },
-    "_cityNote": "Rajkot is the only live Pack Point node in the doc (Moradabad opens at 40 makers), so Samar is placed there.",
-    "gstNatureOfBusiness": ["Factory / Manufacturing"],
-    "udyam": { "number": "UDYAM-GJ-00-0000002", "majorActivity": "Manufacturing" },
+    "address": {
+      "building": "Shed 0",
+      "street": "Demo Footwear Cluster",
+      "landmark": "-",
+      "pincode": "280000",
+      "city": "Agra",
+      "state": "Uttar Pradesh"
+    },
+    "_cityNote": "team Q4: Samar is in Agra, a live Pack Point (40 makers). Address and identifiers stay fake.",
+    "gstNatureOfBusiness": [
+      "Factory / Manufacturing"
+    ],
+    "udyam": {
+      "number": "UDYAM-UP-00-0000002",
+      "majorActivity": "Manufacturing"
+    },
     "businessType": "I have a manufacturing unit and supply to other sellers",
     "fulfilment": "packPoint",
-    "product": null,
-    "bank": { "account": "000000000002", "ifsc": "DEMO0000002" }
+    "product": {
+      "type": "sneakers-slip-on-men",
+      "makingCost": 200,
+      "marginPct": 15,
+      "_source": "team Q4"
+    },
+    "bank": {
+      "account": "000000000002",
+      "ifsc": "DEMO0000002"
+    }
   },
   "reseller": {
     "name": "Demo Reseller",
@@ -47,12 +87,28 @@
     "gstin": "24CCCCC0000C1Z0",
     "legalName": "DEMO TRADERS",
     "pan": "CCCCC0000C",
-    "address": { "building": "Shop 0", "street": "Demo Market Road", "landmark": "-", "pincode": "360000", "city": "Rajkot", "state": "Gujarat" },
-    "gstNatureOfBusiness": ["Retail Business", "Wholesale Business"],
-    "udyam": { "number": "UDYAM-GJ-00-0000003", "majorActivity": "Services" },
+    "address": {
+      "building": "Shop 0",
+      "street": "Demo Market Road",
+      "landmark": "-",
+      "pincode": "360000",
+      "city": "Rajkot",
+      "state": "Gujarat"
+    },
+    "gstNatureOfBusiness": [
+      "Retail Business",
+      "Wholesale Business"
+    ],
+    "udyam": {
+      "number": "UDYAM-GJ-00-0000003",
+      "majorActivity": "Services"
+    },
     "businessType": "I buy from other sellers and sell online",
     "fulfilment": "selfShip",
     "product": null,
-    "bank": { "account": "000000000003", "ifsc": "DEMO0000003" }
+    "bank": {
+      "account": "000000000003",
+      "ifsc": "DEMO0000003"
+    }
   }
 }

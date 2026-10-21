@@ -52,6 +52,10 @@ export interface GrowthView {
   restock: Restock;
   /** stock of the bottle at the start of the snapshot day */
   onHand: number;
+  /** units of the lot sold up to the end of the day before the snapshot (lot − onHand) */
+  soldBefore: number;
+  /** the bottle's daily orders over the week (D21–D27), oldest first, with ISO dates */
+  weekDaily: { date: string; orders: number }[];
   runRate: number;
   verdicts: SkuVerdict[];
   coach: CoachCard | null;
@@ -96,9 +100,9 @@ export function growthAt(day: number, maker: MakerInputs): GrowthView | null {
   });
 
   const bands = growth.coachBands;
-  const weekOrders = launchProgress(daily, maker.lot, asOfDay - 1).days
-    .filter((d) => d.day >= asOfDay - 7)
-    .reduce((s, d) => s + d.orders, 0);
+  const weekDays = launchProgress(daily, maker.lot, asOfDay - 1).days.filter((d) => d.day >= asOfDay - 7);
+  const weekDaily = weekDays.map((d) => ({ date: dayToDate(d.day), orders: d.orders }));
+  const weekOrders = weekDays.reduce((s, d) => s + d.orders, 0);
   const dashboard = funnelStats(
     { views: growth.dashboard.views, clicks: growth.dashboard.clicks, orders: weekOrders, returns: growth.dashboard.returns },
     maker.listPrice,
@@ -157,6 +161,8 @@ export function growthAt(day: number, maker: MakerInputs): GrowthView | null {
     weekTo: dayToDate(asOfDay - 1),
     restock: r,
     onHand,
+    soldBefore: maker.lot - onHand,
+    weekDaily,
     runRate,
     verdicts,
     coach,

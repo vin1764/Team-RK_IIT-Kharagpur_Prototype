@@ -1,0 +1,17 @@
+{
+  "_source": "team Q4 (Phase 6 answers): Samar's first lot inbound at Agra on D50. Never invent other values.",
+  "persona": "samar",
+  "productType": "sneakers-slip-on-men",
+  "node": "Agra",
+  "day": 50,
+  "expected": 90,
+  "received": 90,
+  "packedWeightG": 650,
+  "_packedWeightSource": "team: each pair weighed, ~650 g packed",
+  "weightTolerancePct": 5,
+  "storage": {
+    "freeDays": 30,
+    "perUnitPerDay": 0.29,
+    "_source": "team: storage free to day 30, then ₹0.29 per unit per day"
+  }
+}

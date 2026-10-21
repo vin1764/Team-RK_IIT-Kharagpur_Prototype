@@ -1,0 +1,62 @@
+import { describe, expect, it } from 'vitest';
+import lot from '../data/packPointLot.json';
+import types from '../data/productTypes.json';
+import { benchmarkB, priceCheck, priceDrop } from './benchmark';
+import { costStack, gstAt } from './costStack';
+import { likelyOrdersPerDay, suggestedLot } from './demand';
+import { lotInbound, sizeSplit } from './lot';
+import { packPointFee } from './packPoint';
+
+// Team Q4 (Phase 6 answers): Samar, men's casual slip-on sneakers, Agra Pack Point
+const T = 'sneakers-slip-on-men' as const;
+
+describe('Samar — cost stack at the Agra Pack Point (40 makers)', () => {
+  const s = costStack(T, 200, 15, 'packPoint', 40);
+
+  it('fee ₹30 at 40 makers', () => expect(packPointFee(40).feePerDeliveredOrder).toBe(30));
+  it('take-home 15% × ₹200 = ₹30', () => expect(s.takeHome).toBe(30));
+  it('cost before GST 200 + 30 + 40 + 20 = ₹290', () => expect(s.costBeforeGst).toBe(290));
+  it('break-even 290 × 1.05 = 304.5 → ₹305', () => expect(s.breakEven).toBe(305));
+  it('list (290 + 30) × 1.05 = ₹336', () => expect(s.listPrice).toBe(336));
+  it('GST at ₹336 = ₹16', () => {
+    expect(gstAt(336, s)).toBe(16);
+    expect(s.fees).toEqual({ packPointFee: 30, shippingAndFixed: 40, returnsBuffer: 20, gst: 16 });
+  });
+  it('no self-ship stack (packaging not given)', () => expect(() => costStack(T, 200, 15, 'selfShip')).toThrow(/packaging/));
+});
+
+describe('Samar — hidden B ₹370', () => {
+  const b = types[T].benchmark;
+  const B = benchmarkB(b.comparables, b.minDeliveredOrders);
+  it('B = ₹370', () => expect(B).toBe(370));
+  it('₹336 qualifies', () => expect(priceCheck(336, 305, B)).toBe('qualifies'));
+  it('price drop ₹34 = 9.2% of B, meets the 8% target', () => {
+    const d = priceDrop(336, B);
+    expect(d.rupees).toBe(34);
+    expect((d.shareOfB * 100).toFixed(1)).toBe('9.2');
+    expect(d.meetsTarget).toBe(true);
+  });
+});
+
+describe('Samar — first lot', () => {
+  it('likely 5–8 orders a day', () => expect(likelyOrdersPerDay(T)).toEqual({ low: 5, high: 8 }));
+  it('6.5 × 14 = 91 → 90 pairs, ≈ ₹18,000 at cost', () => {
+    expect(suggestedLot(T, 200)).toMatchObject({ dailyRunRate: 6.5, units: 90, atCost: 18000 });
+  });
+  it('size split 6/7/8/9/10 = 10/20/25/20/15 adds to 90', () => {
+    expect(sizeSplit(types[T].sizeSplit, 90).map((r) => [r.size, r.units])).toEqual([
+      ['6', 10], ['7', 20], ['8', 25], ['9', 20], ['10', 15],
+    ]);
+  });
+  it('a split that doesn’t add up throws', () => expect(() => sizeSplit({ '6': 10 }, 90)).toThrow());
+});
+
+describe('Samar — D50 lot inbound at Agra', () => {
+  const r = lotInbound(lot);
+  it('expected 90, received 90', () => expect([r.expected, r.received, r.shortBy]).toEqual([90, 90, 0]));
+  it('~650 g packed, ±5% → 617.5–682.5 g', () => expect(r.weightRangeG).toEqual({ low: 617.5, high: 682.5 }));
+  it('storage free to D80 (D50 + 30), then 90 × ₹0.29 = ₹26.10 a day', () => {
+    expect(r.storageFreeUntilDay).toBe(80);
+    expect(r.storagePerDayAfterFree).toBe(26.1);
+  });
+});
