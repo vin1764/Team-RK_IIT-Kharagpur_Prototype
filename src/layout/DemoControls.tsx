@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from 'react-router';
 import calendar from '../data/calendar.json';
 import { dayLabel } from '../engine/ui';
 import { useDemo, withDemoParams, type Persona } from '../store/demo';
-import { useCatalog } from '../store/catalog';
+import { resetCatalog } from '../store/catalog';
+import { resetDraft } from '../pages/panel/catalog/draftStore';
 import { useOnboarding } from '../store/onboarding';
 
 const PERSONAS: { id: Persona; label: string }[] = [
@@ -99,7 +100,7 @@ export function DemoControls() {
               </button>
             ))}
           </div>
-          <button type="button" onClick={() => { s.reset(); useOnboarding.getState().reset(); useCatalog.getState().reset(); }} className="rounded-sm border border-solid border-white/30 bg-transparent text-white px-2 py-0.5 text-sm cursor-pointer">
+          <button type="button" onClick={() => { s.reset(); useOnboarding.getState().reset(); resetCatalog(); resetDraft(); }} className="rounded-sm border border-solid border-white/30 bg-transparent text-white px-2 py-0.5 text-sm cursor-pointer">
             Reset demo
           </button>
         </div>
