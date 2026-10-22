@@ -94,8 +94,8 @@
       "title": "Product screen, filled by the bot",
       "tag": "EXTENDED",
       "part": "listing",
-      "what": "Category, cleaned-up images, title and attributes are pre-filled from the photos and marked as filled; the maker adds only what a photo can’t tell.",
-      "why": "Most of today’s mandatory fields are filled for the maker, and every field stays editable.",
+      "what": "Category, cleaned-up images, title and attributes are pre-filled from the photos. The “We filled 21 details” card must be reviewed: yellow “Needs your review” until the maker opens the grouped list (pencil per detail, “Edited by you” tags), ticks “I’ve checked these details” and confirms; then green “Reviewed ✓ · 21 of 21”. Next stays disabled until then, any later edit sends it back to review, and the confirmation is stored with its date and time on the listing (shown in Catalog Uploads). “Fill demo values” never confirms.",
+      "why": "The bot does most of the typing, so the maker must own the result: a deliberate, recorded check of every pre-filled detail, with a record if a listing is disputed later.",
       "behind": "botFill"
     },
     {
@@ -103,8 +103,8 @@
       "title": "Demand and first lot",
       "tag": "EXTENDED",
       "part": "listing",
-      "what": "Quantity screen: open demand for the product type, the listing’s likely share, and a suggested first lot the maker can lower.",
-      "why": "Makers make to demand: the first lot is sized from expected sales, not guessed.",
+      "what": "Quantity screen: the maker’s minimum run and lead time, and a first lot suggested from his likely sales (≈ 2 weeks, never below his minimum run). The reasoning sits behind an (i) next to “First lot · 150 suggested”; no market totals, other makers’ commitments or confidence label on this screen.",
+      "why": "A maker needs one sensible number and the reason for it, not the market picture; the soft warning below his own minimum run stays.",
       "behind": "demandLot"
     },
     {
@@ -112,7 +112,7 @@
       "title": "Take-home and Qualifies chip",
       "tag": "EXTENDED",
       "part": "listing",
-      "what": "Price screen: making cost and margin in → every fee, break-even, list price, take-home and a Qualifies / Doesn’t qualify chip.",
+      "what": "Price screen: making cost and margin in → every fee, break-even, list price, take-home and a Qualifies / Doesn’t qualify chip. Fulfilment is switchable here for this product only: [Self-ship] [Pack Point] (Pack Point only in a live cluster), recalculating break-even, list price, take-home and Qualifies live, with “+₹24 per order” and the rate-card drawer; the Packer detail follows the choice.",
       "why": "Today the maker types a price with no fees or take-home shown. Now they see what they keep, while the launch price cap stays hidden.",
       "behind": "price"
     },

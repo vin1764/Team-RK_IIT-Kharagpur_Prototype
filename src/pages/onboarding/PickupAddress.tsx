@@ -158,7 +158,8 @@ export default function PickupAddress() {
     setTimeout(() => {
       setSaving(false);
       saved[personaId] = addr;
-      o.set({ pickupSaved: true });
+      // The pincode decides the Pack Point option later too (bot Price screen, restock plan): keep it in the store.
+      o.set({ pickupSaved: true, pickupAddress: addr });
     }, 300);
   };
 
