@@ -85,9 +85,18 @@ export function scriptedListingFor(persona: Persona, choice?: ProductChoice): Sc
   };
 }
 
-/** Pick the persona's listing for the launch: one of a launch product type first, else the latest. */
-function pickListing(listings: Listing[]): Listing | null {
-  return listings.find((l) => LAUNCH.productTypes.includes(l.typeId)) ?? listings[listings.length - 1] ?? null;
+/**
+ * The persona's launch listing on `day`: a real listing of a launch product type first; else (Jasmeet, from the
+ * listing day) the scripted one, so a later listing of another type (a casserole from "What to make instead") doesn't
+ * replace her launched bottle; else her latest real listing.
+ */
+export function launchListing(listings: Listing[], persona: Persona, day: number, choice?: ProductChoice): ScriptedListing | null {
+  const launch = listings.find((l) => LAUNCH.productTypes.includes(l.typeId));
+  if (launch) return { ...launch, scripted: false };
+  const scripted = day >= LAUNCH.listingDay ? scriptedListingFor(persona, choice) : null;
+  if (scripted) return scripted;
+  const latest = listings[listings.length - 1];
+  return latest ? { ...latest, scripted: false } : null;
 }
 
 /** The current persona's live listing: real, or (Jasmeet, from D3) the scripted one. */
@@ -96,12 +105,7 @@ export function useScriptedListing(): ScriptedListing | null {
   const day = useDemo((s) => s.day);
   const listings = useListingsForPersona();
   const choice = useMakerProduct((s) => s.chosen[persona]);
-  return useMemo(() => {
-    const real = pickListing(listings);
-    if (real) return { ...real, scripted: false };
-    if (day >= LAUNCH.listingDay) return scriptedListingFor(persona, choice);
-    return null;
-  }, [listings, persona, day, choice]);
+  return useMemo(() => launchListing(listings, persona, day, choice), [listings, persona, day, choice]);
 }
 
 /** What a scripted commit would hold: the persona's launch listing, only if its price qualifies. */
@@ -132,7 +136,7 @@ export function useAllCommits(): Partial<Record<Persona, Commit & { scripted: bo
   return useMemo(() => {
     const out: Partial<Record<Persona, Commit & { scripted: boolean }>> = {};
     for (const p of Object.keys(PERSONAS) as Persona[]) {
-      const listing = pickListing(listingsFor(listings, p)) ?? (day >= LAUNCH.listingDay ? scriptedListingFor(p, chosen[p]) : null);
+      const listing = launchListing(listingsFor(listings, p), p, day, chosen[p]);
       const c = effectiveCommit(commits[p], day, scriptedPrice(p, listing));
       if (c) out[p] = c;
     }

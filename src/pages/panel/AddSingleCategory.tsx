@@ -2,15 +2,16 @@
 // Replica of reference/html/meesho-catalog-add-single-category.html + catalog-select-category*.png.
 // ?mode=photos = "Create from photos" (LB-3/LB-4): the maker adds 3-5 photos, the bot recognises the category
 // from them (no tree) and pre-fills the draft, then the three short screens open on Product (catalog/bot/BotFlow.tsx).
-import { useRef, useState } from 'react';
+// ?mode=photos&type=<product type> (Inventory → "What to make instead" → "List it with photos") starts a fresh draft for
+// that type: the photo modal opens with the type's placeholder photo and the bot pre-selects that type.
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { Banner } from '../../components/ui';
 import { useT } from '../../i18n';
 import { useDemo } from '../../store/demo';
-import { useBotProductType } from '../../store/makerProduct';
 import { useOnboarding, usePersona } from '../../store/onboarding';
-import { botTypeFor, MAX_PHOTOS } from './catalog/bot';
+import { botTypeFor, MAX_PHOTOS, photoFor } from './catalog/bot';
 import { applyPhotos } from './catalog/photos';
 import { BotStrip } from './catalog/BotStrip';
 import { BotLayout } from './catalog/bot/BotLayout';
@@ -20,7 +21,8 @@ import { isLeafPath } from './catalog/categories';
 import { CategoryPreview } from './catalog/CategoryPreview';
 import { CategorySearch } from './catalog/CategorySearch';
 import { CategoryTree } from './catalog/CategoryTree';
-import { DEMO_IMAGE, useDraft, type DraftImage } from './catalog/draftStore';
+import { useDraft, type DraftImage } from './catalog/draftStore';
+import { listableType, startListingFor, TYPE_PARAM, useListingType } from './catalog/listingType';
 import { ProductsModal } from './catalog/ProductsModal';
 
 export default function AddSingleCategory() {
@@ -33,18 +35,35 @@ function CategoryPage({ c2m }: { c2m: boolean }) {
   const navigate = useNavigate();
   const d = useDraft();
   const { categoryPath, images, setCategoryPath, setImages, reset } = d;
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const persona = usePersona();
   const fulfilment = useOnboarding((s) => s.fulfilment);
   const t = useT();
   const botMode = c2m && params.get('mode') === 'photos';
-  const type = useBotProductType();
+  const type = useListingType();
   const botType = botMode ? botTypeFor(type) : null;
   const bot = !!botType && !!type;
 
   const [modal, setModal] = useState(bot);
   const search = useRef<HTMLInputElement>(null);
   const leaf = isLeafPath(categoryPath);
+
+  // ?type=: a listing for that product type. A draft for another type (or his own product) starts over; a draft
+  // already for this type is kept. The param is then dropped, so a reload keeps the draft as it is.
+  const askedType = botMode ? listableType(params.get(TYPE_PARAM)) : null;
+  const switching = !!askedType && d.typeOverride !== askedType;
+  useEffect(() => {
+    if (!askedType) return;
+    if (useDraft.getState().typeOverride !== askedType) startListingFor(askedType);
+    setModal(true);
+    setParams(
+      (p) => {
+        p.delete(TYPE_PARAM);
+        return p;
+      },
+      { replace: true },
+    );
+  }, [askedType]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const discard = () => {
     reset();
@@ -58,6 +77,7 @@ function CategoryPage({ c2m }: { c2m: boolean }) {
   };
   const prefilled = d.categoryConfirmed && d.images.length > 0;
 
+  if (switching) return null;
   if (bot) {
     const none = { product: false, quantity: false, price: false };
     return (
@@ -65,7 +85,8 @@ function CategoryPage({ c2m }: { c2m: boolean }) {
         <BotLayout step="product" done={none} onBackHeader={() => navigate(paths.home)} />
         {modal && (
           <ProductsModal
-            initial={d.photos.length ? d.photos : [DEMO_IMAGE]}
+            key={type}
+            initial={d.photos.length ? d.photos : [photoFor(type)]}
             photos={{
               title: t('bot.modal.title'),
               intro: t('bot.modal.intro'),

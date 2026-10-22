@@ -48,6 +48,8 @@ interface TypeRecord {
   /** seeded directly when the team gave orders a day rather than a share of a gap */
   likelyOrdersPerDay?: Range;
   typical?: { minRun: number; leadTimeDays: number };
+  /** team demo values for "Fill demo values" on a type the maker doesn't make yet (casserole, flask) */
+  demo?: { makingCost: number; marginPct: number };
 }
 
 const TYPES = data as unknown as Record<string, TypeRecord>;
@@ -127,6 +129,12 @@ export function suggestedLot(type: ProductTypeId, makingCost: number, minRun?: n
 /** Typical minimum run and lead time for a type — placeholder hints only (the maker enters their own). */
 export function typicalForType(type: ProductTypeId): { minRun: number; leadTimeDays: number } | null {
   return record(type).typical ?? null;
+}
+
+/** The team's demo making cost and margin for a type ("Fill demo values" when the persona doesn't make it), or null. */
+export function demoInputsForType(type: ProductTypeId): { makingCost: number; marginPct: number } | null {
+  const d = record(type).demo;
+  return d ? { makingCost: d.makingCost, marginPct: d.marginPct } : null;
 }
 
 /** "What to make instead": open-gap types on the same line the maker doesn't already make, largest gap first. */

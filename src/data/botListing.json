@@ -48,6 +48,91 @@
         "_source": "team, Phase 3 review",
         "note": "Fill demo values fills every maker field so the demo never stalls. Capacity, material and 'Leak-proof' match the doc p.14 mock-up; Length/Breadth/Height, Product Weight 360 g (was 320 g), Net Weight 320 g, Add Ons and MRP are the team's values. Making cost and margin come from the persona; minimum run and lead time from typicalForType(). The Net Quantity confirmation is left for the maker."
       }
+    },
+    "steel-casserole-1-5l": {
+      "_source": "team (What to make instead → Plan a lot spec): only what follows from the product type and the persona. Dimensions, weights, MRP, add-ons and leak-proof are NOT seeded: the maker types them (asked of the team).",
+      "categoryPath": [
+        "Home & Kitchen",
+        "Kitchen & Dining",
+        "Cookware"
+      ],
+      "_categoryPathSource": "PLACEHOLDER pending the team: the captured tree (src/data/categories.json) has no Casseroles leaf, so this is the deepest captured node, Cookware (3 levels, not a captured leaf).",
+      "photo": {
+        "id": "demo-casserole",
+        "url": "/brand/local/catalog/demo-product-casserole.svg"
+      },
+      "_photoSource": "neutral placeholder illustration drawn for the prototype (no brand), already on white, so it is also the cleaned cover",
+      "bot": {
+        "productName": "Stainless Steel Casserole 1.5 L",
+        "genericName": "Casserole",
+        "type": "Casserole",
+        "color": "Silver",
+        "size": "Free Size",
+        "netQuantity": "1",
+        "productUnit": "cm",
+        "volumeUnit": "L",
+        "productWeightUnit": "g",
+        "countryOfOrigin": "India"
+      },
+      "_botSource": {
+        "productName": "the product type's name, in the bottle's title style (type, capacity)",
+        "genericName": "the product type",
+        "type": "the product type",
+        "color": "the colour of the placeholder illustration (steel, Silver)",
+        "size": "Free Size: the only captured size",
+        "netQuantity": "one unit per listing (the product type is a single item); the maker must confirm",
+        "units": "unit pickers follow the type's capacity (L) and the bottle's defaults (g for weights, cm for L/B/H)",
+        "countryOfOrigin": "India, from the GST address (as for the bottle)",
+        "manufacturerPackerImporter": "from the persona's GST record and the packer rule (bot.ts), importer not applicable: not stored here"
+      },
+      "demo": {
+        "capacity": "1.5",
+        "material": "Stainless Steel"
+      },
+      "_demoSource": "Fill demo values: capacity and material follow from the product type (1.5 L, steel). Making cost and margin come from productTypes.json demo (₹220, 15%); minimum run and lead time from the maker's own seeded values (typicalForType of his product: 100, 5 days). Everything else stays with the maker."
+    },
+    "steel-flask-500ml": {
+      "_source": "team (What to make instead → Plan a lot spec): only what follows from the product type and the persona. Dimensions, weights, MRP, add-ons and leak-proof are NOT seeded: the maker types them (asked of the team).",
+      "categoryPath": [
+        "Home & Kitchen",
+        "Kitchen & Dining",
+        "Kitchen Storage",
+        "Thermos & Vacuum Flasks"
+      ],
+      "_categoryPathSource": "team: Thermos & Vacuum Flasks, a captured leaf in src/data/categories.json",
+      "photo": {
+        "id": "demo-flask",
+        "url": "/brand/local/catalog/demo-product-flask.svg"
+      },
+      "_photoSource": "neutral placeholder illustration drawn for the prototype (no brand), already on white, so it is also the cleaned cover",
+      "bot": {
+        "productName": "Stainless Steel Flask 500 ml",
+        "genericName": "Flask",
+        "type": "Flask",
+        "color": "Silver",
+        "size": "Free Size",
+        "netQuantity": "1",
+        "productUnit": "cm",
+        "volumeUnit": "L",
+        "productWeightUnit": "g",
+        "countryOfOrigin": "India"
+      },
+      "_botSource": {
+        "productName": "the product type's name, in the bottle's title style (type, capacity)",
+        "genericName": "the product type",
+        "type": "the product type",
+        "color": "the colour of the placeholder illustration (steel, Silver)",
+        "size": "Free Size: the only captured size",
+        "netQuantity": "one unit per listing (the product type is a single item); the maker must confirm",
+        "units": "capacity is asked in litres on today's form ('Capacity In L', options 0.5–2), so 500 ml is 0.5 with the L picker; g for weights, cm for L/B/H",
+        "countryOfOrigin": "India, from the GST address (as for the bottle)",
+        "manufacturerPackerImporter": "from the persona's GST record and the packer rule (bot.ts), importer not applicable: not stored here"
+      },
+      "demo": {
+        "capacity": "0.5",
+        "material": "Stainless Steel"
+      },
+      "_demoSource": "Fill demo values: capacity and material follow from the product type (500 ml = 0.5 L, steel). Making cost and margin come from productTypes.json demo (₹100, 15%); minimum run and lead time from the maker's own seeded values (typicalForType of his product: 100, 5 days). Everything else stays with the maker."
     }
   },
   "packPointPartner": {
@@ -64,7 +149,9 @@
   },
   "cleanedImages": {
     "_source": "White-background cut-out of the team's demo photo, made offline with OpenCV GrabCut (see Phase 3 report). No runtime ML.",
-    "demo-1": "/brand/local/catalog/demo-product-bottle-cleaned.png"
+    "demo-1": "/brand/local/catalog/demo-product-bottle-cleaned.png",
+    "demo-casserole": "/brand/local/catalog/demo-product-casserole.svg",
+    "demo-flask": "/brand/local/catalog/demo-product-flask.svg"
   },
   "scriptedReview": {
     "_source": "team (bot review spec): when the presenter jumps past D3 (scripted listing, showcase 'botFilled' jump), the 'Confirmed by maker' record shows the listing day (D3) at this fixed time instead of a real click",

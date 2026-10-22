@@ -4,7 +4,6 @@
 import { useEffect } from 'react';
 import { checkListingPrice, costStack, suggestedLot, typicalForType } from '../../../../engine/ui';
 import { useDemo } from '../../../../store/demo';
-import { useBotProductType } from '../../../../store/makerProduct';
 import { useOnboarding, usePersona, usePickupPincode } from '../../../../store/onboarding';
 import {
   BOT_STEPS,
@@ -27,13 +26,14 @@ import {
 } from '../bot';
 import { EMPTY_PRICE_ROW, useDraft, type PriceRow } from '../draftStore';
 import { missingFields, PACKER_FROM_MANUFACTURER } from '../fields';
+import { useListingType } from '../listingType';
 import { missingPrices, suggestWdrp } from '../pricing';
 
 export function useBotModel() {
   const d = useDraft();
   const persona = usePersona();
   const fulfilmentChoice = useOnboarding((s) => s.fulfilment);
-  const type = useBotProductType();
+  const type = useListingType();
   const values = d.values;
   const size = values.size ?? '';
   const row: PriceRow = (size && d.prices[size]) || EMPTY_PRICE_ROW;

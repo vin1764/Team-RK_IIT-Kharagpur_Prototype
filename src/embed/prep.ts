@@ -10,6 +10,7 @@ import { useDemo, type Persona } from '../store/demo';
 import { PERSONAS, useOnboarding } from '../store/onboarding';
 import { resetPriceEdits } from '../store/priceEdits';
 import { resetRestockPlans } from '../store/restockPlan';
+import { resetLotPlans } from '../store/lotPlans';
 import { resetLaunch } from '../store/timeline';
 import { LAUNCH } from '../pages/panel/factory-launch/launch';
 import { resetLaunchBanner } from '../store/launchBanner';
@@ -27,6 +28,7 @@ export function resetInteractive() {
   resetLaunch();
   resetPriceEdits();
   resetRestockPlans();
+  resetLotPlans();
   resetMakerProduct();
   resetLaunchBanner();
 }

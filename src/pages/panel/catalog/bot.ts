@@ -3,10 +3,10 @@
 // Who fills what = doc pp.15-18 / plan §7. Numbers come from the engine (src/engine/ui.ts) or seed JSON.
 import data from '../../../data/botListing.json';
 import nodesData from '../../../data/packPointNodes.json';
-import { checkListingPrice, clusterForPincode, costStack, suggestedLot, takeHomeAt, typeFees, type CostStack, type ProductTypeId, type PriceStatus } from '../../../engine/ui';
+import { checkListingPrice, clusterForPincode, costStack, demoInputsForType, suggestedLot, takeHomeAt, typeFees, typicalForType, type CostStack, type ProductTypeId, type PriceStatus } from '../../../engine/ui';
 import type { T } from '../../../i18n';
 import type { PersonaRecord } from '../../../store/onboarding';
-import type { DraftImage, DraftReview, PriceRow } from './draftStore';
+import { DEMO_IMAGE, type DraftImage, type DraftReview, type PriceRow } from './draftStore';
 import { FIELDS, PACKER_FROM_MANUFACTURER, type FieldDef } from './fields';
 import { PRICE_COLUMNS } from './pricing';
 
@@ -14,13 +14,21 @@ export interface BotType {
   categoryPath: string[];
   bot: Record<string, string>;
   demo: Record<string, string>;
+  /** the photo offered in the photo modal (a placeholder illustration for the "What to make instead" types) */
+  photo?: { id: string; url: string };
 }
 
-const TYPES = data.types as Record<string, BotType>;
+const TYPES = data.types as unknown as Record<string, BotType>;
 
 /** Bot data for a product type, or null when the bot has nothing for it (Samar, reseller). */
 export function botTypeFor(type: ProductTypeId | null | undefined): BotType | null {
   return (type && TYPES[type]) || null;
+}
+
+/** The photo the photo modal starts with for a type: its placeholder illustration, else the team's bottle photo. */
+export function photoFor(type: ProductTypeId | null | undefined): DraftImage {
+  const p = botTypeFor(type)?.photo;
+  return p ? { id: p.id, url: p.url, name: DEMO_IMAGE.name } : DEMO_IMAGE;
 }
 
 /** Query string that puts Add Single Catalog in "Create from photos" mode. */
@@ -156,19 +164,24 @@ export function botPrefill(type: ProductTypeId, persona: PersonaRecord, mode: 's
 }
 
 /**
- * "Fill demo values": every maker field in one click (team, Phase 3 review) so the demo never stalls. `mrp` is a
- * price-table cell; the rest are form values. The Net Quantity confirmation stays with the maker.
+ * "Fill demo values": every maker field the team gave values for, in one click (team, Phase 3 review) so the demo never
+ * stalls. `mrp` is a price-table cell; the rest are form values. The Net Quantity confirmation stays with the maker.
+ * Making cost and margin: the persona's own product's, else the type's seeded demo values (casserole ₹220 / 15%).
+ * Minimum run and lead time: the type's typical values, else the maker's own (his product's: Jasmeet 100, 5 days).
+ * A type with fewer seeded values (casserole, flask) leaves the rest for the maker.
  */
 export function demoValues(type: ProductTypeId, persona: PersonaRecord, typical: { minRun: number; leadTimeDays: number } | null): Record<string, string> {
   const t = botTypeFor(type);
   const out: Record<string, string> = { ...(t?.demo ?? {}) };
-  if (persona.product) {
-    out.makingCost = String(persona.product.makingCost);
-    out.marginPct = String(persona.product.marginPct);
+  const cost = persona.product?.type === type ? persona.product : demoInputsForType(type);
+  if (cost) {
+    out.makingCost = String(cost.makingCost);
+    out.marginPct = String(cost.marginPct);
   }
-  if (typical) {
-    out.minRun = String(typical.minRun);
-    out.leadTimeDays = String(typical.leadTimeDays);
+  const factory = typical ?? (persona.product ? typicalForType(persona.product.type) : null);
+  if (factory) {
+    out.minRun = String(factory.minRun);
+    out.leadTimeDays = String(factory.leadTimeDays);
   }
   return out;
 }

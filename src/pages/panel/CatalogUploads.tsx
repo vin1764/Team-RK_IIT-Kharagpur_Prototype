@@ -27,11 +27,13 @@ export default function CatalogUploads() {
   const day = useDemo((s) => s.day);
   const ours = useListingsForPersona();
   const scripted = useScriptedListing();
-  const fallback = useMemo(
-    () => (scripted?.scripted && day > LAUNCH.listingDay ? [{ ...scripted, id: String(FIRST_ID) }] : NONE),
-    [scripted, day],
-  );
-  const listings = c2m ? (ours.length ? ours : fallback) : NONE;
+  // The scripted listing (she went live on D3 without the clicks) shows beside her own later go-lives (e.g. a casserole
+  // from "What to make instead"): it takes the first fake id and hers follow it.
+  const listings = useMemo(() => {
+    if (!c2m) return NONE;
+    if (!(scripted?.scripted && day > LAUNCH.listingDay)) return ours;
+    return [{ ...scripted, id: String(FIRST_ID) }, ...ours.map((l) => ({ ...l, id: String(Number(l.id) + 1) }))];
+  }, [c2m, scripted, day, ours]);
   const data = useMemo(
     () => ({
       bulk: seed.bulk,

@@ -4,6 +4,7 @@
 // files the maker picked (they die with the page); the bundled demo photo paths are kept.
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { ProductTypeId } from '../../../engine/ui';
 import { DRAFT_STORAGE_KEY, safeJSONStorage } from '../../../store/catalog';
 
 export interface DraftImage {
@@ -57,13 +58,18 @@ interface DraftState {
   botReview: DraftReview | null;
   /** Bot mode: fulfilment picked on the Price screen for THIS product; null = his default from Pickup Address. */
   fulfilmentOverride: 'selfShip' | 'packPoint' | null;
+  /**
+   * Bot mode: the product type this one listing is for when it isn't the maker's own product (Inventory → "What to
+   * make instead" → "List it with photos"); null = his product. Cleared with the draft (Go live, Discard, Reset).
+   */
+  typeOverride: ProductTypeId | null;
   setCategoryPath: (p: string[]) => void;
   setImages: (imgs: DraftImage[]) => void;
   setValue: (id: string, v: string) => void;
   setValues: (v: Record<string, string>) => void;
   setPrice: (size: string, row: Partial<PriceRow>) => void;
   setExtraImages: (productId: string, imgs: DraftImage[]) => void;
-  setBot: (patch: Partial<Pick<DraftState, 'botFilled' | 'photos' | 'categoryConfirmed' | 'netQtyConfirmed' | 'retailPacked' | 'sameAsManufacturer' | 'botStep' | 'botReview' | 'fulfilmentOverride'>>) => void;
+  setBot: (patch: Partial<Pick<DraftState, 'botFilled' | 'photos' | 'categoryConfirmed' | 'netQtyConfirmed' | 'retailPacked' | 'sameAsManufacturer' | 'botStep' | 'botReview' | 'fulfilmentOverride' | 'typeOverride'>>) => void;
   /** The maker edited a bot-filled field: it is no longer marked "Filled by bot". */
   unmarkBot: (id: string) => void;
   reset: () => void;
@@ -84,6 +90,7 @@ const INITIAL = {
   botStep: 'product' as 'product' | 'quantity' | 'price',
   botReview: null as DraftReview | null,
   fulfilmentOverride: null as 'selfShip' | 'packPoint' | null,
+  typeOverride: null as ProductTypeId | null,
 };
 
 let seq = 0;
@@ -121,6 +128,8 @@ export function sanitizeDraft(raw: unknown): Partial<DraftData> {
       ? { day: rv.day, time: rv.time, values: textMap(rv.values) }
       : null;
   const override = r.fulfilmentOverride === 'selfShip' || r.fulfilmentOverride === 'packPoint' ? r.fulfilmentOverride : null;
+  // Any string is kept; the bot checks it has data for that type (useListingType) before using it.
+  const typeOverride = typeof r.typeOverride === 'string' ? (r.typeOverride as ProductTypeId) : null;
   return {
     categoryPath: strings(r.categoryPath),
     images: imgs(r.images),
@@ -136,6 +145,7 @@ export function sanitizeDraft(raw: unknown): Partial<DraftData> {
     botStep: step,
     botReview: review,
     fulfilmentOverride: override,
+    typeOverride,
   };
 }
 
@@ -165,7 +175,7 @@ export const useDraft = create<DraftState>()(
       version: 2,
       storage: safeJSONStorage<DraftData>(),
       // v1 drafts (and anything malformed) are kept only where each field has the right shape. Fields added later
-      // (botReview, fulfilmentOverride) are optional: a draft saved before them loads with null, so v2 stays v2.
+      // (botReview, fulfilmentOverride, typeOverride) are optional: a draft saved before them loads with null, so v2 stays v2.
       migrate: (persisted) => sanitizeDraft(persisted) as DraftData,
       merge: (persisted, current) => ({ ...current, ...sanitizeDraft(persisted) }),
       partialize: (s): DraftData => ({
@@ -183,6 +193,7 @@ export const useDraft = create<DraftState>()(
         botStep: s.botStep,
         botReview: s.botReview,
         fulfilmentOverride: s.fulfilmentOverride,
+        typeOverride: s.typeOverride,
       }),
     },
   ),

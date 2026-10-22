@@ -26,13 +26,14 @@ export interface FieldDef {
 const NUM = (xs: number[]) => xs.map(String);
 
 /** Placeholder option sets (assumption: real lists not captured). Navy Blue, Lid, 7.5, 27 and 360 were added so the
- *  team's demo values (botListing.json, Phase 3 review) can be selected. */
+ *  team's demo values (botListing.json, Phase 3 review) can be selected; Casserole and Flask so the bot's values for the
+ *  "What to make instead" types can (the forms of their categories weren't captured: they use this one). */
 export const PLACEHOLDER_OPTIONS: Record<string, string[]> = {
   size: ['Free Size'], // captured
   addOns: ['None', 'Cover', 'Lid', 'Strap'],
   capacity: ['0.5', '0.75', '1', '1.5', '2'],
   color: ['Black', 'Blue', 'Green', 'Grey', 'Navy Blue', 'Pink', 'Red', 'Silver', 'White', 'Yellow', 'Multicolor'],
-  genericName: ['Bottle', 'Water Bottle'],
+  genericName: ['Bottle', 'Water Bottle', 'Casserole', 'Flask'],
   leakProof: ['Yes', 'No'],
   material: ['Plastic', 'Stainless Steel', 'Glass', 'Copper', 'Aluminium'],
   netQuantity: NUM([1, 2, 3, 4, 6]),
@@ -42,7 +43,7 @@ export const PLACEHOLDER_OPTIONS: Record<string, string[]> = {
   productUnit: ['cm', 'inch'],
   productWeight: NUM([100, 200, 250, 300, 360, 400, 500, 750, 1000]),
   productWeightUnit: ['g', 'kg'],
-  type: ['Sports Bottle', 'Fridge Bottle', 'Insulated Bottle', 'Kids Bottle'],
+  type: ['Sports Bottle', 'Fridge Bottle', 'Insulated Bottle', 'Kids Bottle', 'Casserole', 'Flask'],
   volumeUnit: ['ml', 'L'],
   countryOfOrigin: ['India'],
   brand: ['Generic'],

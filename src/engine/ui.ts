@@ -6,12 +6,13 @@ import { benchmarkB, priceCheck, pricePosition, type Comparable, type PricePosit
 import { MissingPlanValue, type ProductTypeId } from './types';
 
 export { costStack, gstAt, takeHomeAt, typeFees, type CostStack, type Fees } from './costStack';
-export { demandForType, likelyOrdersPerDay, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions, typicalForType } from './demand';
+export { demandForType, demoInputsForType, likelyOrdersPerDay, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions, typicalForType } from './demand';
 export { restock, type Restock } from './restock';
 export { launchProgress, trailingRunRate, type LaunchProgress } from './launch';
 export { verdict, type Verdict, type SkuHealth } from './verdict';
 export { coachFix, type CoachFix } from './coach';
 export { funnelStats, pctDisplay, type FunnelStats } from './funnel';
+export { firstLotPlan, type FirstLotInput, type FirstLotPlan } from './firstLot';
 export { planBatch, stockOn, landsDayOf, type BatchPlan, type PlanInput, type PlannedBatch, type StockBase } from './restockPlan';
 export { growthAt, type GrowthView, type MakerInputs, type SkuVerdict, type CoachCard, type VerdictReason } from './growth';
 export {
