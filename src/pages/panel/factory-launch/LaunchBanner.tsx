@@ -84,17 +84,21 @@ export function LaunchBanner() {
   // ── Full banner ──
   let heading = title;
   let line = pitch;
-  let right: string | null = null;
+  let right: [string, string | null] | null = null;
   let button: { label: string; onClick: () => void } = { label: B.check, onClick: () => setOpen(!open) };
   const red = state === 'slotRemoved';
   if (state === 'choose' || state === 'join') {
     const next = model.next;
     const nextLabel = next?.key === 'product' ? B.item.product : next?.key === 'price' ? B.createFromPhotos : next?.key === 'stock' ? B.commitStock : null;
-    right = [B.progress(model.done, model.total), nextLabel && B.next(nextLabel), next?.key === 'stock' && B.closeBy(close)].filter(Boolean).join(' · ');
+    // Two short lines, so the pitch line keeps its room: "3 of 4 done · Next: Commit stock" / "Commitments close 31 Oct".
+    right =
+      state === 'choose'
+        ? [B.progress(model.done, model.total), nextLabel && B.next(nextLabel)]
+        : [[B.progress(model.done, model.total), nextLabel && B.next(nextLabel)].filter(Boolean).join(' · '), B.closeBy(close)];
   } else if (state === 'in') {
     heading = B.in(LAUNCH.name, shortDay(LAUNCH.stockAtNodeDay), shortDay(LAUNCH.liveFromDay));
     line = `${title} · ${FL.committedPill(v.commit!.units)}`;
-    right = B.progress(model.done, model.total);
+    right = [B.progress(model.done, model.total), null];
     button = { label: FL.viewLive, onClick: () => navigate(paths.factoryLaunchLive) };
   } else if (state === 'live') {
     const live = liveDayIndex(v.day)!;
@@ -149,9 +153,10 @@ export function LaunchBanner() {
           </p>
         </div>
         {right && (
-          <p className="m-0 shrink-0 font-body text-lg leading-5 text-secondary-text max-[1199px]:hidden" data-fl-progress>
-            {right}
-          </p>
+          <div className="shrink-0 text-right max-[1199px]:hidden" data-fl-progress>
+            <p className="m-0 font-body text-lg leading-5 text-primary-text">{right[0]}</p>
+            {right[1] && <p className="m-0 font-body text-lg leading-5 text-secondary-text">{right[1]}</p>}
+          </div>
         )}
         <Button onClick={button.onClick} variant={red ? 'outline' : 'primary'} className="shrink-0" data-fl-button aria-expanded={button.label === B.check ? expanded : undefined}>
           {button.label}
