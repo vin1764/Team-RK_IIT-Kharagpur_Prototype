@@ -210,7 +210,7 @@
       "title": "Restock card",
       "tag": "EXTENDED",
       "part": "growth",
-      "what": "On Inventory → Low Stock: run-rate, days of cover, reorder point, next batch, and dates to start and land it.",
+      "what": "On Inventory → Low Stock: run-rate, days of cover, reorder point, next batch, and dates to start and land it. “Plan this batch” opens a panel: units (any number, soft warning below the minimum run), start date → landing date from the lead time, cost at making price, ship from Self-ship / Pack Point, and days of cover after it lands; “Confirm plan” turns the card green (“Batch planned · 230 units · starts 21 Nov · lands 26 Nov”), and from the landing day the units join on-hand stock and the verdict is recomputed.",
       "why": "Low Stock lists SKUs with no guidance today; the maker gets a dated production plan.",
       "behind": "restock"
     },
@@ -578,6 +578,20 @@
       "persona": "jasmeet",
       "day": 28,
       "route": "/panel/v3/new/services/demo/inventory"
+    },
+    {
+      "id": "gl-plan-batch",
+      "docId": "GL-2",
+      "title": "Plan this batch (restock panel)",
+      "part": "growth",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 28,
+      "route": "/panel/v3/new/services/demo/inventory?stock=low_stock&plan=open",
+      "selector": "[data-plan-panel]",
+      "prep": [
+        "clean"
+      ]
     },
     {
       "id": "gl-verdicts",

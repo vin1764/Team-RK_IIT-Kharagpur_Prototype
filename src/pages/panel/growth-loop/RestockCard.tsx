@@ -35,8 +35,10 @@ export function RestockCard({ g }: { g: GrowthView }) {
   const last = batches[batches.length - 1] ?? null;
   const pending = last && day < landsDayOf(last) ? last : null;
   const earlier = useMemo(() => (pending ? batches.slice(0, -1) : batches), [pending, batches]);
+  // The SKU's name as its Inventory row shows it; lead time, minimum run, making cost and fulfilment from the listing.
+  const skuName = g.verdicts.find((v) => v.id === STOCKED_SKU)?.name ?? listing?.name ?? '';
   const maker: PlanMaker | null = listing
-    ? { name: listing.name, leadTimeDays: listing.leadTimeDays, minRun: listing.minRun, makingCost: listing.makingCost, fulfilment: listing.fulfilment, pincode }
+    ? { name: skuName, leadTimeDays: listing.leadTimeDays, minRun: listing.minRun, makingCost: listing.makingCost, fulfilment: listing.fulfilment, pincode }
     : null;
   const planned = pending && maker ? planBatch({ base: g.stockBase, units: pending.units, startDay: pending.startDay, leadTimeDays: pending.leadTimeDays, makingCost: maker.makingCost, minRun: maker.minRun, earlier }) : null;
   const ppCity = pending?.shipFrom === 'packPoint' ? (packPointStatus(pincode)?.node.city ?? null) : null;

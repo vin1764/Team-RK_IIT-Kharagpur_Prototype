@@ -81,6 +81,7 @@ describe('features (the jump list)', () => {
   const LANDS: Record<string, string> = {
     'fo-outreach': 'outreach',
     'pp-drawer': 'pickup-address',
+    'gl-plan-batch': 'inventory',
     'fo-checks-maker': 'business-details',
     'fo-checks-reseller': 'business-details',
     'fo-ship-choice': 'pickup-address',
