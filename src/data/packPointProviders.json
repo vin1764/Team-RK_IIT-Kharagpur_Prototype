@@ -1,0 +1,46 @@
+{
+  "_source": "team (Pickup Address drawer spec, PP-10): providers serving a Pack Point pincode, their services and rate cards. Shiprocket Fulfillment ₹24 per order; the others 'on request'. Never invent other rates.",
+  "_scopeNote": "The team gave one provider list; it is shown for every cluster (live or opening). Per-pincode coverage was not given.",
+  "providers": [
+    {
+      "name": "WareIQ",
+      "services": [
+        "bulk in",
+        "pack",
+        "returns"
+      ],
+      "ratePerOrder": null
+    },
+    {
+      "name": "Prozo",
+      "services": [
+        "bulk in",
+        "pack",
+        "returns"
+      ],
+      "ratePerOrder": null
+    },
+    {
+      "name": "Eshopbox",
+      "services": [
+        "bulk in",
+        "pack",
+        "returns"
+      ],
+      "ratePerOrder": null
+    },
+    {
+      "name": "Shiprocket Fulfillment",
+      "services": [
+        "bulk in",
+        "pack",
+        "returns"
+      ],
+      "ratePerOrder": 24
+    }
+  ],
+  "howItWorks": {
+    "_source": "team (drawer spec)",
+    "shipWithinHours": 24
+  }
+}

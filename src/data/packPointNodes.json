@@ -23,8 +23,10 @@
       "opensAtMakers": 40,
       "pincodePrefixes": [
         "244"
-      ]
+      ],
+      "makersSignedUp": 32
     }
   ],
-  "_pincodeSource": "team (Phase 6 review): the Pack Point card shows to Factory-verified makers whose pickup pincode is in a cluster. Clusters are matched by the city's 3-digit postal prefix (public India Post district prefixes), not by any real address."
+  "_pincodeSource": "team (Phase 6 review): the Pack Point card shows to Factory-verified makers whose pickup pincode is in a cluster. Clusters are matched by the city's 3-digit postal prefix (public India Post district prefixes), not by any real address.",
+  "_signedUpSource": "team (Pickup Address drawer spec): Moradabad 'Opening soon near you (32/40 makers)'"
 }
