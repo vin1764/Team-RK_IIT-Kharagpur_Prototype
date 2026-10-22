@@ -172,14 +172,13 @@ export default function BusinessDetails() {
               options={BUSINESS_TYPES}
               value={o.businessType}
               onChange={(v) => o.set({ businessType: v })}
-              badge={(v) =>
-                v === persona.businessType ? (
-                  <Pill tone="brand" className="shrink-0">
-                    {C2M.suggested}
-                  </Pill>
-                ) : null
-              }
+              placeholder={C2M.select}
             />
+            {/* Unprompted on purpose: Meesho's 7 options in Meesho's order, nothing pre-chosen or marked. The maker
+                declares; eligibility is decided only afterwards by the GST nature-of-business and Udyam checks. */}
+            <DemoFill className="mt-3" onClick={() => o.set({ businessType: persona.businessType })}>
+              {C2M.useDemoBusinessType}
+            </DemoFill>
           </section>
 
           {c2m && o.businessType && <AutomaticChecks persona={persona} businessType={o.businessType} />}

@@ -13,6 +13,7 @@ import { botTypeFor } from '../pages/panel/catalog/bot';
 import { LAUNCH, effectiveCommit, type Commit } from '../pages/panel/factory-launch/launch';
 import { listingsFor, safeJSONStorage, useCatalog, useListingsForPersona, type Listing } from './catalog';
 import { useDemo, type Persona } from './demo';
+import { useMakerProduct, type ProductChoice } from './makerProduct';
 import { PERSONAS } from './onboarding';
 
 export const LAUNCH_STORAGE_KEY = 'rk-launch-v1';
@@ -50,10 +51,14 @@ export function resetLaunch() {
 
 export type ScriptedListing = Omit<Listing, 'id'> & { id: string; scripted: boolean };
 
-/** The listing the engine computes for a persona's own product (what Go live would have saved). */
-export function scriptedListingFor(persona: Persona): ScriptedListing | null {
+/**
+ * The listing the engine computes for a persona's own product (what Go live would have saved). None when
+ * the maker told us (finish screen) they make something else: the scripted story is for her own product.
+ */
+export function scriptedListingFor(persona: Persona, choice?: ProductChoice): ScriptedListing | null {
   const p = PERSONAS[persona];
   if (persona !== SCRIPTED_PERSONA || !p.product) return null;
+  if (choice && choice.type !== p.product.type) return null;
   const { type, makingCost, marginPct } = p.product;
   const mode = p.fulfilment;
   const stack = costStack(type, makingCost, marginPct, mode);
@@ -88,12 +93,13 @@ export function useScriptedListing(): ScriptedListing | null {
   const persona = useDemo((s) => s.persona);
   const day = useDemo((s) => s.day);
   const listings = useListingsForPersona();
+  const choice = useMakerProduct((s) => s.chosen[persona]);
   return useMemo(() => {
     const real = pickListing(listings);
     if (real) return { ...real, scripted: false };
-    if (day >= LAUNCH.listingDay) return scriptedListingFor(persona);
+    if (day >= LAUNCH.listingDay) return scriptedListingFor(persona, choice);
     return null;
-  }, [listings, persona, day]);
+  }, [listings, persona, day, choice]);
 }
 
 /** What a scripted commit would hold: the persona's launch listing, only if its price qualifies. */
@@ -120,13 +126,14 @@ export function useAllCommits(): Partial<Record<Persona, Commit & { scripted: bo
   const day = useDemo((s) => s.day);
   const commits = useLaunch((s) => s.commits);
   const listings = useCatalog((s) => s.listings);
+  const chosen = useMakerProduct((s) => s.chosen);
   return useMemo(() => {
     const out: Partial<Record<Persona, Commit & { scripted: boolean }>> = {};
     for (const p of Object.keys(PERSONAS) as Persona[]) {
-      const listing = pickListing(listingsFor(listings, p)) ?? (day >= LAUNCH.listingDay ? scriptedListingFor(p) : null);
+      const listing = pickListing(listingsFor(listings, p)) ?? (day >= LAUNCH.listingDay ? scriptedListingFor(p, chosen[p]) : null);
       const c = effectiveCommit(commits[p], day, scriptedPrice(p, listing));
       if (c) out[p] = c;
     }
     return out;
-  }, [commits, day, listings]);
+  }, [commits, day, listings, chosen]);
 }

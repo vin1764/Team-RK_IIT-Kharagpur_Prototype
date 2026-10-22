@@ -3,6 +3,7 @@
 // Every number comes from src/engine/ui.ts or the seed JSON; B never enters here (status only).
 import { useEffect } from 'react';
 import { checkListingPrice, costStack, suggestedLot, typicalForType } from '../../../../engine/ui';
+import { useBotProductType } from '../../../../store/makerProduct';
 import { useOnboarding, usePersona } from '../../../../store/onboarding';
 import {
   BOT_STEPS,
@@ -24,7 +25,7 @@ export function useBotModel() {
   const d = useDraft();
   const persona = usePersona();
   const fulfilmentChoice = useOnboarding((s) => s.fulfilment);
-  const type = persona.product?.type ?? null;
+  const type = useBotProductType();
   const values = d.values;
   const size = values.size ?? '';
   const row: PriceRow = (size && d.prices[size]) || EMPTY_PRICE_ROW;

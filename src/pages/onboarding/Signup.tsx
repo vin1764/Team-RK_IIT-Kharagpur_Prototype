@@ -1,26 +1,20 @@
 // Sign-up (existing page, replicated from reference/screens/signup.png).
 // Mock only: nothing is sent; any 6 digits work as the OTP.
-// From the outreach link (?ref=outreach) the right panel shows the FO-4 teaser instead.
+// Always Meesho's own right panel, also from the outreach link: the demand teaser (FO-4) comes after
+// onboarding, once the maker has told us what they make (finish screen, onboarding/Finish.tsx).
 import { useRef } from 'react';
-import { useSearchParams } from 'react-router';
 import { onboarding } from '../../app/paths';
 import { Button } from '../../components/ui';
 import { notInPrototype, toast } from '../../components/Toast';
-import { useDemo } from '../../store/demo';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import { Field } from './signup/Field';
 import { GenericPanel } from './signup/GenericPanel';
 import { useDemoLink } from './signup/nav';
-import { OutreachPanel } from './signup/OutreachPanel';
 import { SplitLayout } from './signup/SplitLayout';
 
 const digits = (v: string, max: number) => v.replace(/\D/g, '').slice(0, max);
 
 export default function Signup() {
-  const [params] = useSearchParams();
-  const fromOutreach = params.get('ref') === 'outreach';
-  // Plain mode ("Today vs ours"): today's right panel, no demand teaser.
-  const c2m = useDemo((s) => s.c2m);
   const persona = usePersona();
   const { phone, otpSent, otp, set } = useOnboarding();
   const { go } = useDemoLink();
@@ -101,7 +95,7 @@ export default function Signup() {
     <SplitLayout
       left={left}
       leftFooter={footer}
-      right={fromOutreach && c2m ? <OutreachPanel onContinue={() => phoneRef.current?.focus()} /> : <GenericPanel />}
+      right={<GenericPanel />}
     />
   );
 }

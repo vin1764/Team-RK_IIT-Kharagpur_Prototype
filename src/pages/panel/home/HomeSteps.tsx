@@ -10,7 +10,6 @@ import { Button, Pill } from '../../../components/ui';
 import { tEn } from '../../../i18n';
 import { useListingsForPersona } from '../../../store/catalog';
 import { useDemo } from '../../../store/demo';
-import { HomeLaunchCard, useHasHomeLaunchCard } from '../factory-launch/HomeLaunchCard';
 import { PinkTag } from '../catalog/BulkTemplatePanel';
 import { BOT_QUERY } from '../catalog/bot';
 import { DEMO_IMAGE } from '../catalog/draftStore';
@@ -250,15 +249,14 @@ function QcStatus() {
 const CONTENT: Record<HomeState, Partial<Record<number, () => ReactNode>>> = {
   start: { 1: () => <UploadChoice /> },
   qc: { 1: () => <UploadChoice />, 2: () => <QcStatus /> },
-  live: { 1: () => <UploadChoice />, 2: () => <LiveStatus />, 3: () => <HomeLaunchCard /> },
+  live: { 1: () => <UploadChoice />, 2: () => <LiveStatus /> },
 };
 
 export function HomeSteps({ state }: { state: HomeState }) {
   const status = STATUS[state];
-  // C2M LW-6: step 3 shows the Factory Launch card only when the maker has an order book to join.
-  const hasLaunchCard = useHasHomeLaunchCard();
-  const content: Partial<Record<number, () => ReactNode>> = { ...CONTENT[state] };
-  if (!hasLaunchCard) delete content[3];
+  // Step 3 "Get your first order" has no captured content (as on Meesho); the Factory Launch entry
+  // (LW-6) is the banner at the top of Home instead.
+  const content = CONTENT[state];
   // Open on the current step; when it has no captured content, on the latest step before it that has.
   let initial = status.indexOf('current') + 1;
   while (initial > 1 && !content[initial]) initial--;

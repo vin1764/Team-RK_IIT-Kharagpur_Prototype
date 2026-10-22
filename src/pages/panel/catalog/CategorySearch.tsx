@@ -1,14 +1,18 @@
 // "Search Category" box. Typing lists matching leaves as "<b>Leaf</b> in Root" (the style of the
 // "Home Temple in Home & Kitchen" suggestion in catalog-select-category.png); picking one selects
-// its full path in the tree and shows the pick inside the box.
+// its full path in the tree and shows the pick inside the box. `search` swaps the matcher (the onboarding
+// finish screen also finds product types outside the captured tree).
 import { forwardRef, useState } from 'react';
 import { searchLeaves, type LeafHit } from './categories';
 
-export const CategorySearch = forwardRef<HTMLInputElement, { onPick: (path: string[]) => void }>(function CategorySearch({ onPick }, ref) {
+export const CategorySearch = forwardRef<HTMLInputElement, { onPick: (path: string[]) => void; search?: (q: string) => LeafHit[]; placeholder?: string }>(function CategorySearch(
+  { onPick, search = searchLeaves, placeholder = 'Try Sarees, Toys, Charger, Mugs and more...' },
+  ref,
+) {
   const [q, setQ] = useState('');
   const [picked, setPicked] = useState<LeafHit | null>(null);
   const [focus, setFocus] = useState(false);
-  const hits = searchLeaves(q);
+  const hits = search(q);
 
   const choose = (h: LeafHit) => {
     setPicked(h);
@@ -29,7 +33,7 @@ export const CategorySearch = forwardRef<HTMLInputElement, { onPick: (path: stri
               className="peer flex-1 bg-transparent border-none [font-family:inherit] rounded-sm outline-none px-4 z-1 placeholder:text-secondary-border min-h-0 p-2! text-lg text-primary-text"
               type="text"
               value={q}
-              placeholder={picked ? '' : 'Try Sarees, Toys, Charger, Mugs and more...'}
+              placeholder={picked ? '' : placeholder}
               onChange={(e) => {
                 setQ(e.target.value);
                 setPicked(null);

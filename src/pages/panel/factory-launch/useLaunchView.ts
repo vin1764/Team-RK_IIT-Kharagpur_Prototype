@@ -16,6 +16,7 @@ import {
   type ProductTypeId,
 } from '../../../engine/ui';
 import { useDemo } from '../../../store/demo';
+import { useMakerProductType } from '../../../store/makerProduct';
 import { usePersona } from '../../../store/onboarding';
 import { useAllCommits, useScriptedCommit, useScriptedListing } from '../../../store/timeline';
 import { LAUNCH, phaseForDay, slotStatus, type SlotStatus } from './launch';
@@ -56,11 +57,13 @@ export function useLaunchView() {
   const listing = useScriptedListing();
   const commit = useScriptedCommit();
   const all = useAllCommits();
+  // What the maker told us they make (finish screen), or past onboarding the seeded product.
+  const makerType = useMakerProductType().type;
 
   return useMemo(() => {
     const phase = phaseForDay(day);
     const rows = LAUNCH.productTypes.map((t) => orderBookRow(t, Object.values(all)));
-    const ownType = listing?.typeId ?? record.product?.type ?? null;
+    const ownType = listing?.typeId ?? makerType;
     const hasBook = ownType !== null && LAUNCH.productTypes.includes(ownType);
     const elig: Eligibility = eligibility({
       taxId: record.taxId,
@@ -87,7 +90,7 @@ export function useLaunchView() {
       /** the launch type a maker without a listing would list (her own product type) */
       bookTypeName: productTypeName(LAUNCH.productTypes[0]!),
     };
-  }, [day, persona, record, listing, commit, all]);
+  }, [day, persona, record, listing, commit, all, makerType]);
 }
 
 export type LaunchView = ReturnType<typeof useLaunchView>;

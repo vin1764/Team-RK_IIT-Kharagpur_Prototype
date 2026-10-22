@@ -8,6 +8,7 @@ import { paths } from '../../app/paths';
 import { Banner } from '../../components/ui';
 import { useT } from '../../i18n';
 import { useDemo } from '../../store/demo';
+import { useBotProductType } from '../../store/makerProduct';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import { botTypeFor, MAX_PHOTOS } from './catalog/bot';
 import { applyPhotos } from './catalog/photos';
@@ -37,7 +38,7 @@ function CategoryPage({ c2m }: { c2m: boolean }) {
   const fulfilment = useOnboarding((s) => s.fulfilment);
   const t = useT();
   const botMode = c2m && params.get('mode') === 'photos';
-  const type = persona.product?.type ?? null;
+  const type = useBotProductType();
   const botType = botMode ? botTypeFor(type) : null;
   const bot = !!botType && !!type;
 

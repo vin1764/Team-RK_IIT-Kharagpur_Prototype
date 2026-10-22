@@ -12,6 +12,7 @@ import { checkListingPrice, costStack, gstAt, suggestedLot, takeHomeAt, typicalF
 import { fmt, useT } from '../../i18n';
 import { useCatalog } from '../../store/catalog';
 import { useDemo } from '../../store/demo';
+import { useBotProductType } from '../../store/makerProduct';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import {
   BOT_INPUTS,
@@ -88,11 +89,11 @@ function ProductStrip({ selected, onSelect }: { selected: string; onSelect: (id:
 
 export default function AddSingleDetails() {
   const [params] = useSearchParams();
-  const persona = usePersona();
+  const botType = useBotProductType();
   // "Today vs ours": plain mode is today's details form + price table on the same draft (no bot screens,
   // no demand card, cost inputs, take-home, status or go-live checklist). Remount on a switch.
   const c2m = useDemo((s) => s.c2m);
-  const short = c2m && params.get('mode') === 'photos' && params.get('view') !== 'form' && !!botTypeFor(persona.product?.type);
+  const short = c2m && params.get('mode') === 'photos' && params.get('view') !== 'form' && !!botTypeFor(botType);
   return short ? <BotFlow /> : <DetailsPage key={c2m ? 'c2m' : 'plain'} c2m={c2m} />;
 }
 
@@ -105,7 +106,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   const day = useDemo((s) => s.day);
   const personaId = useDemo((s) => s.persona);
   const t = useT();
-  const type = persona.product?.type ?? null;
+  const type = useBotProductType();
   // "Create from photos" needs a product type with bot data (Jasmeet); otherwise the plain flow runs.
   const bot = c2m && params.get('mode') === 'photos' && !!botTypeFor(type);
   const [selected, setSelected] = useState(d.images[0]?.id ?? '');

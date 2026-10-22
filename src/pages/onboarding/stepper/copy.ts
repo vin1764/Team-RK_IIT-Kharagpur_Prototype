@@ -7,7 +7,8 @@ export const C2M = {
   // FO-6
   businessTypeHeading: 'What’s your business type?', // doc
   businessTypeLabel: 'What’s your business type', // existing field label (onb-business-type-dropdown.png)
-  suggested: 'Suggested', // ours
+  select: 'Select', // Meesho's empty dropdown value
+  useDemoBusinessType: 'Use demo answer', // ours (demo only; fills nothing until clicked)
   // FO-7
   checksHeading: 'Automatic checks', // doc
   sellerType: (ok: boolean) => `Seller type: ${ok ? 'manufacturer' : 'not a manufacturer'}`, // ours (prompt)

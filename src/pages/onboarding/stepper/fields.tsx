@@ -77,14 +77,17 @@ export function SelectField<T extends string>({
   value,
   onChange,
   badge,
+  placeholder,
   className,
 }: {
   label: string;
   options: readonly T[];
   value: T | null;
   onChange: (v: T) => void;
-  /** optional tag rendered after an option (e.g. the suggested one) */
+  /** optional tag rendered after an option */
   badge?: (o: T) => ReactNode;
+  /** shown (greyed) in the box while nothing is chosen, e.g. "Select" */
+  placeholder?: string;
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -107,9 +110,9 @@ export function SelectField<T extends string>({
   return (
     <div ref={ref} className={cx('relative', className)}>
       <button type="button" onClick={toggle} className="block w-full bg-transparent border-0 p-0 text-left cursor-pointer" aria-haspopup="listbox" aria-expanded={open}>
-        <Outline label={label} floating={open || value !== null} focused={open}>
+        <Outline label={label} floating={open || value !== null || !!placeholder} focused={open}>
           <span className="flex h-full items-center pl-4 pr-10 text-lg font-body text-primary-text">
-            <span className="truncate">{value ?? ''}</span>
+            <span className={cx('truncate', value === null && 'text-tertiary-text')}>{value ?? placeholder ?? ''}</span>
           </span>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden className={cx('absolute right-3 top-1/2 -translate-y-1/2 text-secondary-text', !open && 'rotate-180')}>
             <path d="M7 14l5-5 5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

@@ -43,12 +43,14 @@ export const paths = {
 export const onboarding = {
   outreach: '/outreach',
   signup: '/signup',
-  signupFromOutreach: '/signup?ref=outreach',
+  /** the old standalone cost check; now redirects to the finish screen (onboarding.done) */
   costCheck: '/cost-check',
   businessDetails: '/onboarding/business-details',
   pickupAddress: '/onboarding/pickup-address',
   bankDetails: '/onboarding/bank-details',
   supplierDetails: '/onboarding/supplier-details',
+  /** C2M (FO-4, FO-5, FO-7): after Submit, verified manufacturers only — "What do you make?" */
+  done: '/onboarding/done',
 } as const;
 
 /** Path without its query string, for matching the current location. */
