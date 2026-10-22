@@ -110,25 +110,65 @@ export const FL = {
   noCommitTitle: 'You have no lot in this launch', // ours
   noCommitSub: 'Commit units from the Factory Launch tab to see your launch here.', // ours
   backToLaunch: 'Factory Launch', // ours
-  // Home step 3 (LW-6)
-  homeNext: 'Next Factory Launch', // doc
-  homeNextLine: (name: string, slots: string) => `${name} · ${slots}`, // doc ("Next Factory Launch · slots left · join")
-  homeNextBody: (close: string, live: string) => `Commit units by ${close}. Orders start ${live}.`, // ours
-  join: 'Join', // doc
-  homeIn: (name: string, live: string) => `You're in ${name} · live ${live}`, // prompt
-  homeInBody: (stock: string) => `Have your units ready by ${stock}.`, // ours
-  homeLive: (today: number) => `Live now · ${s(today, 'order', 'orders')} today`, // prompt
-  homeLiveBody: (sold: string) => `${sold} sold so far.`, // ours
-  homeEnded: 'Launch week ended · orders continue', // prompt
-  homeEndedBody: (sold: string, date: string, left: number) => `${sold} sold by ${date} · ${fmt(left)} left.`, // ours (Phase 6: matches the restock plan)
+  // Home banner, sidebar item, pinned notice, onboarding finish (LW-6, FO-7). Shown only to makers
+  // who passed the seller-type + GST/Udyam checks.
+  banner: {
+    manufacturersOnly: 'Manufacturers only', // doc (FO-9 offer: "manufacturers only")
+    noAds: 'No ads, no listing fee', // doc (FO-9 offer: "no ads, no listing fee")
+    slotsFor: (slots: string, type: string) => `${slots} for ${type.endsWith('s') ? type : `${type}s`}`, // prompt
+    liveOn: (dates: string) => `Live ${dates}`, // prompt
+    check: 'Check my eligibility', // prompt
+    progress: (done: number, total: number) => `${fmt(done)} of ${fmt(total)} done`, // prompt
+    next: (step: string) => `Next: ${step}`, // ours
+    commitStock: 'Commit stock', // prompt
+    closeBy: (date: string) => `Commitments close ${date}`, // prompt
+    item: {
+      manufacturer: 'Manufacturer', // prompt
+      manufacturerSub: 'GST nature of business + Udyam', // prompt
+      records: 'Records agree', // prompt
+      recordsSub: 'Your business type matches GST and Udyam', // ours (FO-7: "matched to seller type")
+      price: 'Product listed at a qualifying price', // prompt
+      priceListed: (type: string) => `Your ${type} qualifies`, // ours
+      priceNotListed: (type: string) => `List your ${type}; the price check shows Qualifies or not`, // ours
+      priceFails: 'Your price doesn’t qualify', // ours (prompt wording)
+      stock: 'Stock committed', // prompt
+      stockDone: (units: number, stock: string) => `${s(units, 'unit', 'units')} · ready by ${stock}`, // ours
+      stockOpen: (date: string) => `Commit units from the order book by ${date}`, // ours
+      stockClosed: (date: string) => `Commitments closed on ${date}`, // prompt
+    },
+    createFromPhotos: 'Create from photos', // existing LB-3 button
+    toOrderBook: 'Go to order book', // prompt
+    in: (name: string, stock: string, live: string) => `You're in ${name} · stock ready by ${stock} · live ${live}`, // prompt
+    live: (today: number) => `Live now · ${s(today, 'order', 'orders')} today`, // prompt
+    liveSub: (day: string, sold: string) => `${day} · ${sold} sold so far`, // ours
+    ended: 'Launch week ended · orders continue', // prompt
+    results: 'Launch results', // prompt
+    slotRemoved: 'Launch slot removed — price no longer qualifies', // prompt (doc p.7)
+    slotRemovedSub: 'Sales so far stay as they are.', // doc + ours
+    closed: (date: string) => `Commitments closed on ${date} · next Factory Launch soon`, // prompt
+    dismiss: 'Dismiss', // ours
+    expand: 'Show checklist', // ours
+    collapse: 'Hide checklist', // ours
+  },
+  sidebar: 'Factory Launch', // prompt
+  newTag: 'NEW', // panel
+  notice: {
+    pinned: 'Pinned', // ours
+    body: 'A factory-direct launch week for manufacturers. Entry by rule: records and a qualifying price, no discount asked.', // ours (doc LW-4/LW-5)
+    dates: (close: string, stock: string, live: string) => `Commit stock by ${close} · stock ready by ${stock} · live ${live}`, // ours (calendar)
+  },
+  finish: {
+    title: 'You’re a verified factory seller', // prompt
+    sub: 'You’re eligible for Factory Launch Week', // prompt
+    next: (name: string, category: string, live: string) => `Next: ${name} · ${category} · live ${live}`, // ours
+    check: 'Check my eligibility', // prompt
+    dashboard: 'Go to dashboard', // prompt
+  },
   // Price-hold breach (PI-3, doc p.7: "price no longer qualifies" → launch slot removed, no number shown)
-  homeSlotRemoved: 'Launch slot removed', // doc
-  homeSlotRemovedLine: 'Your price no longer qualifies for Factory Launch', // doc
   toPricePosition: 'View price position', // ours
   slotRemovedPill: 'Slot removed', // doc
   slotRemovedSub: 'Price no longer qualifies', // doc
   slotRemovedBanner: 'Your price no longer qualifies for Factory Launch · launch slot removed. Sales so far stay as they are.', // doc + ours
-  homeClosed: (date: string) => `Commitments closed on ${date}`, // prompt
   // Quality (LW-8)
   scoreTitle: (type: string) => `Listing score · ${type}`, // prompt
   scoreLine: 'Built from this listing’s own orders and returns', // prompt

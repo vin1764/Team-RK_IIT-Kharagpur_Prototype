@@ -66,6 +66,12 @@ export function dateRange(fromDay: number, toDay: number): string {
 /** The live week as a date range: "14–18 Nov 2026". */
 export const liveDates = () => dateRange(LAUNCH.liveFromDay, LAUNCH.liveToDay);
 
+/** A demo day without its year: "31 Oct" (the Home banner's short dates). */
+export const shortDay = (day: number) => dayLabel(day).split(' ').slice(0, 2).join(' ');
+
+/** The live week without the year: "14–18 Nov". */
+export const liveDatesShort = () => liveDates().replace(/ \d{4}$/, '');
+
 export interface Commit {
   typeId: ProductTypeId;
   units: number;
