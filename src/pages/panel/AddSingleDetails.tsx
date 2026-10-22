@@ -8,7 +8,7 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { toast } from '../../components/Toast';
 import { Banner, Button, Pill } from '../../components/ui';
-import { checkListingPrice, costStack, gstAt, suggestedLot, typicalForType } from '../../engine/ui';
+import { costStack, gstAt, suggestedLot, typicalForType } from '../../engine/ui';
 import { fmt, useT } from '../../i18n';
 import { useCatalog } from '../../store/catalog';
 import { useDemo } from '../../store/demo';
@@ -32,7 +32,9 @@ import {
   stackMode,
   takeHomeShown,
 } from './catalog/bot';
-import { DemandCard, GoLiveBar, LotLine, StackLine, StatusChip } from './catalog/BotPrice';
+import { DemandCard, GoLiveBar, LaunchStatus, LotLine, StackLine, StatusChip } from './catalog/BotPrice';
+import { chipStatus, launchCheckView } from './catalog/launchCheck';
+import { usePriceCheckEntry } from '../../store/priceChecks';
 import { BotStrip, type BotTab } from './catalog/BotStrip';
 import { CatalogHeader, NeedHelp, SingleStepper } from './catalog/CatalogHeader';
 import { DetailsForm, FieldGrid, type BotView, type FormState } from './catalog/DetailsForm';
@@ -141,7 +143,10 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   const margin = numberIn(values.marginPct);
   const stack = bot && type && makingCost !== null && makingCost > 0 && margin !== null && margin >= 0 ? costStack(type, makingCost, margin, mode, makersPooled) : null;
   const price = numberIn(row.meeshoPrice);
-  const status = stack && type && price ? checkListingPrice(type, price, stack.breakEven) : null;
+  // Factory Launch status: the same rationed "Check price" as the bot's Price screen (launchCheck.ts); never blocks.
+  const priceChecks = usePriceCheckEntry(bot ? type : null);
+  const launch = launchCheckView({ type: bot ? type : null, price, stack, entry: priceChecks.entry, day: priceChecks.day });
+  const checkPrice = () => (launch.canCheck && price && stack ? priceChecks.check(price, stack.breakEven) : false);
   const inventory = numberIn(row.inventory);
   const lot = bot && type ? suggestedLot(type, makingCost ?? 0, numberIn(values.minRun)) : null;
   const typical = bot && type ? typicalForType(type) : null;
@@ -290,14 +295,14 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
         takeHome: (r) => {
           const p = numberIn(r.meeshoPrice);
           return stack && p ? (
-            <b className="font-button whitespace-nowrap" data-testid="takeHome">
-              {t('takeHome.perUnit', { v: fmt(takeHomeShown(p, stack)) })}
+            <b className={`font-button whitespace-nowrap${launch.loss !== null ? ' text-error-text' : ''}`} data-testid="takeHome">
+              {launch.loss !== null ? t('takeHome.loss', { v: fmt(launch.loss) }) : t('takeHome.perUnit', { v: fmt(takeHomeShown(p, stack)) })}
             </b>
           ) : (
             <span className="text-tertiary-text">—</span>
           );
         },
-        status: () => <StatusChip status={status} />,
+        status: () => <StatusChip status={chipStatus(launch)} pending={launch.state === 'stale'} />,
         filled,
         youEnter,
         tagBot: t('bot.tag.bot'),
@@ -317,7 +322,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
     missingPrices: size ? missingPrices(d.prices[size]) : ['meeshoPrice'],
     netQtyConfirmed: d.netQtyConfirmed,
     inputs: values,
-    status,
+    price,
     inventory,
   });
 
@@ -467,6 +472,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
                         <PriceTable sizes={sizes} prices={d.prices} onChange={setPrice} showErrors={submitted} bot={botPrice} />
                       </>
                     )}
+                    <LaunchStatus v={launch} breakEven={stack?.breakEven ?? null} onCheck={checkPrice} />
                     <StackLine stack={stack} gst={stack && price ? gstAt(price, stack) : null} />
                     <LotLine lot={lot} makingCost={makingCost} inventory={inventory} minRun={numberIn(values.minRun)} />
                   </div>
@@ -505,7 +511,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
             Discard Catalog
           </button>
           {bot ? (
-            <GoLiveBar checks={checks} status={status} inventory={inventory} onGoLive={goLive} onShow={show} />
+            <GoLiveBar checks={checks} launch={launch} inventory={inventory} onGoLive={goLive} onShow={show} />
           ) : (
             <div className="flex gap-6">
               <button

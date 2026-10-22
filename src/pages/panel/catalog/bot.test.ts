@@ -131,12 +131,18 @@ describe('goLiveChecks', () => {
     missingPrices: [],
     netQtyConfirmed: true,
     inputs: { makingCost: '80', marginPct: '17.5', minRun: '100', leadTimeDays: '5' },
-    status: 'qualifies' as const,
+    price: 147,
     inventory: 150,
   };
   it('all pass', () => expect(goLiveChecks(ok).all).toBe(true));
   it('Net Quantity must be confirmed', () => expect(goLiveChecks({ ...ok, netQtyConfirmed: false }).details).toBe(false));
-  it('price must qualify', () => expect(goLiveChecks({ ...ok, status: 'aboveCap' }).price).toBe(false));
+  it('the price never blocks: any positive price is "Price set" (₹165 above the cap, ₹120 below break-even)', () => {
+    for (const price of [147, 165, 120]) expect(goLiveChecks({ ...ok, price }), `₹${price}`).toMatchObject({ price: true, all: true });
+  });
+  it('a missing or zero price is not set', () => {
+    expect(goLiveChecks({ ...ok, price: null }).price).toBe(false);
+    expect(goLiveChecks({ ...ok, price: 0 }).all).toBe(false);
+  });
   it('any lot above zero passes, even below the minimum run', () => expect(goLiveChecks({ ...ok, inventory: 20 }).lot).toBe(true));
   it('the bot details must be reviewed ("Bot details reviewed")', () => {
     const c = goLiveChecks({ ...ok, reviewed: false });

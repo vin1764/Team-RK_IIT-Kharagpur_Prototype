@@ -1,14 +1,15 @@
-// Screen 3 · Price (LB-6, LB-8; doc pp.15-18): the maker's three numbers, the engine's list price and take-home with
-// the Qualifies chip (status only, never B), "How we got ₹…" (the bot's fee stack), fulfilment for this product
-// ([Self-ship] [Pack Point] when his pickup pincode is in a cluster), and the go-live checklist. Every ₹ value comes
-// from costStack / takeHomeShown / checkListingPrice / packPointExtra.
+// Screen 3 · Price (LB-6, LB-8; doc pp.15-18): the maker's three numbers, the engine's list price and take-home, the
+// Factory Launch status under it (status only, never B; rationed "Check price" for a typed price: launchCheck.ts),
+// "How we got ₹…" (the bot's fee stack), fulfilment for this product ([Self-ship] [Pack Point] when his pickup pincode
+// is in a cluster), and the go-live checklist. The price never blocks Go live. Every ₹ value comes from costStack /
+// takeHomeShown / lossPerOrder / packPointExtra.
 import { useState } from 'react';
 import { Pill } from '../../../../components/ui';
 import { fmt, useT } from '../../../../i18n';
 import { PackPointDrawer } from '../../../onboarding/packpoint/PackPointDrawer';
 import type { BotStep, GoLiveChecks, ShipMode } from '../bot';
 import { packPointExtra, selfShipPossible, takeHomeShown } from '../bot';
-import { StatusChip } from '../BotPrice';
+import { LaunchLine, LaunchStatus } from '../BotPrice';
 import { Checkbox } from '../FormBits';
 import { Choice, LinkButton, NumberBox, QField, QRow, StepCard } from './Bits';
 import { FilledCard } from './FilledCard';
@@ -64,9 +65,12 @@ function ResultCard({ m }: { m: BotModel }) {
     <StepCard c2m="LB-6" testId="priceResult">
       <div className="flex flex-wrap items-center gap-3">
         <p className="m-0 min-w-0 flex-1 font-heading text-3xl leading-6 text-primary-text" data-testid="listAt">
-          {price ? t('price.result', { price: fmt(price), take: fmt(takeHomeShown(price, s)) }) : t('price.enterPrice')}
+          {!price
+            ? t('price.enterPrice')
+            : m.launch.state === 'belowCost'
+              ? t('price.resultLoss', { price: fmt(price), be: fmt(s.breakEven) })
+              : t('price.result', { price: fmt(price), take: fmt(takeHomeShown(price, s)) })}
         </p>
-        <StatusChip status={m.status} />
       </div>
       <div className="mt-2.5 flex flex-wrap items-center gap-3">
         {changing ? (
@@ -91,6 +95,7 @@ function ResultCard({ m }: { m: BotModel }) {
           </LinkButton>
         )}
       </div>
+      <LaunchStatus v={m.launch} breakEven={s.breakEven} onCheck={m.checkPrice} />
       <HowWeGotIt m={m} />
     </StepCard>
   );
@@ -172,7 +177,7 @@ export function PriceStep({ m, onGoTo }: { m: BotModel; onGoTo: (s: BotStep) => 
   const t = useT();
   const v = m.values;
   const checks = m.checks;
-  const priceLabel = !checks.price && m.status && m.status !== 'qualifies' ? `${t('check.price')} · ${t(`status.${m.status}`)}` : t('check.price');
+  const priceLabel = checks.price ? t('check.priceSet') : t('check.price');
   const items: Array<[keyof typeof CHECK_STEP, string]> = [
     ['images', t('check.images')],
     ['details', t('check.details')],
@@ -229,6 +234,7 @@ export function PriceStep({ m, onGoTo }: { m: BotModel; onGoTo: (s: BotStep) => 
               </button>
             ))}
           </div>
+          <LaunchLine v={m.launch} className="mt-2.5 text-lg leading-5" />
           <p className="m-0 mt-3 font-body text-base leading-4 text-secondary-text">{t('check.feesLocked')}</p>
         </div>
       </StepCard>
