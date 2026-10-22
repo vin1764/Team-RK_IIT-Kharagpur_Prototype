@@ -112,6 +112,14 @@ const takeHomeLine = (prod: Product, s: CostStack) => `Take-home: ${fmt(prod.mar
 const listLine = (s: CostStack) =>
   `List price: (${fmt(s.costBeforeGst)} + ${fmt(s.takeHome)}) × ${gstX(s)} = ${rs(s.listPrice)} · GST inside ${rs(s.fees.gst)}`;
 
+/** Why the hidden cap exists and who clears it (its value is never shown). */
+const CAP_WHY = (ok: boolean, breakEven: number) =>
+  `The launch price cap is the 25th-percentile price buyers paid for like-for-like listings (its value is never shown). ${
+    ok
+      ? 'Makers clear it because they skip the middleman’s margin.'
+      : `A reseller pays a maker’s price first, so even at his break-even ${rs(breakEven)} he stays above it: resellers can join, but their margin prices them out.`
+  }`;
+
 const STATUS_WORD = { qualifies: 'Qualifies', aboveCap: 'Doesn’t qualify', belowCost: 'Doesn’t qualify (below break-even)' } as const;
 const THIRD = { low: 'Low', mid: 'Mid', high: 'High' } as const;
 
@@ -153,7 +161,6 @@ function records(p: Persona): MakerRecords {
     udyamMajorActivity: (r.udyam?.majorActivity ?? null) as MakerRecords['udyamMajorActivity'],
   };
 }
-const RESULT = { eligible: 'Eligible for Factory Launch', pending: 'Pending (no Udyam yet)', notEligible: 'Not eligible: sells as today, not factory-track' } as const;
 
 // ── the calculations ────────────────────────────────────────────────────────────────────────────
 // ── Pack Point: Meesho's view (not shown to sellers) ─────────────────────────────────────────────
@@ -202,11 +209,12 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     if (!x) return NO_PRODUCT(persona);
     const { prod, stack } = x;
     const status = checkListingPrice(prod.type, stack.listPrice, stack.breakEven);
+    const ok = status === 'qualifies';
     return [
-      `He types: making cost ${rs(prod.makingCost)}, wants to earn ${rs(stack.takeHome)} per unit (the same as ${fmt(prod.marginPct)}% on the ₹/% switch) · ${modeOf(persona) === 'packPoint' ? 'Pack Point' : 'Self-ship'} from Pickup Address`,
-      `Costs per order: ${costLine(stack)} · ${breakEvenLine(stack)}`,
+      `He types: cost ${rs(prod.makingCost)} per unit, wants to earn ${rs(stack.takeHome)} (the same as ${fmt(prod.marginPct)}% on the ₹/% switch) · ${modeOf(persona) === 'packPoint' ? 'Pack Point' : 'Self-ship'} from Pickup Address. Costs per order: ${costLine(stack)} · ${breakEvenLine(stack)}`,
       `Your price: (${fmt(stack.costBeforeGst)} + ${fmt(stack.takeHome)}) × ${gstX(stack)} = ${fmt(Math.round((stack.costBeforeGst + stack.takeHome) * (1 + stack.gstRate) * 100) / 100)} → ${rs(stack.listPrice)} (nearest rupee) · you earn ${rs(stack.takeHome)}`,
-      `“Check price” (${fmt(MAX_PRICE_CHECKS)} a day per product, shared with the bot’s Price screen) → ${STATUS_WORD[status]}; nothing shows before he checks`,
+      `“Check price” (${fmt(MAX_PRICE_CHECKS)} a day per product, shared with the bot’s Price screen) → ${ok ? 'Qualifies' : 'Not eligible at this price · a lower price may qualify'}; nothing shows before he checks. Any price can still list and sell.`,
+      CAP_WHY(ok, stack.breakEven),
     ];
   },
 
@@ -268,7 +276,7 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
       `Costs: ${costLine(stack)}`,
       breakEvenLine(stack),
       `${takeHomeLine(prod, stack)} → ${listLine(stack).replace('List price: ', 'list ')}`,
-      `${rs(stack.listPrice)} is above break-even ${rs(stack.breakEven)} and within the launch price cap → ${STATUS_WORD[checkListingPrice(prod.type, stack.listPrice, stack.breakEven)]} · any price can go live; a typed price shows its launch status after “Check price” (${MAX_PRICE_CHECKS} a day per product)`,
+      `${rs(stack.listPrice)} → ${STATUS_WORD[checkListingPrice(prod.type, stack.listPrice, stack.breakEven)]} · any price can go live; a typed price shows its launch status after “Check price” (${MAX_PRICE_CHECKS} a day per product). ${CAP_WHY(checkListingPrice(prod.type, stack.listPrice, stack.breakEven) === 'qualifies', stack.breakEven)}`,
     ];
   },
 
@@ -322,27 +330,25 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
   /** LW-6: the Home banner (also the sidebar item and pinned notice), on the scripted story for each persona */
   launchBanner: (ctx) => {
     const { persona, day } = ctx;
-    const e = eligibility(records(persona));
-    if (e.status !== 'eligible')
-      return [
-        `${RESULT[e.status]} → no banner, no sidebar item, no pinned notice: Meesho as today.`,
-        `The eligibility drawer, if opened, says “Not eligible for Factory Launch” and why: ${e.failedChecks.join(', ')} failed (eligibility() checks) · he still sells normally.`,
-      ];
+    // Open to every seller whose product is in the launch's category; the GST/Udyam checks are no gate.
     const own = productOf(persona);
     if (!own || !launch.productTypes.includes(own.type))
-      return [`${own ? productTypeName(own.type) : 'This product'} has no order book in ${launch.name} (${launch.category}) → a slim “no open order book” note on Home while commitments are open; sidebar item and pinned notice still show.`];
+      return [`${own ? productTypeName(own.type) : 'This product'} isn’t in ${launch.name} (${launch.category}) → no banner, sidebar item or pinned notice; Meesho as today.`];
     const total = slots(own.type);
     const taken = launch.slotsTakenBeforeJasmeet;
     const told = day > calendar.jumps.onboarding;
-    const listed = day >= calendar.jumps.listing;
-    const committed = day > L.commitmentsCloseDay;
-    // scripted story: the price row turns ✓ with the listing (a qualifying “Check price” in the cost check ticks it earlier)
-    const n = 2 + 2 * Number(listed) + Number(committed);
+    // Scripted story: only Jasmeet lists (D3) and commits (after D7); the reseller never gets scripted data.
+    const scripted = persona === J;
+    const listed = scripted && day >= calendar.jumps.listing;
+    const committed = scripted && day > L.commitmentsCloseDay;
+    const x = stackOf(persona)!;
+    const checkOk = checkListingPrice(own.type, x.stack.listPrice, x.stack.breakEven) === 'qualifies';
+    const n = 2 * Number(listed) + Number(committed);
     const mark = (b: boolean) => (b ? '✓' : '○');
     const lines = [
-      `Slots: ${fmt(total)} − ${fmt(taken)} taken = ${fmt(total - taken)} left for ${productTypeName(own.type)} (the order book’s count, before ${firstName(persona)} commits)`,
+      `Slots: ${fmt(total)} − ${fmt(taken)} taken = ${fmt(total - taken)} left for ${productTypeName(own.type)} (the order book’s count before Jasmeet commits) · open to every seller whose price qualifies`,
       `Dates: commitments close D${L.commitmentsCloseDay} (${short(L.commitmentsCloseDay)}) · stock ready D${L.stockAtNodeDay} (${short(L.stockAtNodeDay)}) · live D${L.liveFromDay}–D${L.liveToDay} (${shortSpan(L.liveFromDay, L.liveToDay)})`,
-      `Checklist (banner and “Check my eligibility” drawer, one model): manufacturer ✓ + records agree ✓ (GST/Udyam checks) + price qualifies ${mark(listed)} (his last “Check price”, or his listing from D${calendar.jumps.listing}) + product listed ${mark(listed)}${told ? '' : ` (“Tell us what you make” first; the seeded product counts from D${calendar.jumps.onboarding + 1})`} + stock committed ${mark(committed)} (counts after D${L.commitmentsCloseDay}) = ${n} of 5`,
+      `Checklist (banner and “Check my eligibility” drawer, one model): price qualifies ${listed ? '✓ (his listing)' : `○ (“Check price” on ${rs(x.stack.listPrice)} → ${checkOk ? 'Qualifies ticks it' : 'not eligible'})`} + product listed ${mark(listed)}${told ? '' : ` (“Tell us what you sell” first; the seeded product counts from D${calendar.jumps.onboarding + 1})`} + stock committed ${mark(committed)} = ${n} of 3`,
     ];
     if (day >= L.liveFromDay && day <= L.liveToDay) {
       const g = launchProgress(DAILY, LOT, day);

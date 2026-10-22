@@ -126,7 +126,7 @@ describe('after going live above the cap', () => {
   it('Home banner: join, "Not eligible at this price · lower your price to join", the price item open → Price position', () => {
     const m = bannerModel({
       c2m: true,
-      eligibility: { status: 'eligible', failedChecks: [] },
+      inLaunch: true,
       told: true,
       hasBook: true,
       phase: 'open',

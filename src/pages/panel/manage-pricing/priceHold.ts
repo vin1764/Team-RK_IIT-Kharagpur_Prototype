@@ -6,9 +6,8 @@
 import { useMemo } from 'react';
 import calendar from '../../../data/calendar.json';
 import launch from '../../../data/launch.json';
-import { checkListingPrice, eligibility, listingPricePosition, type PricePosition, type PriceStatus, type ProductTypeId } from '../../../engine/ui';
+import { checkListingPrice, listingPricePosition, type PricePosition, type PriceStatus, type ProductTypeId } from '../../../engine/ui';
 import { useDemo, type Persona } from '../../../store/demo';
-import { usePersona } from '../../../store/onboarding';
 import { usePriceEdits, type PriceEdit } from '../../../store/priceEdits';
 import { useScriptedCommit, useScriptedListing } from '../../../store/timeline';
 
@@ -76,13 +75,12 @@ export function priceHoldView(
 }
 
 /**
- * The current persona's Factory Launch listing on Manage Pricing, or null when there is none or the
- * maker failed the seller-type / GST-Udyam checks (doc p.7: resellers don't see the tab).
+ * The current persona's Factory Launch listing on Manage Pricing, or null when there is none. Every seller with a
+ * launch listing gets it (team, 22 Oct 2026: the seller-type / GST-Udyam checks are no launch gate).
  */
 export function usePriceHold(): PriceHoldView | null {
   const day = useDemo((s) => s.day);
   const persona = useDemo((s) => s.persona);
-  const record = usePersona();
   const listing = useScriptedListing();
   const commit = useScriptedCommit();
   const real = usePriceEdits((s) => s.edits[persona]);
@@ -97,7 +95,7 @@ export function usePriceHold(): PriceHoldView | null {
     }
     const hasCommit = !!commit && commit.typeId === listing.typeId;
     return priceHoldView(listing, hasCommit, effectivePriceEdit(real, day, persona));
-  }, [c2m, listing, commit, real, day, persona, record]);
+  }, [c2m, listing, commit, real, day, persona]);
 }
 
 /** The weekly limit (doc PI-2: "price changes allowed once a week"): after a change on day d, the next change is

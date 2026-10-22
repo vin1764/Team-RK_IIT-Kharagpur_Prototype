@@ -7,10 +7,10 @@ describe('the maker’s product (chosen, or scripted past onboarding)', () => {
     expect(makerProduct('jasmeet', 1, undefined)).toMatchObject({ type: null, told: false });
   });
 
-  it('from D2 the seeded product counts (Jasmeet’s bottle, Samar’s sneakers); the reseller has none', () => {
+  it('from D2 the seeded product counts (Jasmeet’s bottle, Samar’s sneakers, the reseller’s bought-in bottle)', () => {
     expect(makerProduct('jasmeet', 3, undefined)).toMatchObject({ type: 'steel-bottle-1l', told: true, source: 'scripted' });
     expect(makerProduct('samar', 50, undefined)).toMatchObject({ type: 'sneakers-slip-on-men', source: 'scripted' });
-    expect(makerProduct('reseller', 3, undefined)).toMatchObject({ type: null, told: false });
+    expect(makerProduct('reseller', 3, undefined)).toMatchObject({ type: 'steel-bottle-1l', told: true, source: 'scripted' });
   });
 
   it('an interactive choice always wins, even a leaf with no product type', () => {

@@ -49,8 +49,8 @@
       "title": "5-minute cost check",
       "tag": "NEW",
       "part": "onboarding",
-      "what": "Inline on the finish screen: two empty fields, his making cost and what he wants to earn per unit (₹ or %) → every fee (with his Pickup Address shipping choice, Self-ship or Pack Point), break-even and “Your price ₹X · you earn ₹Y”. “Check price” then says Qualifies or Not eligible, rationed like the bot’s.",
-      "why": "A maker decides on what he keeps, not on the selling price, so he sets his own take-home and we work out the price. The launch status comes only from his own price, so the hidden cap can’t be probed.",
+      "what": "Inline on the finish screen, for every seller: two empty fields, his cost per unit (making cost if he makes it, buying cost if he buys it) and what he wants to earn (₹ or %) → every fee (with his Pickup Address shipping choice, Self-ship or Pack Point), break-even and “Your price ₹X · you earn ₹Y”. “Check price” then says Qualifies or Not eligible (3 a day, shared with the bot).",
+      "why": "A seller decides on what he keeps, not on the selling price, so he sets his own take-home and we work out the price. The launch status comes only from his own price, so the hidden cap can’t be probed. A maker’s price clears it; a reseller’s margin prices him out.",
       "behind": "costCheck"
     },
     {
@@ -153,12 +153,12 @@
     },
     {
       "docId": "LW-4",
-      "title": "Eligibility by rule · “Check my eligibility” drawer",
+      "title": "Entry by rule · “Check my eligibility” drawer",
       "tag": "NEW",
       "part": "launch",
-      "what": "Every “Check my eligibility” (finish screen, Home banner, Notices) opens one right-side drawer: manufacturer, records agree, price qualifies (his last Check price or his listing), product listed (“List this product”), stock committed (“Go to order book”), with “n of 5 done”. A maker who fails a check (the reseller) sees “not eligible”, why, and that he still sells normally. On the Factory Launch tab, eligible makers just see Commit.",
-      "why": "Entry is decided by records and price, not by who opts in. One drawer, opened in place, so checking never loses his place; only its buttons move him on.",
-      "behind": "eligibility"
+      "what": "Every “Check my eligibility” (finish screen, Home banner, Notices) opens one right-side drawer with three steps for every seller: price qualifies (his last Check price or his listing), product listed (“List this product”), stock committed (“Go to order book”), and “n of 3 done”. No seller-type or GST/Udyam row: those checks only give the “Factory verified” badge.",
+      "why": "Entry is decided by price, a live listing and committed stock, not by who opts in or what he calls himself. One drawer, opened in place, so checking never loses his place; only its buttons move him on.",
+      "behind": "launchBanner"
     },
     {
       "docId": "LW-5",
@@ -174,8 +174,8 @@
       "title": "Factory Launch on Home, sidebar and Notices",
       "tag": "EXTENDED",
       "part": "launch",
-      "what": "A banner at the top of Home (dates, slots left, “n of 5 done · Next: …” and “Check my eligibility”, which opens the eligibility drawer in place), a “Factory Launch” item under Boost Sales, and a pinned notice laid out like Meesho’s sale notices (the launch creative on top, then the offer, a status line that follows the maker’s state, and the same “Check my eligibility”) — only for makers who passed the checks.",
-      "why": "A new manufacturer finds the launch on day one instead of three clicks deep in Promotions, and always sees the one next step.",
+      "what": "A banner at the top of Home (dates, “open to every seller whose price qualifies · no ads, no listing fee”, slots left, “n of 3 done · Next: …” and “Check my eligibility”, which opens the eligibility drawer in place), a “Factory Launch” item under Boost Sales, and a pinned notice laid out like Meesho’s sale notices (the launch creative on top, then the offer, a status line that follows the seller’s state, and the same “Check my eligibility”) — for every seller whose product is in the launch’s category.",
+      "why": "A new seller finds the launch on day one instead of three clicks deep in Promotions, and always sees the one next step.",
       "behind": "launchBanner"
     },
     {
@@ -415,6 +415,20 @@
       ]
     },
     {
+      "id": "fo-finish-cost-reseller",
+      "docId": "FO-5",
+      "title": "A reseller’s cost check: his margin prices him out (not eligible)",
+      "part": "onboarding",
+      "tag": "NEW",
+      "persona": "reseller",
+      "day": 1,
+      "route": "/onboarding/done?state=checked",
+      "selector": "[data-cost-check]",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
       "id": "lb-entry",
       "docId": "LB-3",
       "title": "Create from photos on Home",
@@ -543,7 +557,7 @@
     {
       "id": "lw-banner-listed",
       "docId": "LW-6",
-      "title": "Banner after listing: 4 of 5, commit next",
+      "title": "Banner after listing: 2 of 3, commit next",
       "part": "launch",
       "tag": "EXTENDED",
       "persona": "jasmeet",
@@ -557,7 +571,7 @@
     {
       "id": "lw-eligibility-listed",
       "docId": "LW-4",
-      "title": "Eligibility drawer after listing: 4 of 5, go to order book",
+      "title": "Eligibility drawer after listing: 2 of 3, go to order book",
       "part": "launch",
       "tag": "NEW",
       "persona": "jasmeet",
@@ -567,17 +581,6 @@
       "prep": [
         "clean"
       ]
-    },
-    {
-      "id": "lw-eligibility-reseller",
-      "docId": "LW-4",
-      "title": "Same drawer: a reseller isn’t eligible, and why",
-      "part": "launch",
-      "tag": "NEW",
-      "persona": "reseller",
-      "day": 3,
-      "route": "/panel/v3/new/growth/demo/home?fl=open",
-      "selector": "[data-fl-drawer]"
     },
     {
       "id": "lw-sidebar",

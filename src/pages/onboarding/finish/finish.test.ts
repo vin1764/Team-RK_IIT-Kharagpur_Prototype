@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { beforeEach, describe, expect, it } from 'vitest';
 import personas from '../../../data/personas.json';
-import { costStack, demandForType } from '../../../engine/ui';
+import { checkListingPrice, costStack, costStackAtTakeHome, demandForType } from '../../../engine/ui';
 import { priceCheckKey, usePriceChecks } from '../../../store/priceChecks';
 import { launchCheckView, MAX_PRICE_CHECKS } from '../../panel/catalog/launchCheck';
 import { finishMode, hasFeeCard } from './CostCheckInline';
@@ -56,6 +56,7 @@ describe('finish screen: teaser and cost check numbers', () => {
 describe('FO-5 cost check: his making cost + what he wants to earn → his price', () => {
   const J = personas.jasmeet.product as { type: 'steel-bottle-1l'; makingCost: number; marginPct: number };
   const S = personas.samar.product as { type: 'sneakers-slip-on-men'; makingCost: number; marginPct: number };
+  const R = personas.reseller.product as unknown as { type: 'steel-bottle-1l'; makingCost: number; marginPct: number };
   const bottle = (over: Partial<CostCheckInput>): CostCheckInput => ({ type: 'steel-bottle-1l', mode: 'selfShip', making: '', earning: '', unit: 'rupee', ...over });
 
   it('nothing until both inputs are filled (no pre-fill, no suggested value)', () => {
@@ -76,9 +77,24 @@ describe('FO-5 cost check: his making cost + what he wants to earn → his price
     expect([r.stack.breakEven, r.price, r.takeHome, r.stack.fees.packPointFee]).toEqual([305, 336, 30, 30]);
   });
 
-  it('“Fill demo values” = the seed’s making cost and the rupees its margin gives: ₹80 + ₹14, ₹200 + ₹30', () => {
+  it('“Fill demo values” = the seed’s cost and the rupees its margin gives: ₹80 + ₹14, ₹200 + ₹30, reseller ₹120 + ₹20', () => {
     expect(demoCostValues(J)).toEqual({ making: '80', earning: '14', unit: 'rupee' });
     expect(demoCostValues(S)).toEqual({ making: '200', earning: '30', unit: 'rupee' });
+    expect(demoCostValues(R)).toEqual({ making: '120', earning: '20', unit: 'rupee' });
+  });
+
+  it('reseller (bought-in bottle, self-ship): ₹120 + ₹20 → break-even ₹175, your price ₹195', () => {
+    const r = costCheckResult({ type: R.type, mode: 'selfShip', ...demoCostValues(R) })!;
+    expect([r.stack.costBeforeGst, r.stack.breakEven, r.price, r.takeHome]).toEqual([166, 175, 195, 20]);
+  });
+
+  it('Check price: Jasmeet’s ₹147 qualifies; the reseller’s ₹195 doesn’t, nor any price his ₹120 cost allows (₹0…₹200 earned)', () => {
+    const j = costStackAtTakeHome('steel-bottle-1l', 80, 14, 'selfShip');
+    expect(checkListingPrice('steel-bottle-1l', j.listPrice, j.breakEven)).toBe('qualifies');
+    for (let earn = 0; earn <= 200; earn++) {
+      const s = costStackAtTakeHome(R.type, R.makingCost, earn, 'selfShip');
+      expect(checkListingPrice(R.type, s.listPrice, s.breakEven), `₹${earn}`).not.toBe('qualifies');
+    }
   });
 
   it('₹/% switch: 17.5% of ₹80 is the same ₹14 and ₹147; switching keeps his earning', () => {
