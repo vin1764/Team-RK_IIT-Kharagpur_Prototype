@@ -118,21 +118,25 @@ function NoCatalogs() {
 export default function Inventory() {
   // Null before D28 and in plain mode ("Today vs ours"): the captured empty page.
   const g = useGrowth();
-  // ?stock=<tab id> opens that stock tab (showcase jumps, e.g. the verdicts on All Stock).
+  // ?stock=<tab id> opens that stock tab (showcase jumps, e.g. the verdicts on All Stock); with ?plan=open the
+  // restock card's "Plan this batch" panel opens too (RestockCard).
   const [params] = useSearchParams();
   const asked = params.get('stock');
   const stockParam = asked && STOCK_TABS.some((t) => t.id === asked) ? asked : null;
-  // Remount when the growth loop switches on or off (demo day / persona) or ?stock= changes, so the tab follows.
-  return <InventoryView key={`${g ? 'growth' : 'captured'}-${stockParam ?? ''}`} g={g} stockParam={stockParam} />;
+  // Remount when the growth loop switches on or off (demo day / persona), when Low Stock empties or fills (a planned
+  // batch landing), or ?stock= changes, so the tab follows.
+  const low = g ? stockTabRows(g).low_stock.length > 0 : false;
+  return <InventoryView key={`${g ? 'growth' : 'captured'}-${low ? 'low' : 'ok'}-${stockParam ?? ''}`} g={g} stockParam={stockParam} />;
 }
 
 function InventoryView({ g, stockParam }: { g: GrowthView | null; stockParam: string | null }) {
   const day = useDemo((s) => s.day);
   const [status, setStatus] = useState('active');
-  // From D28 (growth loop) the page opens on Low Stock, where the restock card is (GL-2).
-  const [stock, setStock] = useState(stockParam ?? (g ? 'low_stock' : 'all_stock'));
   // D28+ (Jasmeet): her live SKUs fill Active; the tab counts follow the rows shown (C2M, GL-2/GL-5).
   const rows = g ? stockTabRows(g) : null;
+  // From D28 (growth loop) the page opens on Low Stock, where the restock card is (GL-2), while anything is low
+  // (a planned batch that has landed can take the bottle off Low Stock: then All Stock).
+  const [stock, setStock] = useState(stockParam ?? (rows?.low_stock.length ? 'low_stock' : 'all_stock'));
   const statusTabs = rows ? STATUS_TABS.map((t) => ({ ...t, count: t.id === 'active' ? rows.all_stock.length : 0 })) : STATUS_TABS;
   const stockTabs = rows ? STOCK_TABS.map((t) => ({ ...t, count: rows[t.id as keyof typeof rows].length })) : STOCK_TABS;
   const shown = g && rows && status === 'active' ? rows[stock as keyof typeof rows] : [];

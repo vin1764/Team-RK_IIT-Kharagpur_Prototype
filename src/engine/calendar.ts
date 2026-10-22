@@ -19,3 +19,9 @@ export function formatDate(iso: string): string {
 export function dayLabel(day: number): string {
   return formatDate(dayToDate(day));
 }
+
+/** ISO date → demo day (inverse of dayToDate). */
+export function dateToDay(iso: string): number {
+  const ms = Date.parse(`${iso}T00:00:00Z`) - Date.parse(`${calendar.d0}T00:00:00Z`);
+  return Math.round(ms / 86_400_000);
+}

@@ -17,3 +17,11 @@ describe('dayLabel', () => {
     expect(dayLabel(31)).toBe('24 Nov 2026');
   });
 });
+
+describe('dateToDay', () => {
+  it('inverts dayToDate: 21 Nov = D28, 26 Nov = D33, D0…D90 round-trip', async () => {
+    const { dateToDay } = await import('./calendar');
+    expect([dateToDay('2026-11-21'), dateToDay('2026-11-26')]).toEqual([28, 33]);
+    for (let d = 0; d <= 90; d++) expect(dateToDay(dayToDate(d))).toBe(d);
+  });
+});

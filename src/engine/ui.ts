@@ -26,7 +26,7 @@ export {
 } from './eligibility';
 export { packPointFee } from './packPoint';
 export { clusterForPincode, lotInbound, sizeSplit, sizeSplitFor, type LotInbound, type LotSeed } from './lot';
-export { dayToDate, dayLabel, formatDate } from './calendar';
+export { dayToDate, dateToDay, dayLabel, formatDate } from './calendar';
 export type { PricePosition, PriceStatus, ProductTypeId };
 
 interface BenchmarkSeed {

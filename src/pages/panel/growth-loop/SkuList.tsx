@@ -10,9 +10,7 @@ import { CrystalTip, T } from '../manage-pricing/crystal';
 import { RestockCard } from './RestockCard';
 import { SwitchPanel } from './SwitchPanel';
 import { THUMBS, Thumb, VerdictChip } from './parts';
-
-/** The SKU with tracked stock in the demo (the launched bottle). */
-const STOCKED = 'bottle';
+import { STOCKED_SKU as STOCKED } from './useGrowth';
 
 /** Stock-tab membership of the growth-loop SKUs: Low Stock = the verdict says make more. */
 export function stockTabRows(g: GrowthView): Record<'all_stock' | 'out_of_stock' | 'low_stock', SkuVerdict[]> {

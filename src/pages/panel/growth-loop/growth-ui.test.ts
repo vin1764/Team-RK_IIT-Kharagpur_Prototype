@@ -1,9 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { growthAt } from '../../../engine/ui';
+import { growthAt, planBatch } from '../../../engine/ui';
 import en from '../../../i18n/en.json';
 import hi from '../../../i18n/hi.json';
-import { translate } from '../../../i18n';
+import { fmt, translate } from '../../../i18n';
 import { scriptedListingFor } from '../../../store/timeline';
 import { LAUNCH, effectiveCommit } from '../factory-launch/launch';
 import { stockTabRows } from './SkuList';
@@ -37,6 +37,20 @@ describe('growth loop UI wiring', () => {
   it('Inventory tab counts follow the rows: All 3, Out 0, Low 1 (the bottle)', () => {
     const rows = stockTabRows(g);
     expect([rows.all_stock.length, rows.out_of_stock.length, rows.low_stock.map((r) => r.id)]).toEqual([3, 0, ['bottle']]);
+  });
+
+  it('plan panel and planned card copy: 230 / 21 Nov / 26 Nov / ₹18,400 / ≈ 22 days', () => {
+    const p = planBatch({ base: g.stockBase, units: g.restock.nextBatch, startDay: 28, leadTimeDays: maker.leadTimeDays, makingCost: maker.makingCost, minRun: maker.minRun });
+    expect(translate('en', 'gl.plan.plannedDetail', { n: p.units, start: shortDate(p.startsOn), lands: shortDate(p.landsOn) })).toBe('230 units · starts 21 Nov · lands 26 Nov');
+    expect(`₹${fmt(p.atCost)}`).toBe('₹18,400');
+    expect(translate('en', 'gl.plan.coverValue', { days: p.coverAfterDays })).toBe('≈ 22 days');
+    expect(translate('en', 'gl.plan.coverSub', { left: p.onHandAtLanding, n: p.units, rate: g.runRate })).toBe('(18 on hand + 230) ÷ 11 a day');
+  });
+
+  it('after the planned batch lands (D33): the bottle is Keep and leaves Low Stock (All 3, Low 0)', () => {
+    const g33 = growthAt(33, maker, [{ units: 230, startDay: 28, leadTimeDays: maker.leadTimeDays }])!;
+    const rows = stockTabRows(g33);
+    expect([g33.onHand, rows.all_stock.length, rows.low_stock.length]).toEqual([248, 3, 0]);
   });
 
   it('sipper reason reads exactly "Sell-through low for 2+ weeks"', () => {

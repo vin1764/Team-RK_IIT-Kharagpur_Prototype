@@ -6,10 +6,14 @@
 import { useMemo } from 'react';
 import { formatDate, growthAt, type GrowthView, type MakerInputs } from '../../../engine/ui';
 import { useDemo, type Persona } from '../../../store/demo';
+import { useRestockBatches } from '../../../store/restockPlan';
 import { useScriptedCommit, useScriptedListing } from '../../../store/timeline';
 
 /** The seeded growth-loop SKUs (src/data/growth.json) are Jasmeet's. */
 const GROWTH_PERSONA: Persona = 'jasmeet';
+
+/** The SKU with tracked stock in the demo (the launched bottle): the restock card and its plans are for it. */
+export const STOCKED_SKU = 'bottle';
 
 /** Pure: the maker inputs for growthAt from a listing and a commit, or null when either is missing. */
 export function makerInputs(
@@ -23,6 +27,7 @@ export function makerInputs(
 /**
  * The growth-loop view on the demo day: null before D28, for other personas, without a launch commit, or in
  * plain mode ("Today vs ours", c2m off), where Inventory, Business Dashboard and Home show their captured state.
+ * Restock batches the maker confirmed ("Plan this batch", src/store/restockPlan.ts) are applied from the day they land.
  */
 export function useGrowth(): GrowthView | null {
   const day = useDemo((s) => s.day);
@@ -30,11 +35,12 @@ export function useGrowth(): GrowthView | null {
   const c2m = useDemo((s) => s.c2m);
   const listing = useScriptedListing();
   const commit = useScriptedCommit();
+  const batches = useRestockBatches(persona, STOCKED_SKU);
   return useMemo(() => {
     if (!c2m || persona !== GROWTH_PERSONA) return null;
     const maker = makerInputs(listing, commit);
-    return maker ? growthAt(day, maker) : null;
-  }, [c2m, day, persona, listing, commit]);
+    return maker ? growthAt(day, maker, batches) : null;
+  }, [c2m, day, persona, listing, commit, batches]);
 }
 
 /** "2026-11-21" → "21 Nov" (the year is implied on these cards). */
