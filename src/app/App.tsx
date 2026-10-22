@@ -35,6 +35,7 @@ import BusinessDetails from '../pages/onboarding/BusinessDetails';
 import PickupAddress from '../pages/onboarding/PickupAddress';
 import BankDetails from '../pages/onboarding/BankDetails';
 import SupplierDetails from '../pages/onboarding/SupplierDetails';
+import Finish from '../pages/onboarding/Finish';
 import { OffShowcase, SHOWCASE_PATH } from '../showcase/OffShowcase';
 import { onboarding, paths, SID } from './paths';
 
@@ -87,6 +88,7 @@ export function App() {
         <Route path={onboarding.pickupAddress} element={<PickupAddress />} />
         <Route path={onboarding.bankDetails} element={<BankDetails />} />
         <Route path={onboarding.supplierDetails} element={<SupplierDetails />} />
+        <Route path={onboarding.done} element={<Finish />} />
         <Route
           path={SHOWCASE_PATH}
           element={

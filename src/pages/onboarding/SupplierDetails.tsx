@@ -3,7 +3,7 @@
 // as today (FO-2 uses its record). Mock only: Submit creates nothing.
 // Plain mode ("Today vs ours", c2m off): the business-type question is back here, as captured.
 import { useEffect, useState } from 'react';
-import { paths } from '../../app/paths';
+import { onboarding, paths } from '../../app/paths';
 import { notInPrototype, toast } from '../../components/Toast';
 import { Banner, Button } from '../../components/ui';
 import { BUSINESS_TYPES } from '../../engine/ui';
@@ -13,6 +13,7 @@ import { C2M } from './stepper/copy';
 import { Checkbox, DemoFill, SelectField, TextField } from './stepper/fields';
 import { useDevState, useGo } from './stepper/nav';
 import { OnboardingLayout } from './stepper/OnboardingLayout';
+import { useFinishEligible } from './Finish';
 
 export default function SupplierDetails() {
   const persona = usePersona();
@@ -37,6 +38,9 @@ export default function SupplierDetails() {
   }, [persona, dev]);
 
   const c2m = useDemo((s) => s.c2m);
+  // C2M: verified manufacturers continue to the finish screen ("What do you make?"); everyone else, and plain
+  // mode, lands on the dashboard as today.
+  const verified = useFinishEligible();
   const ready = storeName.trim() !== '' && email.trim() !== '' && fullName.trim() !== '' && agree && (c2m || o.businessType !== null);
 
   return (
@@ -50,7 +54,7 @@ export default function SupplierDetails() {
           onClick={() => {
             o.set({ supplierSubmitted: true });
             toast(C2M.accountCreated);
-            go(paths.home);
+            go(c2m && verified ? onboarding.done : paths.home);
           }}
         >
           Submit

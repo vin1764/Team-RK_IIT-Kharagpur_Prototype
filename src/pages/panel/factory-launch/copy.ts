@@ -110,7 +110,7 @@ export const FL = {
   noCommitTitle: 'You have no lot in this launch', // ours
   noCommitSub: 'Commit units from the Factory Launch tab to see your launch here.', // ours
   backToLaunch: 'Factory Launch', // ours
-  // Home banner, sidebar item, pinned notice, onboarding finish (LW-6, FO-7). Shown only to makers
+  // Home banner, sidebar item, pinned notice (LW-6). Shown only to makers
   // who passed the seller-type + GST/Udyam checks.
   banner: {
     manufacturersOnly: 'Manufacturers only', // doc (FO-9 offer: "manufacturers only")
@@ -156,13 +156,6 @@ export const FL = {
     pinned: 'Pinned', // ours
     body: 'A factory-direct launch week for manufacturers. Entry by rule: records and a qualifying price, no discount asked.', // ours (doc LW-4/LW-5)
     dates: (close: string, stock: string, live: string) => `Commit stock by ${close} · stock ready by ${stock} · live ${live}`, // ours (calendar)
-  },
-  finish: {
-    title: 'You’re a verified factory seller', // prompt
-    sub: 'You’re eligible for Factory Launch Week', // prompt
-    next: (name: string, category: string, live: string) => `Next: ${name} · ${category} · live ${live}`, // ours
-    check: 'Check my eligibility', // prompt
-    dashboard: 'Go to dashboard', // prompt
   },
   // Price-hold breach (PI-3, doc p.7: "price no longer qualifies" → launch slot removed, no number shown)
   toPricePosition: 'View price position', // ours

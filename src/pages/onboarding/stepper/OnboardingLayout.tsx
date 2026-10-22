@@ -36,7 +36,7 @@ const STEPS = [
 
 export type StepIndex = 0 | 1 | 2 | 3;
 
-function Stepper({ current }: { current: StepIndex }) {
+function Stepper({ current }: { current: StepIndex | 'done' }) {
   const go = useGo();
   const o = useOnboarding();
   const doneFlags = [o.businessFetched && !!o.businessType, o.pickupSaved && !!o.fulfilment, o.bankVerified, o.supplierSubmitted];
@@ -44,7 +44,7 @@ function Stepper({ current }: { current: StepIndex }) {
     <div className="mt-[31px] flex border-0 border-b border-solid border-tertiary-border">
       {STEPS.map((s, i) => {
         const isCurrent = i === current;
-        const done = !isCurrent && (i < current || doneFlags[i]);
+        const done = current === 'done' || (!isCurrent && (i < current || doneFlags[i]));
         return (
           <button
             key={s.label}
@@ -168,6 +168,26 @@ export function OnboardingLayout({
         </div>
       </div>
       <AsideColumn aside={ASIDES[aside]} />
+    </div>
+  );
+}
+
+/**
+ * C2M (FO-7): the onboarding finish screen after Supplier Details → Submit. Same frame as the 4 steps
+ * (wordmark, the stepper with every step done, form surface), one wide column instead of form + FAQ,
+ * since the category tree needs the width. Buttons sit at the bottom, as on the steps.
+ */
+export function OnboardingDoneLayout({ footer, children }: { footer: ReactNode; children: ReactNode }) {
+  return (
+    <div data-onb-root className="min-h-[calc(100vh-var(--concept-strip-h))] bg-secondary-bg px-4 max-[1023px]:pb-[var(--demo-controls-room)]">
+      <div className="mx-auto flex w-[1040px] max-w-full flex-col">
+        <img src={`${IMG}/meesho-wordmark.png`} alt="meesho" width="98" height="25" className="mt-[11px] h-[25px] w-[98px] self-start" />
+        <Stepper current="done" />
+        <div className="flex flex-col">{children}</div>
+        <div className="relative mt-auto pt-6 pb-14">
+          <div className="relative flex flex-wrap gap-3">{footer}</div>
+        </div>
+      </div>
     </div>
   );
 }
