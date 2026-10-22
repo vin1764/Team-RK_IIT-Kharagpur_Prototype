@@ -3,7 +3,7 @@
 // Who fills what = doc pp.15-18 / plan §7. Numbers come from the engine (src/engine/ui.ts) or seed JSON.
 import data from '../../../data/botListing.json';
 import nodesData from '../../../data/packPointNodes.json';
-import { checkListingPrice, clusterForPincode, costStack, demoInputsForType, suggestedLot, takeHomeAt, typeFees, typicalForType, type CostStack, type ProductTypeId, type PriceStatus } from '../../../engine/ui';
+import { checkListingPrice, clusterForPincode, costStack, demoInputsForType, suggestedLot, takeHomeAt, typeFees, typicalForType, type CostStack, type ProductTypeId } from '../../../engine/ui';
 import type { T } from '../../../i18n';
 import type { PersonaRecord } from '../../../store/onboarding';
 import { DEMO_IMAGE, type DraftImage, type DraftReview, type PriceRow } from './draftStore';
@@ -202,7 +202,9 @@ export interface GoLiveInput {
   missingPrices: string[];
   netQtyConfirmed: boolean;
   inputs: Record<string, string>;
-  status: PriceStatus | null;
+  /** The list price on screen. Any positive price passes: the price never blocks listing (its Factory Launch
+   *  status is a separate, non-blocking line: launchCheck.ts). */
+  price: number | null;
   inventory: number | null;
 }
 
@@ -219,7 +221,7 @@ export interface GoLiveChecks {
  * Go-live checklist (LB-8):
  *  Images  — a Front Image is present (the bot's cleaned cover counts as the Front Image);
  *  Details — every mandatory field and price cell filled, the 4 new inputs filled, Net Quantity confirmed;
- *  Price   — status is "qualifies";
+ *  Price   — "Price set": any positive list price (Factory Launch eligibility never blocks Go live);
  *  Lot     — inventory > 0 (any number: no cap, no floor, Q19);
  *  Review  — the maker confirmed the bot's details ("Bot details reviewed").
  */
@@ -230,7 +232,7 @@ export function goLiveChecks(x: GoLiveInput): GoLiveChecks {
   });
   const images = x.hasFrontImage;
   const details = !x.missingFields.length && !x.missingPrices.length && x.netQtyConfirmed && inputsOk;
-  const price = x.status === 'qualifies';
+  const price = (x.price ?? 0) > 0;
   const lot = (x.inventory ?? 0) > 0;
   const review = x.reviewed;
   return { images, details, review, price, lot, all: images && details && review && price && lot };

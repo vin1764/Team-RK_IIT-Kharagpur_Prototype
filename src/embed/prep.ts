@@ -8,6 +8,7 @@ import { applyPhotos } from '../pages/panel/catalog/photos';
 import { resetCatalog } from '../store/catalog';
 import { useDemo, type Persona } from '../store/demo';
 import { PERSONAS, useOnboarding } from '../store/onboarding';
+import { resetPriceChecks } from '../store/priceChecks';
 import { resetPriceEdits } from '../store/priceEdits';
 import { resetRestockPlans } from '../store/restockPlan';
 import { resetLotPlans } from '../store/lotPlans';
@@ -27,6 +28,7 @@ export function resetInteractive() {
   resetDraft();
   resetLaunch();
   resetPriceEdits();
+  resetPriceChecks();
   resetRestockPlans();
   resetLotPlans();
   resetMakerProduct();

@@ -1,9 +1,10 @@
 // State of the three short "Create from photos" screens: the draft, the engine numbers derived from it
-// (cost stack → list price → take-home → status; suggested lot) and the setters the screens share.
-// Every number comes from src/engine/ui.ts or the seed JSON; B never enters here (status only).
+// (cost stack → list price → take-home; suggested lot; the Factory Launch check, launchCheck.ts) and the setters the
+// screens share. Every number comes from src/engine/ui.ts or the seed JSON; B never enters here (status only).
 import { useEffect } from 'react';
-import { checkListingPrice, costStack, suggestedLot, typicalForType } from '../../../../engine/ui';
+import { costStack, suggestedLot, typicalForType } from '../../../../engine/ui';
 import { useDemo } from '../../../../store/demo';
+import { usePriceCheckEntry } from '../../../../store/priceChecks';
 import { useOnboarding, usePersona, usePickupPincode } from '../../../../store/onboarding';
 import {
   BOT_STEPS,
@@ -25,6 +26,7 @@ import {
   type ShipMode,
 } from '../bot';
 import { EMPTY_PRICE_ROW, useDraft, type PriceRow } from '../draftStore';
+import { launchCheckView } from '../launchCheck';
 import { missingFields, PACKER_FROM_MANUFACTURER } from '../fields';
 import { useListingType } from '../listingType';
 import { missingPrices, suggestWdrp } from '../pricing';
@@ -52,7 +54,11 @@ export function useBotModel() {
   const margin = numberIn(values.marginPct);
   const stack = type && makingCost !== null && makingCost > 0 && margin !== null && margin >= 0 ? costStack(type, makingCost, margin, mode, makersPooled) : null;
   const price = numberIn(row.meeshoPrice);
-  const status = stack && type && price ? checkListingPrice(type, price, stack.breakEven) : null;
+  // Factory Launch status: rationed "Check price" for a typed price, free for the bot's own price (launchCheck.ts).
+  const priceChecks = usePriceCheckEntry(type);
+  const launch = launchCheckView({ type, price, stack, entry: priceChecks.entry, day: priceChecks.day });
+  /** "Check price": uses one of today's checks on the price on screen (refused when none is left). */
+  const checkPrice = () => (launch.canCheck && price && stack ? priceChecks.check(price, stack.breakEven) : false);
   const inventory = numberIn(row.inventory);
   const lot = type ? suggestedLot(type, makingCost ?? 0, numberIn(values.minRun)) : null;
   const typical = type ? typicalForType(type) : null;
@@ -150,7 +156,7 @@ export function useBotModel() {
     missingPrices: size ? missingPrices(d.prices[size]) : ['meeshoPrice'],
     netQtyConfirmed: d.netQtyConfirmed,
     inputs: values,
-    status,
+    price,
     inventory,
   });
 
@@ -172,7 +178,8 @@ export function useBotModel() {
     margin,
     stack,
     price,
-    status,
+    launch,
+    checkPrice,
     inventory,
     lot,
     typical,
