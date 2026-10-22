@@ -80,7 +80,7 @@
   "reseller": {
     "name": "Demo Reseller",
     "storeName": "Demo Traders",
-    "profile": "Buys from makers and resells; fails the seller-type and GST/Udyam checks",
+    "profile": "Buys the 1 L steel bottle from a maker and resells it; not Factory verified (seller type, GST and Udyam don't show a factory), so no Direct-from-maker label and no Pack Point. Can join Factory Launch if his price qualifies; at his cost it never does",
     "phone": "+91 90000 00003",
     "email": "reseller@example.com",
     "taxId": "GSTIN",
@@ -105,7 +105,12 @@
     },
     "businessType": "I buy from other sellers and sell online",
     "fulfilment": "selfShip",
-    "product": null,
+    "product": {
+      "type": "steel-bottle-1l",
+      "makingCost": 120,
+      "marginPct": 16.7,
+      "_source": "team, 22 Oct 2026: bought from a maker at ₹120 per unit; wants to earn ₹20 per unit (16.7% of ₹120 = ₹20.04 → ₹20, the engine's rupee rounding). Self-ship fees ₹6 + ₹32 + ₹8 = ₹46 → break-even (120 + 46) × 1.05 = 174.3 → ₹175; price (166 + 20) × 1.05 = 195.3 → ₹195"
+    },
     "bank": {
       "account": "000000000003",
       "ifsc": "DEMO0000003"

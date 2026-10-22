@@ -1,18 +1,20 @@
-// Onboarding finish screen (C2M; ours-only), after Supplier Details → Submit, for verified manufacturers only
-// (seller type + GST nature of business + Udyam passed, FO-7). Resellers and non-factory sellers go straight
-// to the dashboard as today. We can't trust Udyam or IndiaMART data to know the exact product, so the maker
-// tells us here, then sees the demand teaser (FO-4) and runs the 5-minute cost check (FO-5) for it.
-//   1. What do you make? Meesho's category search + tree (the Add Single Catalog components and data), or
+// Onboarding finish screen (C2M; ours-only), after Supplier Details → Submit, for every seller (Factory Launch is open
+// to anyone whose price qualifies; the GST/Udyam checks only give the "Factory verified" badge). We can't trust Udyam
+// or IndiaMART data to know the exact product, so the seller tells us here, then sees the demand teaser (FO-4) and
+// runs the 5-minute cost check (FO-5) for it.
+//   1. What do you sell? Meesho's category search + tree (the Add Single Catalog components and data), or
 //      one product photo the bot recognises ("Recognised: … — Correct? Yes / Change").
 //   2. FO-4 teaser for the chosen type: open gap and price band from demandForType, or a neutral line.
-//   3. FO-5 cost check inline, with the maker's Pickup Address shipping choice (FO-8).
-// "Check my eligibility" opens Home with the Factory Launch banner expanded; "Skip for now" opens Home.
+//   3. FO-5 cost check inline: his cost per unit and what he wants to earn → his price, with the Pickup Address
+//      shipping choice (FO-8); "Check price" for its Factory Launch status.
+// "Check my eligibility" opens the eligibility drawer here (LW-4; the page stays); "Skip for now" opens Home.
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, useLocation, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { Button } from '../../components/ui';
-import { eligibility, productTypeName, type ProductTypeId } from '../../engine/ui';
+import { productTypeName, type ProductTypeId } from '../../engine/ui';
 import { useDemo } from '../../store/demo';
+import { useEligibilityDrawer } from '../../store/eligibilityDrawer';
 import { useMakerProduct, useMakerProductType } from '../../store/makerProduct';
 import { useOnboarding, usePersona } from '../../store/onboarding';
 import { CategorySearch } from '../panel/catalog/CategorySearch';
@@ -21,29 +23,20 @@ import { isLeafPath } from '../panel/catalog/categories';
 import { DEMO_IMAGE } from '../panel/catalog/draftStore';
 import { ProductsModal } from '../panel/catalog/ProductsModal';
 import { FIN } from './finish/copy';
-import { CostCheckInline, finishMode, hasFeeCard } from './finish/CostCheckInline';
+import { CostCheckInline, finishMode, hasFeeCard, type CostInputs } from './finish/CostCheckInline';
+import { costCheckResult, demoCostValues } from './finish/costCheck';
+import { priceCheckKey, usePriceChecks } from '../../store/priceChecks';
 import { pathForType, recognisedType, searchProducts, typeForPath } from './finish/productPick';
 import { demandOrNull } from './signup/guards';
-import { linkWithDemo, rupeeRange, useDemoLink } from './signup/nav';
+import { rupeeRange, useDemoLink } from './signup/nav';
 import { DemoFill } from './stepper/fields';
 import { useDevState } from './stepper/nav';
 import { OnboardingDoneLayout } from './stepper/OnboardingLayout';
 
+const EMPTY_COST: CostInputs = { making: '', earning: '', unit: 'rupee' };
+
 /** Where the leaf sits, as the bot's Product screen shows it: "Kitchen Storage / Water Bottles". */
 const where = (path: string[]) => path.slice(-2).join(' / ');
-
-/** Whether the current persona passed the factory-track checks (with the business type they answered). */
-export function useFinishEligible(): boolean {
-  const record = usePersona();
-  const answered = useOnboarding((s) => s.businessType);
-  const e = eligibility({
-    taxId: record.taxId,
-    businessType: answered ?? record.businessType,
-    gstNatureOfBusiness: record.gstNatureOfBusiness,
-    udyamMajorActivity: record.udyam?.majorActivity ?? null,
-  });
-  return e.status === 'eligible';
-}
 
 function Teaser({ type }: { type: ProductTypeId }) {
   const d = demandOrNull(type);
@@ -85,7 +78,9 @@ function FinishPage() {
   /** a photo the bot has recognised, awaiting "Correct?" */
   const [pending, setPending] = useState<ProductTypeId | null>(null);
   const [unrecognised, setUnrecognised] = useState(false);
-  const [making, setMaking] = useState('');
+  /** the cost check's two inputs, empty until he types (or "Fill demo values") */
+  const [cost, setCost] = useState<CostInputs>(EMPTY_COST);
+  const openDrawer = useEligibilityDrawer((s) => s.show);
 
   const choice = maker.source === 'chosen' ? maker.choice : null;
   const type = choice?.type ?? null;
@@ -98,7 +93,7 @@ function FinishPage() {
     // A tree leaf (4 levels) or a product type's own path (search hit outside the captured tree) is an answer.
     if (isLeafPath(path) || t) {
       choose(personaId, { categoryPath: path, type: t, via: 'category' });
-      setMaking('');
+      setCost(EMPTY_COST);
     }
   };
 
@@ -109,14 +104,24 @@ function FinishPage() {
     setTreePath(path);
     setPending(null);
     choose(personaId, { categoryPath: path, type: own.type, via: 'category' });
-    setMaking(String(own.makingCost));
+    setCost(demoCostValues(own));
   };
 
-  // Dev / showcase `?state=picked`: the persona's own product picked and its making cost filled (again after
+  // Dev / showcase `?state=picked`: the persona's own product picked and its cost check filled (again after
   // a showcase jump's "clean" prep empties the choice).
   const [, setParams] = useSearchParams();
+  // `?state=checked`: the same, plus one "Check price" on that price (as a presenter would click it; it uses one of
+  // the day's checks), so the Factory Launch status shows (the reseller's jump: not eligible at ₹195).
   useEffect(() => {
-    if (dev === 'picked' && maker.source !== 'chosen') demoFill();
+    if ((dev === 'picked' || dev === 'checked') && maker.source !== 'chosen') {
+      demoFill();
+      if (dev === 'checked' && own && hasFeeCard(own.type)) {
+        const r = costCheckResult({ type: own.type, mode: finishMode(fulfilment, persona, own.type), ...demoCostValues(own) });
+        const key = priceCheckKey(personaId, own.type);
+        const last = usePriceChecks.getState().entries[key]?.last;
+        if (r && last?.price !== r.price) usePriceChecks.getState().check(key, useDemo.getState().day, r.price, r.stack.breakEven);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dev, personaId, maker.source]);
 
@@ -133,18 +138,17 @@ function FinishPage() {
       );
     clear(personaId);
     setPending(null);
-    setMaking('');
+    setCost(EMPTY_COST);
     setTimeout(() => search.current?.focus(), 0);
   };
 
   const mode = type && hasFeeCard(type) ? finishMode(fulfilment, persona, type) : null;
-  const marginPct = type && own?.type === type ? own.marginPct : 0;
 
   return (
     <OnboardingDoneLayout
       footer={
         <>
-          <Button className="h-11 px-6" onClick={() => go(`${paths.home}?fl=open`)} data-finish-check>
+          <Button className="h-11 px-6" onClick={openDrawer} aria-haspopup="dialog" data-finish-check>
             {FIN.check}
           </Button>
           <Button variant="outline" className="h-11 px-6" onClick={() => go(paths.home)} data-finish-skip>
@@ -230,7 +234,14 @@ function FinishPage() {
         {type && (
           <div className="mt-4">
             {mode ? (
-              <CostCheckInline key={type} type={type} mode={mode} marginPct={marginPct} making={making} onMaking={setMaking} />
+              <CostCheckInline
+                key={type}
+                type={type}
+                mode={mode}
+                value={cost}
+                onChange={setCost}
+                onDemoFill={own?.type === type ? () => setCost(demoCostValues(own)) : undefined}
+              />
             ) : (
               <section className="rounded bg-white p-6 text-lg leading-5 text-secondary-text" data-c2m="FO-5" data-c2m-id="FO-5">
                 {FIN.noFeeCard}
@@ -258,13 +269,10 @@ function FinishPage() {
 }
 
 /**
- * Ours-only: verified manufacturers; anyone else is sent to the dashboard, as Submit does today. In plain mode
- * ("Today vs ours") the screen's content is hidden like every C2M element; Submit never comes here then.
+ * Ours-only, for every seller. In plain mode ("Today vs ours") the screen's content is hidden like every C2M element;
+ * Submit never comes here then.
  */
 export default function Finish() {
-  const ok = useFinishEligible();
   const persona = useDemo((s) => s.persona);
-  const { search } = useLocation();
-  if (!ok) return <Navigate to={linkWithDemo(paths.home, search)} replace />;
   return <FinishPage key={persona} />;
 }

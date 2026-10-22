@@ -25,7 +25,7 @@ describe('demo guide numbers — recomputed from engine/seed', () => {
     expect([n.listPrice, n.takeHome]).toEqual([147, 14]);
     expect(checkListingPrice('steel-bottle-1l', 147, 133)).toBe('qualifies');
     expect(n.listQualifies).toBe(true);
-    expect(text(1)).toContain('“₹147 → ₹14 take-home, qualifies”');
+    expect(text(1)).toContain('₹80 making cost and ₹14 to earn → “Your price: ₹147 · you earn ₹14” → Check price: qualifies');
     // Teaser after onboarding, for the type she picks (plan §10 step 1, updated)
     expect(text(1)).toContain('picks the 1 L steel water bottle → teaser “about 300 orders a week at ₹150–170”');
     expect(text(1)).toContain('Home & Kitchen invitation');

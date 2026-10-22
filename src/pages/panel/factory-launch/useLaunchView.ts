@@ -5,13 +5,11 @@ import {
   checkListingPrice,
   costStack,
   demandForType,
-  eligibility,
   launchProgress,
   likelyShare,
   productTypeName,
   slots,
   suggestedLot,
-  type Eligibility,
   type PriceStatus,
   type ProductTypeId,
 } from '../../../engine/ui';
@@ -65,12 +63,6 @@ export function useLaunchView() {
     const rows = LAUNCH.productTypes.map((t) => orderBookRow(t, Object.values(all)));
     const ownType = listing?.typeId ?? makerType;
     const hasBook = ownType !== null && LAUNCH.productTypes.includes(ownType);
-    const elig: Eligibility = eligibility({
-      taxId: record.taxId,
-      businessType: record.businessType,
-      gstNatureOfBusiness: record.gstNatureOfBusiness,
-      udyamMajorActivity: record.udyam?.majorActivity ?? null,
-    });
     const launchListing = listing && LAUNCH.productTypes.includes(listing.typeId) ? listing : null;
     const priceStatus: PriceStatus | null = launchListing ? checkListingPrice(launchListing.typeId, launchListing.price, launchListing.breakEven) : null;
     const progress = commit ? launchProgress(LAUNCH.dailyOrders, commit.units, day) : null;
@@ -81,7 +73,6 @@ export function useLaunchView() {
       rows,
       ownType,
       hasBook,
-      eligibility: elig,
       listing: launchListing,
       priceStatus,
       commit,

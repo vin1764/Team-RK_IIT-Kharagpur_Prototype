@@ -49,8 +49,8 @@
       "title": "5-minute cost check",
       "tag": "NEW",
       "part": "onboarding",
-      "what": "Inline on the finish screen: making cost → every fee (with the shipping choice from Pickup Address), break-even, take-home at any price, and whether a qualifying price exists.",
-      "why": "A maker decides on what they keep, not on the selling price, so we show take-home before they list anything.",
+      "what": "Inline on the finish screen: two empty fields, his making cost and what he wants to earn per unit (₹ or %) → every fee (with his Pickup Address shipping choice, Self-ship or Pack Point), break-even and “Your price ₹X · you earn ₹Y”. “Check price” then says Qualifies or Not eligible, rationed like the bot’s.",
+      "why": "A maker decides on what he keeps, not on the selling price, so he sets his own take-home and we work out the price. The launch status comes only from his own price, so the hidden cap can’t be probed.",
       "behind": "costCheck"
     },
     {
@@ -59,7 +59,7 @@
       "tag": "EXTENDED",
       "part": "onboarding",
       "what": "Meesho’s own business-type question, asked right after the GST fetch instead of in the last step — unprompted on purpose: Meesho’s 7 options in Meesho’s order, nothing pre-selected, marked or hinted.",
-      "why": "The maker must declare it without a nudge; eligibility is decided only afterwards, by the GST nature of business and Udyam checks.",
+      "why": "The seller declares it without a nudge. It no longer gates Factory Launch (open to every seller whose price qualifies); with the GST and Udyam records it decides only the Factory verified badge.",
       "behind": "eligibility"
     },
     {
@@ -67,8 +67,8 @@
       "title": "GST and Udyam checks",
       "tag": "EXTENDED",
       "part": "onboarding",
-      "what": "GST nature of business and Udyam activity are matched to the seller type → eligible, pending or not eligible. A verified manufacturer then lands on a finish screen: “What do you make?”",
-      "why": "Factory Launch is for real manufacturers, so records decide, not a self-declared answer. Resellers keep selling as today and go straight to the dashboard.",
+      "what": "Seller type, GST nature of business and Udyam activity are checked silently. A declared manufacturer whose records agree sees one green line, “Factory verified ✓”; one whose records don’t sees a neutral note (or “your Udyam number is missing”), never itemised reasons. Any other seller (a reseller) sees nothing: Business Details stays Meesho’s.",
+      "why": "The badge gives the buyer-side “Direct from the maker” label and Pack Point access. It is not a gate: any seller can join Factory Launch if his price qualifies, and a reseller’s margin prices him out on its own. Showing reasons would only teach people to game the records.",
       "behind": "eligibility"
     },
     {
@@ -153,11 +153,11 @@
     },
     {
       "docId": "LW-4",
-      "title": "Eligibility by rule",
+      "title": "Eligibility by rule · “Check my eligibility” drawer",
       "tag": "NEW",
       "part": "launch",
-      "what": "Eligible makers just see Commit; a maker who fails a check sees “not eligible” and why.",
-      "why": "Entry is decided by records and price, not by who opts in.",
+      "what": "Every “Check my eligibility” (finish screen, Home banner, Notices) opens one right-side drawer: manufacturer, records agree, price qualifies (his last Check price or his listing), product listed (“List this product”), stock committed (“Go to order book”), with “n of 5 done”. A maker who fails a check (the reseller) sees “not eligible”, why, and that he still sells normally. On the Factory Launch tab, eligible makers just see Commit.",
+      "why": "Entry is decided by records and price, not by who opts in. One drawer, opened in place, so checking never loses his place; only its buttons move him on.",
       "behind": "eligibility"
     },
     {
@@ -174,7 +174,7 @@
       "title": "Factory Launch on Home, sidebar and Notices",
       "tag": "EXTENDED",
       "part": "launch",
-      "what": "A banner at the top of Home (dates, slots left, an inline “Check my eligibility” checklist with one button per open step), a “Factory Launch” item under Boost Sales, and a pinned notice laid out like Meesho’s sale notices (the launch creative on top, then the offer, a status line that follows the maker’s state, and “Check my eligibility”) — only for makers who passed the checks.",
+      "what": "A banner at the top of Home (dates, slots left, “n of 5 done · Next: …” and “Check my eligibility”, which opens the eligibility drawer in place), a “Factory Launch” item under Boost Sales, and a pinned notice laid out like Meesho’s sale notices (the launch creative on top, then the offer, a status line that follows the maker’s state, and the same “Check my eligibility”) — only for makers who passed the checks.",
       "why": "A new manufacturer finds the launch on day one instead of three clicks deep in Promotions, and always sees the one next step.",
       "behind": "launchBanner"
     },
@@ -336,7 +336,7 @@
     {
       "id": "fo-checks-maker",
       "docId": "FO-7",
-      "title": "Seller type + GST/Udyam checks: a maker passes",
+      "title": "Silent checks: a maker sees “Factory verified ✓”",
       "part": "onboarding",
       "tag": "EXTENDED",
       "persona": "jasmeet",
@@ -346,7 +346,7 @@
     {
       "id": "fo-checks-reseller",
       "docId": "FO-7",
-      "title": "Same checks: a reseller fails",
+      "title": "Silent checks: a reseller sees Meesho’s page as today",
       "part": "onboarding",
       "tag": "EXTENDED",
       "persona": "reseller",
@@ -520,8 +520,22 @@
       "tag": "EXTENDED",
       "persona": "jasmeet",
       "day": 1,
-      "route": "/panel/v3/new/growth/demo/home?fl=open",
+      "route": "/panel/v3/new/growth/demo/home",
       "selector": "[data-fl-banner]",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
+      "id": "lw-eligibility",
+      "docId": "LW-4",
+      "title": "“Check my eligibility” opens one drawer, in place",
+      "part": "launch",
+      "tag": "NEW",
+      "persona": "jasmeet",
+      "day": 1,
+      "route": "/panel/v3/new/growth/demo/home?fl=open",
+      "selector": "[data-fl-drawer]",
       "prep": [
         "clean"
       ]
@@ -529,16 +543,41 @@
     {
       "id": "lw-banner-listed",
       "docId": "LW-6",
-      "title": "Banner after listing: 3 of 4, commit next",
+      "title": "Banner after listing: 4 of 5, commit next",
       "part": "launch",
       "tag": "EXTENDED",
       "persona": "jasmeet",
       "day": 3,
-      "route": "/panel/v3/new/growth/demo/home?fl=open",
+      "route": "/panel/v3/new/growth/demo/home",
       "selector": "[data-fl-banner]",
       "prep": [
         "clean"
       ]
+    },
+    {
+      "id": "lw-eligibility-listed",
+      "docId": "LW-4",
+      "title": "Eligibility drawer after listing: 4 of 5, go to order book",
+      "part": "launch",
+      "tag": "NEW",
+      "persona": "jasmeet",
+      "day": 3,
+      "route": "/panel/v3/new/growth/demo/home?fl=open",
+      "selector": "[data-fl-drawer]",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
+      "id": "lw-eligibility-reseller",
+      "docId": "LW-4",
+      "title": "Same drawer: a reseller isn’t eligible, and why",
+      "part": "launch",
+      "tag": "NEW",
+      "persona": "reseller",
+      "day": 3,
+      "route": "/panel/v3/new/growth/demo/home?fl=open",
+      "selector": "[data-fl-drawer]"
     },
     {
       "id": "lw-sidebar",
@@ -1037,7 +1076,7 @@
       "id": "business-details",
       "title": "Business Details",
       "match": "^/onboarding/business-details(\\?|$)",
-      "today": "Enter your GSTIN; Meesho fetches the legal name, PAN and registered address. Nothing checks whether you make what you sell.",
+      "today": "Enter your GSTIN; Meesho fetches the legal name, PAN and registered address, and asks your business type in the last step. Nothing checks whether you make what you sell. Ours looks the same to a reseller.",
       "nearest": "fo-checks-maker"
     },
     {

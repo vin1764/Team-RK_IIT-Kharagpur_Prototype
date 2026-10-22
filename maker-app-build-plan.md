@@ -25,6 +25,7 @@ A clickable replica of today's **Meesho Supplier Hub** (onboarding + seller pane
 - **Logo and icons**: use Meesho's own logo and sidebar icons; their image URLs are in the `/reference/html/` snapshots, so save those images into `/public/brand/`. The concept-label strip and the non-working sign-up stay, so the prototype can't pass as the real panel.
 - **Font**: the panel uses Mier (paid, licensed to Meesho). Use a free look-alike from Google Fonts at the same weights (Book 400, Demi 600, Bold 700). Default: **Figtree**. In Phase 0, render "Welcome Team RK", "Add Single Catalog" and a sidebar list in Figtree, Plus Jakarta Sans and DM Sans next to `/reference/html/meesho-home.html`, and keep whichever matches best. One CSS variable (`--font-sans`) so the swap is one line.
 - **Benchmark B never appears as a number in the maker UI.** It exists only in the engine. The maker sees "Qualifies / Doesn't qualify" and a price position in thirds (Low / Mid / High).
+- **Factory Launch eligibility = price only** (team, 22 Oct 2026). Any seller can join Factory Launch Week if his price qualifies (≤ B, the 25th-percentile price buyers paid for like-for-like listings), he lists the product and commits stock; slots go to the lower price when oversubscribed. The seller-type + GST + Udyam checks are **not a gate**: they run silently and decide only the **Factory verified** badge (buyer-side "Direct from the maker" label, Pack Point access). Makers clear the cap because they skip the middleman margin; a reseller's margin prices him out on its own.
 - **Arithmetic must hold.** Every number on screen comes from the engine, never typed into a component. Each hero value in §8b has a test that recomputes it.
 - **Deterministic data**: all synthetic data from seeded JSON; no randomness at runtime.
 - **Deploy unlisted** (noindex), $0 hosting.
@@ -93,16 +94,17 @@ Routes follow the real panel (`/panel/v3/new/...`). **Bold = has C2M additions.*
 
 | Area | Page (existing) | C2M additions (doc ID) | Priority |
 | --- | --- | --- | --- |
-| Outreach | — (phone mock, new) | Category-level invitation ("Meesho is inviting Home & Kitchen manufacturers to Factory Launch Week · no ads, no listing fee · sign up to check your eligibility"); no product or demand numbers; link to the normal sign-up (FO-3) | P1 |
+| Outreach | — (phone mock, new) | Category-level invitation ("Factory Launch Week for Home & Kitchen is open to every seller whose price qualifies · no ads, no listing fee · sign up to check your price"); no product or demand numbers; link to the normal sign-up (FO-3) | P1 |
 | Onboarding | Sign-up | none: Meesho's own right panel, also from the outreach link (the teaser moved after onboarding) | — |
-| Onboarding | — (new page, after Supplier Details → Submit, verified manufacturers only) | Finish screen "You're a verified factory seller. What do you make?": category search + tree or one photo the bot recognises → demand teaser for the chosen type (FO-4) → 5-minute cost check inline with the Pickup Address shipping choice (FO-5) → "Check my eligibility" (Home banner) or "Skip for now". `/cost-check` redirects here. Udyam/IndiaMART data can't tell us the exact product, so the maker tells us | P1 |
-| Onboarding | **Business Details** | Business-type question moved here from step 4; GST nature of business + Udyam checks → eligible / pending / not eligible (FO-6, FO-7) | P1 |
+| Onboarding | — (new page, after Supplier Details → Submit, every seller) | Finish screen "What do you sell?": category search + tree or one photo the bot recognises → demand teaser for the chosen type (FO-4) → cost check inline with the Pickup Address shipping choice (FO-5): "Your cost per unit" (making cost for makers, buying cost for resellers) and "What you want to earn per unit", no pre-fill → fee stack, break-even, "Your price: ₹X · you earn ₹Y" → "Check price" (3 a day) → "Check my eligibility" (opens the eligibility drawer in place) or "Skip for now". `/cost-check` redirects here | P1 |
+| Onboarding | **Business Details** | Business-type question moved here from step 4 (FO-6); GST nature of business + Udyam checks run silently (FO-7): a declared manufacturer whose records agree sees "Factory verified ✓"; one whose records don't sees a neutral note (or "your Udyam number is missing"); anyone else sees Meesho's page as today. Itemised results only in the showcase "Behind it" | P1 |
 | Onboarding | **Pickup Address** | "How will your orders ship?" Self-ship / Cluster Pack Point / waitlist (FO-8) | P1 |
 | Onboarding | Bank Details | none | — |
-| Onboarding | Supplier Details | business-type field removed (moved to step 1); Submit opens the finish screen for verified manufacturers, the dashboard for everyone else | P1 |
+| Onboarding | Supplier Details | business-type field removed (moved to step 1); Submit opens the finish screen for every seller | P1 |
 | Panel | **Home** | 3rd upload path "Create from photos" (LB-3); Factory Launch banner at the top of Home with an inline eligibility checklist (LW-6, replaces the step-3 card); right rail "This week's one fix" coach card once live | P1 |
-| Panel | **Sidebar** | "Factory Launch" (NEW) first under Boost Sales → Promotions → Factory Launch; "Notices (2)" (LW-6, eligible makers only) | P1 |
-| Panel | **Notices** | Pinned "Factory Launch Week · Home & Kitchen" notice with "Check my eligibility" (LW-6, eligible makers only) | P1 |
+| Panel | **Sidebar** | "Factory Launch" (NEW) first under Boost Sales → Promotions → Factory Launch; "Notices (2)" (LW-6, every seller with a product type in an open launch category) | P1 |
+| Panel | **Notices** | Pinned "Factory Launch Week · Home & Kitchen" notice, "Open to every seller whose price qualifies · no ads, no listing fee", with "Check my eligibility" (LW-6, every seller with a product type in an open launch category) | P1 |
+| Panel | **Eligibility drawer** (new, shared) | "Check my eligibility" anywhere opens it in place: Price qualifies (via "Check price", 3 a day) · Product listed · Stock committed, "x of 3 done"; only its buttons move him on | P1 |
 | Catalog | **Add Single Catalog** | "Create from photos" mode: category auto-detected, image cleanup, field pre-fill per §7, EN / हिंदी toggle (LB-4, LB-10) | P1 |
 | Catalog | **Price table** | Demand card, suggested Inventory, take-home, status chip, go-live checklist, fees locked at dispatch (LB-5, LB-6, LB-9) | P1 |
 | Catalog | Catalog Uploads, Bulk, Image Bulk Upload | none | — |
@@ -113,9 +115,9 @@ Routes follow the real panel (`/panel/v3/new/...`). **Bold = has C2M additions.*
 | Quality | **Quality** | Listing score "Building", based on this listing's own orders and returns (LW-8) | P1 |
 | Inventory | **Inventory → Low Stock** | Restock card, make-to-demand verdicts, "What to make instead" (GL) | P1 |
 | Performance | **Business Dashboard** | SKU Health Coach card above the funnel tiles (GL) | P1 |
-| Warehouse | **Warehouse** | Second program card "Cluster Pack Point"; providers near you with rate cards; lot inbound (PP-3, PP-4, PP-5, PP-10) | P1 (PP-10 P2) |
+| Warehouse | **Warehouse** | For Factory-verified makers with a Pack Point within 150 km: tabs "Meesho Warehouse" (unchanged) and "Cluster Pack Point" (Overview, Lots, Stock at Pack Point, Returns); providers near you with rate cards (PP-3 to PP-6, PP-8, PP-10) | P1 (PP-10 P2) |
 | Orders, Returns, Claims, Payments, Instant Cash, Influencer Marketing, Offer Opt-in | | none in P1 | — |
-| Buyer app | — (phone mock, optional) | Factory Launch section + "Direct from the maker" (LW-10) | P2 for this build |
+| Buyer app | — (phone mock, optional) | Factory Launch section + "Direct from the maker" for Factory-verified makers only (LW-10) | P2 for this build |
 
 ---
 
@@ -230,8 +232,8 @@ Demo controls, concept label, responsive check, README (what's real vs simulated
 
 ## 10. Demo script (≈ 5 minutes)
 
-1. D1 · Jasmeet gets a category-level outreach message (Home & Kitchen manufacturers, no product named) → Meesho's own sign-up → onboarding → finish screen: she picks the 1 L steel water bottle → teaser "about 300 orders a week at ₹150–170" → cost check: "₹147 → ₹14 take-home, qualifies".
-2. D1 · Business Details: GST + Udyam pass → eligible. (Switch to Reseller: not eligible.)
+1. D1 · Jasmeet gets a category-level outreach message (Home & Kitchen, open to every seller whose price qualifies; no product named) → Meesho's own sign-up → onboarding (Business Details: "Factory verified ✓") → finish screen: she picks the 1 L steel water bottle → teaser "about 300 orders a week at ₹150–170" → cost check: her ₹80 cost and ₹14 earning → "Your price: ₹147" → Check price: Qualifies.
+2. D1 · Reseller (same bottle, bought from a maker at ₹120): Business Details looks like Meesho's today. Cost check: break-even (120 + 46) × 1.05 → ₹175; earning ₹20 → ₹195 → Check price: "Not eligible at this price · a lower price may qualify". Even at ₹0 earnings he stays above the cap: resellers can join, but their margin prices them out. He can still list and sell at ₹195; no "Direct from the maker", no Pack Point.
 3. D3 · Create from photos → 21 fields pre-filled → enters the 14 → price table: Qualifies, 150 suggested → Go live.
 4. D5 · Promotions → Factory Launch → commits units → Commit.
 5. D23 · Live launch: 11 orders today, expected 9–13, 33 of 150 sold; listing score building.

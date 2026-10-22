@@ -16,6 +16,7 @@ import {
   dayToDate,
   demandForType,
   eligibility,
+  MANUFACTURER_TYPES,
   formatDate,
   growthAt,
   launchProgress,
@@ -27,7 +28,6 @@ import {
   packPointsNear,
   pctDisplay,
   productTypeName,
-  qualifyingPriceExists,
   slots,
   suggestedLot,
   typicalForType,
@@ -127,11 +127,16 @@ function priceOn(p: Persona, day: number, listPrice: number): { price: number; e
   return p === EDIT.persona && day >= EDIT.day ? { price: EDIT.price, edited: true } : { price: listPrice, edited: false };
 }
 
+const GROWTH_CACHE = new Map<string, ReturnType<typeof growthAt>>();
 function growthFor(p: Persona, day: number, coachApplied: { sku: string; day: number } | null = null) {
   if (p !== J) return null;
+  const key = `${day}:${coachApplied ? `${coachApplied.sku}@${coachApplied.day}` : '-'}`;
+  if (GROWTH_CACHE.has(key)) return GROWTH_CACHE.get(key)!;
   const s = stackOf(J)!;
   const typical = typicalForType(s.prod.type)!;
-  return growthAt(day, { lot: LOT, leadTimeDays: typical.leadTimeDays, minRun: typical.minRun, makingCost: s.prod.makingCost, listPrice: s.stack.listPrice }, [], coachApplied);
+  const g = growthAt(day, { lot: LOT, leadTimeDays: typical.leadTimeDays, minRun: typical.minRun, makingCost: s.prod.makingCost, listPrice: s.stack.listPrice }, [], coachApplied);
+  GROWTH_CACHE.set(key, g);
+  return g;
 }
 const notInLoop = (p: Persona, day: number) =>
   p !== J
@@ -191,17 +196,17 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     ];
   },
 
-  /** FO-5: the 5-minute cost check */
+  /** FO-5: the 5-minute cost check, from his own two numbers (here “Fill demo values”) */
   costCheck: ({ persona }) => {
     const x = stackOf(persona);
     if (!x) return NO_PRODUCT(persona);
     const { prod, stack } = x;
-    const ok = qualifyingPriceExists(prod.type, stack.breakEven);
+    const status = checkListingPrice(prod.type, stack.listPrice, stack.breakEven);
     return [
-      `Costs per order: ${costLine(stack)}`,
-      breakEvenLine(stack),
-      `${takeHomeLine(prod, stack)} → list at ${rs(stack.listPrice)}`,
-      ok ? `Break-even ${rs(stack.breakEven)} sits under the launch price cap → a qualifying price exists` : `Break-even ${rs(stack.breakEven)} is above the launch price cap → no qualifying price`,
+      `He types: making cost ${rs(prod.makingCost)}, wants to earn ${rs(stack.takeHome)} per unit (the same as ${fmt(prod.marginPct)}% on the ₹/% switch) · ${modeOf(persona) === 'packPoint' ? 'Pack Point' : 'Self-ship'} from Pickup Address`,
+      `Costs per order: ${costLine(stack)} · ${breakEvenLine(stack)}`,
+      `Your price: (${fmt(stack.costBeforeGst)} + ${fmt(stack.takeHome)}) × ${gstX(stack)} = ${fmt(Math.round((stack.costBeforeGst + stack.takeHome) * (1 + stack.gstRate) * 100) / 100)} → ${rs(stack.listPrice)} (nearest rupee) · you earn ${rs(stack.takeHome)}`,
+      `“Check price” (${fmt(MAX_PRICE_CHECKS)} a day per product, shared with the bot’s Price screen) → ${STATUS_WORD[status]}; nothing shows before he checks`,
     ];
   },
 
@@ -210,12 +215,13 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     const r = P[persona];
     const e = eligibility(records(persona));
     const ok = (c: EligibilityCheck) => (e.failedChecks.includes(c) ? '✗' : '✓');
-    if (e.failedChecks.includes('gstin')) return ['No GSTIN (Enrolment ID) ✗', `→ ${RESULT[e.status]}`];
+    const declared = MANUFACTURER_TYPES.includes(r.businessType as BusinessType);
+    const seen = e.status === 'eligible' ? 'the maker sees “Factory verified ✓”' : declared ? 'the maker sees a neutral note, no reasons' : 'he sees nothing: the page is Meesho’s as today';
+    if (e.failedChecks.includes('gstin')) return ['Silent check: no GSTIN (Enrolment ID) ✗ → not Factory verified', `Shown: ${seen}`];
     return [
-      `Seller type “${r.businessType}” ${ok('sellerType')}`,
-      `GST nature of business: ${r.gstNatureOfBusiness.join(', ')} ${ok('gstNature')}`,
-      `Udyam activity: ${r.udyam?.majorActivity ?? 'none'} ${ok('udyam')}`,
-      `→ ${RESULT[e.status]}`,
+      `Silent checks: seller type “${r.businessType}” ${ok('sellerType')} · GST nature ${r.gstNatureOfBusiness.join(', ')} ${ok('gstNature')} · Udyam ${r.udyam?.majorActivity ?? 'none'} ${ok('udyam')}`,
+      `→ ${e.status === 'eligible' ? 'Factory verified: “Direct from the maker” label for buyers, Pack Point access' : 'not Factory verified: no “Direct from the maker” label, no Pack Point'} · shown: ${seen}`,
+      'Not a gate: Factory Launch is open to every seller whose price qualifies (price ≤ the cap, listed, stock committed)',
     ];
   },
 
@@ -316,7 +322,12 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
   /** LW-6: the Home banner (also the sidebar item and pinned notice), on the scripted story for each persona */
   launchBanner: (ctx) => {
     const { persona, day } = ctx;
-    if (eligibility(records(persona)).status !== 'eligible') return [`${RESULT[eligibility(records(persona)).status]} → no banner, no sidebar item, no pinned notice: Meesho as today.`];
+    const e = eligibility(records(persona));
+    if (e.status !== 'eligible')
+      return [
+        `${RESULT[e.status]} → no banner, no sidebar item, no pinned notice: Meesho as today.`,
+        `The eligibility drawer, if opened, says “Not eligible for Factory Launch” and why: ${e.failedChecks.join(', ')} failed (eligibility() checks) · he still sells normally.`,
+      ];
     const own = productOf(persona);
     if (!own || !launch.productTypes.includes(own.type))
       return [`${own ? productTypeName(own.type) : 'This product'} has no order book in ${launch.name} (${launch.category}) → a slim “no open order book” note on Home while commitments are open; sidebar item and pinned notice still show.`];
@@ -325,13 +336,13 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     const told = day > calendar.jumps.onboarding;
     const listed = day >= calendar.jumps.listing;
     const committed = day > L.commitmentsCloseDay;
-    const n = 2 + Number(listed) + Number(committed);
+    // scripted story: the price row turns ✓ with the listing (a qualifying “Check price” in the cost check ticks it earlier)
+    const n = 2 + 2 * Number(listed) + Number(committed);
+    const mark = (b: boolean) => (b ? '✓' : '○');
     const lines = [
       `Slots: ${fmt(total)} − ${fmt(taken)} taken = ${fmt(total - taken)} left for ${productTypeName(own.type)} (the order book’s count, before ${firstName(persona)} commits)`,
       `Dates: commitments close D${L.commitmentsCloseDay} (${short(L.commitmentsCloseDay)}) · stock ready D${L.stockAtNodeDay} (${short(L.stockAtNodeDay)}) · live D${L.liveFromDay}–D${L.liveToDay} (${shortSpan(L.liveFromDay, L.liveToDay)})`,
-      told
-        ? `Checklist: manufacturer ✓ + records agree ✓ (GST/Udyam checks) + listed at a qualifying price ${listed ? '✓' : '○'} (listing from D${calendar.jumps.listing}) + stock committed ${committed ? '✓' : '○'} (counts after D${L.commitmentsCloseDay}) = ${n} of 4`
-        : `Checklist: “Tell us what you make” ○ (finish screen; the seeded product counts from D${calendar.jumps.onboarding + 1}) + manufacturer ✓ + records agree ✓ + listed ○ + committed ○ = 2 of 5`,
+      `Checklist (banner and “Check my eligibility” drawer, one model): manufacturer ✓ + records agree ✓ (GST/Udyam checks) + price qualifies ${mark(listed)} (his last “Check price”, or his listing from D${calendar.jumps.listing}) + product listed ${mark(listed)}${told ? '' : ` (“Tell us what you make” first; the seeded product counts from D${calendar.jumps.onboarding + 1})`} + stock committed ${mark(committed)} (counts after D${L.commitmentsCloseDay}) = ${n} of 5`,
     ];
     if (day >= L.liveFromDay && day <= L.liveToDay) {
       const g = launchProgress(DAILY, LOT, day);

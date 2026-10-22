@@ -28,6 +28,7 @@ import Returns from '../pages/panel/Returns';
 import SaleOptIn from '../pages/panel/SaleOptIn';
 import Warehouse from '../pages/panel/Warehouse';
 import LiveLaunch from '../pages/panel/factory-launch/LiveLaunch';
+import { EligibilityDrawerHost } from '../pages/panel/factory-launch/EligibilityDrawer';
 import Outreach from '../pages/onboarding/Outreach';
 import Signup from '../pages/onboarding/Signup';
 import CostCheck from '../pages/onboarding/CostCheck';
@@ -101,6 +102,8 @@ export function App() {
       </Routes>
       </ScreenErrorBoundary>
       <OffShowcase>
+        {/* LW-4: the one eligibility drawer every "Check my eligibility" opens (panel and onboarding alike) */}
+        <EligibilityDrawerHost />
         <DemoControls />
       </OffShowcase>
       <ToastHost />

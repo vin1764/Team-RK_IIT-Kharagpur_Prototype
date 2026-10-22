@@ -3,10 +3,12 @@
 // notices: the creative on top (the team's banner, public/brand/local/notices/factory-launch-week-banner.png,
 // original in reference/), then text and the CMS's orange button. Dates from the calendar, slots and orders from
 // the order book (useLaunchEntry → useLaunchView, the same source as the Home banner and the Factory Launch tab).
+// "Check my eligibility" opens the eligibility drawer in place (LW-4); it never leaves Notices.
 import { useNavigate } from 'react-router';
 import { paths } from '../../../app/paths';
 import { dayToDate } from '../../../engine/ui';
 import { useDemo } from '../../../store/demo';
+import { useEligibilityDrawer } from '../../../store/eligibilityDrawer';
 import { LAUNCH, liveDatesShort, shortDay } from '../factory-launch/launch';
 import { useLaunchEntry } from '../factory-launch/useLaunchEntry';
 import { noticeCopy } from './launchNoticeCopy';
@@ -26,15 +28,17 @@ export function LaunchNotice() {
   const lang = useDemo((s) => s.lang);
   const c = noticeCopy(lang);
   const { model, view, row, productName } = useLaunchEntry();
+  const openDrawer = useEligibilityDrawer((s) => s.show);
   const event = LAUNCH.name.replace(/\s+\d+$/, ''); // "Factory Launch Week"
   const type = row?.name ?? productName ?? '';
 
   // The status line and the button follow the maker's state, like the Home banner.
   let status: string | null = null;
-  let button: { label: string; to: string } | null = null;
+  /** `to` navigates; without it the button opens the eligibility drawer here */
+  let button: { label: string; to?: string } | null = null;
   switch (model?.state) {
     case 'choose':
-      button = { label: c.check, to: `${paths.home}?fl=open` };
+      button = { label: c.check };
       break;
     case 'join':
       if (model.priceNotEligible) {
@@ -44,8 +48,7 @@ export function LaunchNotice() {
         break;
       }
       status = row ? (row.slots.crowded ? c.slotsFull(type) : c.slots(row.slots.left, type)) : null;
-      // Only the commit is left → straight to the order book; otherwise the Home checklist.
-      button = { label: c.check, to: model.next?.key === 'stock' ? paths.factoryLaunch : `${paths.home}?fl=open` };
+      button = { label: c.check };
       break;
     case 'in':
       status = c.in(LAUNCH.name, shortDay(LAUNCH.stockAtNodeDay));
@@ -74,7 +77,11 @@ export function LaunchNotice() {
       // No banner model (e.g. the window closed before the maker told us his product): announcement only.
       break;
   }
-  const go = () => button && navigate(button.to);
+  const go = () => {
+    if (!button) return;
+    if (button.to) navigate(button.to);
+    else openDrawer();
+  };
 
   return (
     <div className="bg-white rounded-lg p-4 mt-0 mx-0 mb-2" data-c2m="LW-6" data-c2m-id="LW-6" data-fl-notice data-fl-notice-state={model?.state ?? 'none'}>

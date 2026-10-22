@@ -9,7 +9,7 @@ const s = (n: number, one: string, many: string) => `${fmt(n)} ${n === 1 ? one :
 export const FL = {
   tab: 'Factory Launch', // doc
   eventTitle: (name: string, category: string) => `${name} · ${category}`, // prompt
-  eventSub: 'Factory-direct launch week. Entry by rule, not by discount: no discount asked.', // ours (doc LW-4/LW-5)
+  eventSub: 'A launch week open to every seller whose price qualifies. Entry by price, not by discount: no discount asked.', // ours (team, 22 Oct 2026: price, listing and stock decide entry)
   // Phase pills
   phase: {
     open: 'Open for commitments', // ours
@@ -58,18 +58,9 @@ export const FL = {
   committedPill: (units: number) => `Committed · ${s(units, 'unit', 'units')}`, // ours
   viewLive: 'View live launch', // prompt
   closedOn: (date: string) => `Commitments closed on ${date}`, // prompt
-  // Personas without an order book / not eligible (LW-4)
+  // Personas without an order book (LW-4)
   noOrderBook: 'No open order book for your product type yet', // prompt
   noOrderBookSub: 'Footwear comes in a later launch. We will tell you when its order book opens.', // ours (deck)
-  notEligible: 'Not eligible for Factory Launch', // prompt (same as onboarding FO-7)
-  stillSells: 'You can still sell on Meesho as today.', // doc
-  why: 'Why:', // ours
-  check: {
-    manufacturer: { ok: 'You make the product', no: 'You buy and resell; Factory Launch is for makers' },
-    records: { ok: 'Your GST and Udyam records agree', no: 'Your GST and Udyam records don’t show manufacturing' },
-    price: { ok: 'Your listing price qualifies', no: (type: string) => `No ${type} listing to check a price for` },
-    stock: { ok: (date: string) => `Stock ready by ${date}`, no: 'No lot committed, so no stock to make ready' },
-  }, // ours (doc LW-4: manufacturer, records agree, price in band, stock ready)
   // Commit panel (LW-5)
   commitTitle: (name: string) => `Commit to ${name}`, // ours
   sku: 'SKU', // doc
@@ -114,7 +105,7 @@ export const FL = {
   // Home banner, sidebar item, pinned notice (LW-6). Shown only to makers
   // who passed the seller-type + GST/Udyam checks.
   banner: {
-    manufacturersOnly: 'Manufacturers only', // doc (FO-9 offer: "manufacturers only")
+    openToAll: 'Open to every seller whose price qualifies · no ads, no listing fee', // team, 22 Oct 2026 (replaces "Manufacturers only")
     noAds: 'No ads, no listing fee', // doc (FO-9 offer: "no ads, no listing fee")
     slotsFor: (slots: string, type: string) => `${slots} for ${type.endsWith('s') ? type : `${type}s`}`, // prompt
     liveOn: (dates: string) => `Live ${dates}`, // prompt
@@ -162,7 +153,7 @@ export const FL = {
   newTag: 'NEW', // panel
   notice: {
     pinned: 'Pinned', // ours
-    body: 'A factory-direct launch week for manufacturers. Entry by rule: records and a qualifying price, no discount asked.', // ours (doc LW-4/LW-5)
+    body: 'Open to every seller whose price qualifies · no ads, no listing fee. Entry by price, a live listing and committed stock; no discount asked.', // team, 22 Oct 2026
     dates: (close: string, stock: string, live: string) => `Commit stock by ${close} · stock ready by ${stock} · live ${live}`, // ours (calendar)
   },
   // Price-hold breach (PI-3, doc p.7: "price no longer qualifies" → launch slot removed, no number shown)

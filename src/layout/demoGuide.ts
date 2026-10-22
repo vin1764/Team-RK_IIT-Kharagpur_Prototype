@@ -62,6 +62,7 @@ export function guideNumbers() {
   return {
     listPrice: stack.listPrice,
     takeHome: stack.takeHome,
+    makingCost: stack.makingCost,
     breakEven: stack.breakEven,
     listQualifies: checkListingPrice(J_TYPE, stack.listPrice, stack.breakEven) === 'qualifies',
     category: launch.category,
@@ -142,7 +143,7 @@ export function buildGuide(): GuideStep[] {
       D.onboarding,
       'jasmeet',
       'Outreach, onboarding, what she makes',
-      `${jn} gets a ${n.category} invitation (no product named) → Meesho’s own sign-up → onboarding → finish screen: she picks the ${n.jasmeetType} → teaser “about ${n.gapLow} orders a week at ₹${n.bandLow}–${n.bandHigh}” → cost check: “₹${n.listPrice} → ₹${n.takeHome} take-home, ${yes(n.listQualifies, 'qualifies', 'doesn’t qualify')}”.`,
+      `${jn} gets a ${n.category} invitation (no product named) → Meesho’s own sign-up → onboarding → finish screen: she picks the ${n.jasmeetType} → teaser “about ${n.gapLow} orders a week at ₹${n.bandLow}–${n.bandHigh}” → cost check: she types ₹${n.makingCost} making cost and ₹${n.takeHome} to earn → “Your price: ₹${n.listPrice} · you earn ₹${n.takeHome}” → Check price: ${yes(n.listQualifies, 'qualifies', 'doesn’t qualify')} → Check my eligibility opens the checklist drawer.`,
       { label: 'Open outreach', persona: 'jasmeet', day: D.onboarding, path: onboarding.outreach },
       [
         { label: 'Sign-up', persona: 'jasmeet', day: D.onboarding, path: onboarding.signup },

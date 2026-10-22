@@ -28,7 +28,7 @@ export default function Outreach() {
   const programme = LAUNCH.name.replace(/\s+\d+$/, '');
   const message = (
     <>
-      Hi {firstName}, Meesho is inviting {LAUNCH.category} manufacturers to {programme} · no ads, no listing fee · sign up to check your eligibility.
+      Hi {firstName}, {programme} for {LAUNCH.category} is open to every seller whose price qualifies · no ads, no listing fee · sign up to check your price.
     </>
   );
 

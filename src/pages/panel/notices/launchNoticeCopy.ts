@@ -28,7 +28,7 @@ const plural = (type: string) => (type.endsWith('s') ? type : `${type}s`);
 const en: Copy = {
   pinned: 'Pinned',
   title: (event, category, live) => `${event} · ${category} · ${live}`,
-  body: (closeBy) => `Manufacturers only. Launch your product to buyers with no ads and no listing fee. Commit stock by ${closeBy}. Slots are limited.`,
+  body: (closeBy) => `Open to every seller whose price qualifies · no ads, no listing fee. Launch your product to buyers and commit stock by ${closeBy}. Slots are limited.`,
   slots: (left, type) => `${left} ${left === 1 ? 'slot' : 'slots'} left for ${plural(type)}`,
   slotsFull: (type) => `All slots taken for ${plural(type)}`,
   in: (name, stock) => `You're in ${name} · stock ready by ${stock}`,
@@ -49,7 +49,7 @@ const en: Copy = {
 const hi: Copy = {
   pinned: 'पिन किया गया',
   title: (event, category, live) => `${event} · ${category} · ${live}`,
-  body: (closeBy) => `सिर्फ़ मैन्युफ़ैक्चरर के लिए। बिना ऐड और बिना लिस्टिंग फ़ीस के अपना प्रोडक्ट ख़रीदारों तक लॉन्च करें। ${closeBy} तक स्टॉक कमिट करें। स्लॉट सीमित हैं।`,
+  body: (closeBy) => `हर उस सेलर के लिए खुला जिसकी कीमत योग्य है · कोई ऐड नहीं, कोई लिस्टिंग फ़ीस नहीं। अपना प्रोडक्ट ख़रीदारों तक लॉन्च करें और ${closeBy} तक स्टॉक कमिट करें। स्लॉट सीमित हैं।`,
   slots: (left, type) => `${plural(type)} के लिए ${left} स्लॉट बाकी`,
   slotsFull: (type) => `${plural(type)} के सभी स्लॉट भर गए`,
   in: (name, stock) => `आप ${name} में हैं · स्टॉक ${stock} तक तैयार`,

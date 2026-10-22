@@ -12,7 +12,7 @@ import { CommitModal } from './CommitModal';
 import { FL } from './copy';
 import { KeyDates } from './KeyDates';
 import { LAUNCH, liveDates, liveDayIndex, statusForPhase, type LaunchPhase } from './launch';
-import { Cell, CheckRow, MerlinTable, Section, T, type Col } from './parts';
+import { Cell, MerlinTable, Section, T, type Col } from './parts';
 import { useLaunchView, type LaunchView, type OrderBookRow } from './useLaunchView';
 import { usePriceHold } from '../manage-pricing/priceHold';
 import { COMMIT_PARAM } from '../../../embed/prep';
@@ -58,7 +58,6 @@ const priceNotEligible = (view: LaunchView, priceStatus: PriceStatus | null) => 
 
 function ActionCell({ view, row, onCommit, slotRemoved, priceStatus }: { view: LaunchView; row: OrderBookRow; onCommit: () => void; slotRemoved: boolean; priceStatus: PriceStatus | null }) {
   const navigate = useNavigate();
-  if (view.eligibility.status === 'notEligible') return <Cell value={<span className="text-error-text">{FL.notEligible}</span>} />;
   if (!view.hasBook || view.ownType !== row.typeId) return <Cell value="—" />;
   if (view.commit && view.commit.typeId === row.typeId) {
     return (
@@ -146,7 +145,7 @@ function OrderBook({ view, onCommit, slotRemoved, priceStatus }: { view: LaunchV
         value={<b className="font-button">{r.name}</b>}
         sub={
           // The maker's own product type (what they told us after onboarding, or their listing's).
-          view.eligibility.status !== 'notEligible' && r.typeId === view.ownType ? (
+          r.typeId === view.ownType ? (
             <span className="inline-flex flex-col items-start gap-1">
               {LAUNCH.category}
               <Pill tone="brand" bordered>
@@ -198,30 +197,6 @@ function OrderBook({ view, onCommit, slotRemoved, priceStatus }: { view: LaunchV
   );
 }
 
-/** LW-4: the checklist appears only when a check fails. */
-function NotEligible({ view }: { view: LaunchView }) {
-  const failed = view.eligibility.failedChecks;
-  const manufacturer = !failed.includes('sellerType') && !failed.includes('gstin');
-  const records = !failed.includes('gstNature') && !failed.includes('udyam') && !failed.includes('gstin');
-  const price = view.priceStatus === 'qualifies';
-  const stock = !!view.commit;
-  return (
-    <div className="px-4 pb-4" data-c2m="LW-4" data-c2m-id="LW-4" data-eligibility="notEligible">
-      <div className="rounded-8 border border-solid border-error-border bg-error-bg p-4">
-        <p className="m-0 p-0 text-xl leading-5 font-button text-primary-text">{FL.notEligible}</p>
-        <p className="m-0 mt-1 text-lg leading-5 font-body text-primary-text">{FL.stillSells}</p>
-        <p className="m-0 mt-3 text-lg leading-5 font-body text-secondary-text">{FL.why}</p>
-        <ul className="m-0 mt-1.5 flex list-none flex-col gap-1.5 p-0">
-          <CheckRow ok={manufacturer}>{manufacturer ? FL.check.manufacturer.ok : FL.check.manufacturer.no}</CheckRow>
-          <CheckRow ok={records}>{records ? FL.check.records.ok : FL.check.records.no}</CheckRow>
-          <CheckRow ok={price}>{price ? FL.check.price.ok : FL.check.price.no(view.bookTypeName)}</CheckRow>
-          <CheckRow ok={stock}>{stock ? FL.check.stock.ok(dayLabel(LAUNCH.stockAtNodeDay)) : FL.check.stock.no}</CheckRow>
-        </ul>
-      </div>
-    </div>
-  );
-}
-
 function StateBanner({ view, slotRemoved, priceStatus }: { view: LaunchView; slotRemoved: boolean; priceStatus: PriceStatus | null }) {
   const navigate = useNavigate();
   const stock = dayLabel(LAUNCH.stockAtNodeDay);
@@ -230,7 +205,6 @@ function StateBanner({ view, slotRemoved, priceStatus }: { view: LaunchView; slo
       {FL.viewLive}
     </Button>
   );
-  if (view.eligibility.status === 'notEligible') return null;
   if (!view.hasBook) {
     return (
       <div className="px-4 pb-4" data-c2m="LW-4" data-c2m-id="LW-4" data-no-order-book>
@@ -305,7 +279,7 @@ export function FactoryLaunchPanel() {
   // once the jump's persona and day have landed; the param is then dropped.
   useEffect(() => {
     if (params.get(COMMIT_PARAM) !== '1' || params.get('persona') !== persona || params.get('day') !== String(day)) return;
-    const own = view.phase === 'open' && !view.commit && view.eligibility.status !== 'notEligible' ? view.rows.find((r) => r.typeId === view.ownType) : undefined;
+    const own = view.phase === 'open' && !view.commit ? view.rows.find((r) => r.typeId === view.ownType) : undefined;
     if (own) setCommitRow(own);
     setParams(
       (prev) => {
@@ -337,7 +311,6 @@ export function FactoryLaunchPanel() {
           <Section className="overflow-hidden">
             <EventHeader view={view} />
             <StateBanner view={view} slotRemoved={slotRemoved} priceStatus={priceStatus} />
-            {view.eligibility.status === 'notEligible' && <NotEligible view={view} />}
             <OrderBook view={view} onCommit={setCommitRow} slotRemoved={slotRemoved} priceStatus={priceStatus} />
           </Section>
         </div>

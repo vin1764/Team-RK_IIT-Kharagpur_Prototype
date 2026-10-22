@@ -5,7 +5,7 @@
 
 **Live (unlisted):** https://team-rk-c2m-prototype.netlify.app
 
-This is a clickable replica of Meesho's Supplier Hub: the onboarding flow and the seller panel. We added Team RK's C2M (customer-to-manufacturer) features only where our solution doc puts them. You follow one factory maker, Jasmeet, from the first outreach message through cost check, eligibility, a listing created from photos, a Factory Launch commit, the live launch week, a restock and coaching, and a price edit that loses her launch slot. A second maker, Samar, sends his first lot to a Cluster Pack Point. Pages without a C2M feature are static replicas. Every number on screen is computed from seeded data by a tested engine, and nothing talks to a server.
+This is a clickable replica of Meesho's Supplier Hub: the onboarding flow and the seller panel. We added Team RK's C2M (customer-to-manufacturer) features only where our solution doc puts them. You follow one factory maker, Jasmeet, from the first outreach message through cost check, price check, a listing created from photos, a Factory Launch commit, the live launch week, a restock and coaching, and a price edit that loses her launch slot. A second maker, Samar, sends his first lot to a Cluster Pack Point. Pages without a C2M feature are static replicas. Every number on screen is computed from seeded data by a tested engine, and nothing talks to a server.
 
 ---
 
@@ -33,7 +33,7 @@ Open **Prototype controls** (the black pill at the bottom right) and click **Dem
 | # | Day | Persona | Opens | What to show |
 | --- | --- | --- | --- | --- |
 | 1 | D1 · 25 Oct | Jasmeet | Outreach (+ links: sign-up teaser, cost check) | Jasmeet gets the outreach message → sign-up shows her teaser → cost check: "₹147 → ₹14 take-home, qualifies". |
-| 2 | D1 | Jasmeet (+ link: as Reseller) | Onboarding → Business Details | GST + Udyam pass → eligible. Switch to Reseller: not eligible. |
+| 2 | D1 | Reseller | Onboarding → finish screen → cost check | Business Details looks like Meesho's today. Cost ₹120 + earning ₹20 → ₹195 → Check price: not eligible; even at ₹0 he can't get under the cap. Resellers can join, but their margin prices them out. |
 | 3 | D3 · 27 Oct | Jasmeet | Home | Click **Create from photos** → three short screens: Meesho fills 21, she adds 14 → Price: list at ₹147 · take home ₹14, Qualifies → Go live. |
 | 4 | D5 · 29 Oct | Jasmeet | Promotions → Factory Launch tab | Order book → commits 150 units → Commit. |
 | 5 | D23 · 16 Nov | Jasmeet | Live launch view (+ link: Quality) | 11 orders today, expected 9–13, 33 of 150 sold. The listing score on Quality reads Building. |
@@ -83,7 +83,7 @@ Then open a URL without `?persona=&day=&lang=` to start from the defaults. If st
 | Area | Doc IDs | Where |
 | --- | --- | --- |
 | Outreach, sign-up teaser, 5-minute cost check | FO-3, FO-4, FO-5 | `/outreach`, `/signup?ref=outreach`, `/cost-check` |
-| Business Details eligibility checks; fulfilment choice at Pickup Address | FO-6, FO-7, FO-8 | onboarding steps 1–2 (the business-type question moves from step 4 to step 1) |
+| Business Details silent checks (Factory verified badge only); fulfilment choice at Pickup Address | FO-6, FO-7, FO-8 | onboarding steps 1–2 (the business-type question moves from step 4 to step 1) |
 | "Create from photos" listing bot: three short screens, pre-fill, price table, go live, EN / हिंदी | LB-3, LB-4, LB-5, LB-6, LB-8, LB-10 | Home, Add Single Catalog |
 | Factory Launch tab, order book, commit, Home card, live view, listing score | LW-2, LW-3, LW-4, LW-5, LW-6, LW-7, LW-8 | Promotions, Home, Quality |
 | Growth loop: restock card, verdicts, what to make instead, SKU Health Coach, filled dashboard | GL-1 … GL-6 | Inventory, Business Dashboard, Home |
@@ -199,11 +199,11 @@ Key: **plan** = `maker-app-build-plan.md` · **doc** = `reference/C2M-solution-d
 ### Personas (all fake)
 | Persona | Facts used | Source |
 | --- | --- | --- |
-| **Jasmeet Sharma**, "Sharma Steelware", Rajkot (Gujarat) | Kitchenware manufacturer, self-ships; GSTIN with GST nature "Factory / Manufacturing" and Udyam "Manufacturing" → eligible | plan §6, doc personas; city and records are ours |
-| **Samar Biswas**, "Biswas Footwear", Agra (UP) | Footwear manufacturer, Cluster Pack Point → eligible | Q4; records are ours |
-| **Demo Reseller**, "Demo Traders", Rajkot | Buys and resells; GST nature Retail / Wholesale, Udyam "Services" → not eligible, with every failed check listed | plan §6; Q11 |
+| **Jasmeet Sharma**, "Sharma Steelware", Rajkot (Gujarat) | Kitchenware manufacturer, self-ships; GSTIN with GST nature "Factory / Manufacturing" and Udyam "Manufacturing" → Factory verified; ₹147 qualifies | plan §6, doc personas; city and records are ours |
+| **Samar Biswas**, "Biswas Footwear", Agra (UP) | Footwear manufacturer, Cluster Pack Point → Factory verified | Q4; records are ours |
+| **Demo Reseller**, "Demo Traders", Rajkot | Resells the 1 L steel bottle, bought from a maker at ₹120; GST nature Retail / Wholesale, Udyam "Services" → not Factory verified (sees nothing on Business Details). Break-even ₹175, price ₹195 at ₹20 earning → not eligible at any earning | plan §6; Q11; team, 22 Oct 2026 |
 
-Eligibility: only the two "I have a manufacturing unit…" business types pass the seller-type check (Q11). See `eligibility.ts` and `eligibility.test.ts`.
+Factory Launch eligibility is price only (team, 22 Oct 2026): any seller can join if his price qualifies (≤ B, the 25th-percentile price buyers paid for like-for-like listings), he lists and commits stock. The seller-type + GST + Udyam checks run silently and decide only the Factory verified badge ("Direct from the maker", Pack Point access); only the two "I have a manufacturing unit…" business types can earn it (Q11). See `eligibility.ts` and `eligibility.test.ts`.
 
 ---
 

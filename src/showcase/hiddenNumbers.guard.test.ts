@@ -22,4 +22,4 @@ test('no hidden numbers in anything the showcase sidebar renders', () => {
             }
           }
   expect(texts.filter((t) => HIDDEN.test(t))).toEqual([]);
-});
+}, 30_000); // sweeps every persona × day × language × "Behind it" key: slow by design

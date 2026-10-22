@@ -50,10 +50,16 @@ describe('Behind it: hero numbers (plan §8b)', () => {
     expect(t).toContain('(290 + 30) × 1.05 = ₹336');
   });
 
-  it('cost check: a qualifying price exists, the cap itself not shown', () => {
+  it('cost check: his own numbers → his price, Qualifies only after Check price; no “qualifying price exists”, no cap', () => {
     const t = text('costCheck', 'jasmeet', J.onboarding);
-    expect(t).toContain('₹133');
-    expect(t).toContain('a qualifying price exists');
+    expect(t).toContain('making cost ₹80, wants to earn ₹14 per unit (the same as 17.5%');
+    expect(t).toContain('→ ₹133');
+    expect(t).toContain('Your price: (126 + 14) × 1.05 = 147 → ₹147');
+    expect(t).toContain('→ Qualifies');
+    expect(t).not.toMatch(/qualifying price exists|price cap/);
+    const s = text('costCheck', 'samar', J.onboarding);
+    expect(s).toContain('Pack Point');
+    expect(s).toContain('(290 + 30) × 1.05 = 336 → ₹336');
   });
 
   it('demand, share, slots and lot: 9–13 a day, 5 slots, 150 (₹12,000)', () => {
@@ -69,16 +75,16 @@ describe('Behind it: hero numbers (plan §8b)', () => {
     expect(text('orderBook', 'jasmeet', J.commit)).toContain('600 units already committed ÷ 150 a lot = 4 slots taken → 1 left');
   });
 
-  it('LW-6 banner: 5 − 4 = 1 slot left, the launch dates, 2 → 3 → 4 of 4 from the scripted story', () => {
+  it('LW-6 banner: 5 − 4 = 1 slot left, the launch dates, 2 → 4 → 5 of 5 from the scripted story', () => {
     const d1 = text('launchBanner', 'jasmeet', J.onboarding);
     expect(d1).toContain('5 − 4 taken = 1 left for 1 L steel water bottle');
     expect(d1).toContain('D7 (31 Oct)');
     expect(d1).toContain('D18 (11 Nov)');
     expect(d1).toContain('D21–D25 (14–18 Nov)');
     expect(d1).toContain('= 2 of 5');
-    expect(text('launchBanner', 'jasmeet', 2)).toContain('= 2 of 4');
-    expect(text('launchBanner', 'jasmeet', J.listing)).toContain('= 3 of 4');
-    expect(text('launchBanner', 'jasmeet', J.restock)).toContain('= 4 of 4');
+    expect(text('launchBanner', 'jasmeet', 2)).toContain('= 2 of 5');
+    expect(text('launchBanner', 'jasmeet', J.listing)).toContain('= 4 of 5');
+    expect(text('launchBanner', 'jasmeet', J.restock)).toContain('= 5 of 5');
     expect(text('launchBanner', 'jasmeet', J.liveLaunch)).toContain('11 orders today');
     expect(text('launchBanner', 'reseller', J.onboarding)).toMatch(/no banner/);
     expect(text('launchBanner', 'samar', J.onboarding)).toMatch(/no order book/);
@@ -122,11 +128,15 @@ describe('Behind it: hero numbers (plan §8b)', () => {
     expect(text('switchTo', 'jasmeet', J.restock)).toMatch(/casserole[\s\S]*flask/);
   });
 
-  it('eligibility: Jasmeet eligible, reseller not', () => {
-    expect(text('eligibility', 'jasmeet', J.onboarding)).toContain('→ Eligible');
+  it('silent checks: Jasmeet Factory verified (sees the badge); reseller not verified, sees nothing; neither is a launch gate', () => {
+    const j = text('eligibility', 'jasmeet', J.onboarding);
+    expect(j).toContain('→ Factory verified');
+    expect(j).toContain('the maker sees “Factory verified ✓”');
     const r = text('eligibility', 'reseller', J.onboarding);
-    expect(r).toContain('→ Not eligible');
+    expect(r).toContain('→ not Factory verified');
+    expect(r).toContain('he sees nothing');
     expect(r.match(/✗/g)).toHaveLength(3);
+    expect(r).toContain('Not a gate: Factory Launch is open to every seller whose price qualifies');
   });
 
   it('price position: ₹147 Low and Qualifies before the edit; ₹165 Mid and doesn’t qualify from D40', () => {

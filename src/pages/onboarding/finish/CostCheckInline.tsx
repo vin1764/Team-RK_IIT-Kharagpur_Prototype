@@ -1,6 +1,6 @@
 // FO-5 · the 5-minute cost check, inline on the onboarding finish screen (it used to be its own page reached
-// from the outreach link). The maker decides his own take-home: making cost per unit and what he wants to earn per
-// unit (₹, or % of making cost), both empty until he types. Then the fee stack with his shipping choice from Pickup
+// from the outreach link), for every seller. He decides his own take-home: his cost per unit (making cost if he makes
+// it, buying cost if he buys it) and what he wants to earn per unit (₹, or % of that cost), both empty until he types. Then the fee stack with his shipping choice from Pickup
 // Address (FO-8) → break-even, and "Your price ₹X · you earn ₹Y per unit". Whether that price qualifies for Factory
 // Launch comes only from "Check price": the bot's rationed check (3 a day per product, shared with the bot's Price
 // screen through store/priceChecks.ts; rules in panel/catalog/launchCheck.ts). Benchmark B is never shown.
@@ -121,16 +121,19 @@ export function CostCheckInline({
       <p className="m-0 mt-1 text-lg leading-5 text-secondary-text">{FIN.costSub(mode)}</p>
       <div className="mt-5 grid grid-cols-[300px_1fr_1fr] items-start gap-4 max-[1023px]:grid-cols-1">
         <div className="flex flex-col gap-4">
-          <Field
-            label={FIN.makingCost}
-            labelBg="bg-white"
-            prefix="₹"
-            inputMode="numeric"
-            autoComplete="off"
-            value={making}
-            onChange={(e) => onChange({ ...value, making: cleanRupees(e.target.value) })}
-            data-making-cost
-          />
+          <div>
+            <Field
+              label={t('cost.yourCost')}
+              labelBg="bg-white"
+              prefix="₹"
+              inputMode="numeric"
+              autoComplete="off"
+              value={making}
+              onChange={(e) => onChange({ ...value, making: cleanRupees(e.target.value) })}
+              data-making-cost
+            />
+            <p className="m-0 mt-1 text-sm leading-4 text-tertiary-text">{t('cost.yourCost.hint')}</p>
+          </div>
           <div className="flex items-center gap-2">
             <Field
               className="min-w-0 flex-1"

@@ -13,7 +13,6 @@ import { C2M } from './stepper/copy';
 import { Checkbox, DemoFill, SelectField, TextField } from './stepper/fields';
 import { useDevState, useGo } from './stepper/nav';
 import { OnboardingLayout } from './stepper/OnboardingLayout';
-import { useFinishEligible } from './Finish';
 
 export default function SupplierDetails() {
   const persona = usePersona();
@@ -38,9 +37,7 @@ export default function SupplierDetails() {
   }, [persona, dev]);
 
   const c2m = useDemo((s) => s.c2m);
-  // C2M: verified manufacturers continue to the finish screen ("What do you make?"); everyone else, and plain
-  // mode, lands on the dashboard as today.
-  const verified = useFinishEligible();
+  // C2M: every seller continues to the finish screen ("What do you sell?"); plain mode lands on the dashboard as today.
   const ready = storeName.trim() !== '' && email.trim() !== '' && fullName.trim() !== '' && agree && (c2m || o.businessType !== null);
 
   return (
@@ -54,7 +51,7 @@ export default function SupplierDetails() {
           onClick={() => {
             o.set({ supplierSubmitted: true });
             toast(C2M.accountCreated);
-            go(c2m && verified ? onboarding.done : paths.home);
+            go(c2m ? onboarding.done : paths.home);
           }}
         >
           Submit

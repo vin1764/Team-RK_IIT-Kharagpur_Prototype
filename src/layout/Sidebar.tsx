@@ -4,7 +4,7 @@ import { paths, pathOnly } from '../app/paths';
 import { notInPrototype } from '../components/Toast';
 import { PinkTag } from '../pages/panel/catalog/BulkTemplatePanel';
 import { FL } from '../pages/panel/factory-launch/copy';
-import { useFlEligible } from '../pages/panel/factory-launch/useLaunchEntry';
+import { useFlVisible } from '../pages/panel/factory-launch/useLaunchEntry';
 import { isGroup, matches, SIDEBAR, type SidebarGroup, type SidebarLeaf } from './sidebarItems';
 
 // Ported class-for-class from reference/html nav#app-sidebar.
@@ -92,7 +92,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname, search } = useLocation();
   const noticesActive = matches(pathname, paths.notices);
   // LW-6: eligible makers also get the pinned Factory Launch notice, counted in "Notices (n)", and the sidebar item.
-  const flEligible = useFlEligible();
+  const flEligible = useFlVisible();
   const noticeCount = 1 + (flEligible ? 1 : 0);
   const flActive =
     flEligible &&
