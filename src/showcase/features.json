@@ -76,7 +76,7 @@
       "title": "Pack Point or self-ship",
       "tag": "EXTENDED",
       "part": "onboarding",
-      "what": "Once the pickup address saves: ship through the Cluster Pack Point (one bulk lot a week) or self-ship as today.",
+      "what": "Once the pickup address saves: a generic “Send one lot a week to a Pack Point” option with its status from the pincode (available / opening soon, 32 of 40 makers), and “See details & rate cards” opening a drawer: how it works, the cluster, providers and rate cards, the fee by cluster size, other charges, self-ship vs Pack Point in words. No product prices until the maker tells us what he makes.",
       "why": "Many offline makers can’t pack and ship single orders; the Pack Point does it for the whole cluster.",
       "behind": "fulfilment"
     },
@@ -174,7 +174,7 @@
       "title": "Factory Launch on Home, sidebar and Notices",
       "tag": "EXTENDED",
       "part": "launch",
-      "what": "A banner at the top of Home (dates, slots left, an inline “Check my eligibility” checklist with one button per open step), a “Factory Launch” item under Boost Sales and a pinned notice — only for makers who passed the checks.",
+      "what": "A banner at the top of Home (dates, slots left, an inline “Check my eligibility” checklist with one button per open step), a “Factory Launch” item under Boost Sales, and a pinned notice laid out like Meesho’s sale notices (the launch creative on top, then the offer, a status line that follows the maker’s state, and “Check my eligibility”) — only for makers who passed the checks.",
       "why": "A new manufacturer finds the launch on day one instead of three clicks deep in Promotions, and always sees the one next step.",
       "behind": "launchBanner"
     },
@@ -294,6 +294,15 @@
       "what": "The first lot sized from demand, received, counted, and every unit weighed.",
       "why": "Weights at inbound make every later claim provable.",
       "behind": "lotInbound"
+    },
+    {
+      "docId": "PP-10",
+      "title": "Pack Point providers near the maker",
+      "tag": "NEW",
+      "part": "packpoint",
+      "what": "In the Pack Point drawer: the fulfilment providers serving the maker’s pincode (WareIQ, Prozo, Eshopbox, Shiprocket Fulfillment), each with services (bulk in · pack · returns) and a rate card (Shiprocket ₹24 per order; others on request), next to the cluster fee by size.",
+      "why": "A maker compares the shared Pack Point with the providers already serving his area before choosing; rates are shown as published, with nothing invented.",
+      "behind": "packPointFee"
     }
   ],
   "features": [
@@ -505,7 +514,7 @@
     {
       "id": "lw-notice",
       "docId": "LW-6",
-      "title": "Pinned Factory Launch notice",
+      "title": "Pinned Factory Launch notice (with the launch creative)",
       "part": "launch",
       "tag": "EXTENDED",
       "persona": "jasmeet",
@@ -609,6 +618,17 @@
       "persona": "jasmeet",
       "day": 40,
       "route": "/panel/v3/new/services/demo/ipp/price-position"
+    },
+    {
+      "id": "pp-drawer",
+      "docId": "PP-10",
+      "title": "Pack Point details & rate cards (Pickup Address)",
+      "part": "packpoint",
+      "tag": "NEW",
+      "persona": "samar",
+      "day": 1,
+      "route": "/onboarding/pickup-address?state=saved&drawer=packpoint",
+      "selector": "[data-testid=pp-drawer]"
     },
     {
       "id": "pp-samar",
@@ -887,7 +907,7 @@
       "id": "pickup-address",
       "title": "Pickup Address",
       "match": "^/onboarding/pickup-address(\\?|$)",
-      "today": "Your factory or shop address; it assumes a Meesho partner picks up every order (self-ship only).",
+      "today": "Your factory or shop address; it assumes a Meesho partner picks up every order (self-ship only). No Pack Point option, no rate cards.",
       "nearest": "fo-ship-choice"
     },
     {

@@ -1,21 +1,22 @@
 // Onboarding step 2 · Pickup Address. The saved state replicates reference/screens/onb-pickup.png;
 // the entry form wasn't captured and is built from the same fields. C2M: "How will your orders
-// ship?" (FO-8) appears once the address is saved; the Pack Point card depends on the pickup city.
+// ship?" (FO-8) appears once the address is saved. The Pack Point option is generic (no fee, city or
+// maker numbers) and its status comes from the pickup pincode's cluster; the detail sits behind
+// "See details & rate cards" (PackPointDrawer). `?drawer=packpoint` opens the drawer on load (showcase jump).
 import { useEffect, useState, type ReactNode } from 'react';
+import { useLocation } from 'react-router';
 import { onboarding } from '../../app/paths';
 import { Banner, Button, cx } from '../../components/ui';
-import nodesData from '../../data/packPointNodes.json';
-import { packPointFee } from '../../engine/ui';
 import { useOnboarding, usePersona, type Fulfilment, type PersonaRecord } from '../../store/onboarding';
 import { useDemo } from '../../store/demo';
+import { PackPointDrawer } from './packpoint/PackPointDrawer';
+import { packPointStatus, packPointStatusLine } from './packpoint/status';
 import { C2M } from './stepper/copy';
 import { Checkbox, DetailList, Spinner, TextField } from './stepper/fields';
 import { useDevState, useGo } from './stepper/nav';
 import { OnboardingLayout } from './stepper/OnboardingLayout';
 
 type Address = PersonaRecord['address'];
-type PackPointNode = { city: string; status: 'live' | 'opening'; makersPooled?: number; opensAtMakers?: number };
-const NODES = nodesData.nodes as PackPointNode[];
 
 const FIELDS: { key: keyof Address; label: string }[] = [
   { key: 'building', label: 'Room/ Floor/ Building Number' },
@@ -30,7 +31,23 @@ const EMPTY: Address = { building: '', street: '', landmark: '', pincode: '', ci
 // The address the maker saved, kept per persona for the session so going back to this step shows it.
 const saved: Partial<Record<string, Address>> = {};
 
-function RadioCard({ checked, muted, onSelect, title, lines, testId }: { checked: boolean; muted?: boolean; onSelect: () => void; title: string; lines: ReactNode[]; testId: string }) {
+function RadioCard({
+  checked,
+  muted,
+  onSelect,
+  title,
+  lines,
+  action,
+  testId,
+}: {
+  checked: boolean;
+  muted?: boolean;
+  onSelect: () => void;
+  title: string;
+  lines: ReactNode[];
+  action?: ReactNode;
+  testId: string;
+}) {
   return (
     <label
       data-testid={testId}
@@ -46,13 +63,14 @@ function RadioCard({ checked, muted, onSelect, title, lines, testId }: { checked
       >
         {checked && <span className="size-2 rounded-full bg-brand-primary-bg" />}
       </span>
-      <span className="flex flex-col">
+      <span className="flex flex-col items-start">
         <span className={cx('text-xl leading-5 font-button', muted ? 'text-secondary-text' : 'text-primary-text')}>{title}</span>
         {lines.map((l, i) => (
           <span key={i} className={cx('mt-1 text-lg leading-5 font-body', muted ? 'text-tertiary-text' : 'text-secondary-text')}>
             {l}
           </span>
         ))}
+        {action}
       </span>
     </label>
   );
@@ -60,22 +78,52 @@ function RadioCard({ checked, muted, onSelect, title, lines, testId }: { checked
 
 function ShipChoice({ address }: { address: Address }) {
   const o = useOnboarding();
-  const node = NODES.find((n) => n.city.trim().toLowerCase() === address.city.trim().toLowerCase());
-  const live = node?.status === 'live' && node.makersPooled !== undefined;
+  const { search } = useLocation();
+  const status = packPointStatus(address.pincode);
+  const [drawer, setDrawer] = useState(() => status !== null && new URLSearchParams(search).get('drawer') === 'packpoint');
+  const live = status?.kind === 'live';
+  // An opening cluster can't be chosen yet: picking the option joins the waitlist (as before).
   const ppValue: Fulfilment = live ? 'packPoint' : 'waitlist';
-  const ppLines = live
-    ? [C2M.packPointLive(node.city, packPointFee(node.makersPooled!).feePerDeliveredOrder), C2M.packPointBody]
-    : node?.status === 'opening' && node.opensAtMakers !== undefined
-      ? [C2M.packPointOpening(node.city, node.opensAtMakers)]
-      : [C2M.packPointNone(address.pincode)];
   return (
     <section data-c2m="FO-8" data-c2m-id="FO-8" className="mt-6">
       <h3 className="m-0 text-xl leading-5 font-button text-primary-text">{C2M.shipHeading}</h3>
       <div className="mt-3 flex flex-col gap-3">
         <RadioCard testId="ship-self" checked={o.fulfilment === 'selfShip'} onSelect={() => o.set({ fulfilment: 'selfShip' })} title={C2M.selfShipTitle} lines={[C2M.selfShipBody]} />
-        <RadioCard testId="ship-packpoint" checked={o.fulfilment === ppValue} muted={!live} onSelect={() => o.set({ fulfilment: ppValue })} title={C2M.packPointTitle} lines={ppLines} />
+        {status && (
+          <RadioCard
+            testId="ship-packpoint"
+            checked={o.fulfilment === ppValue}
+            muted={!live}
+            onSelect={() => o.set({ fulfilment: ppValue })}
+            title={C2M.packPointTitle}
+            lines={[
+              C2M.packPointBody,
+              <span data-testid="pp-status" data-status={status.kind} className={live ? 'text-success-text' : undefined}>
+                {packPointStatusLine(status)}
+                {!live && ` · ${C2M.ppJoinWaitlist}`}
+              </span>,
+            ]}
+            action={
+              <Button
+                variant="text"
+                size="sm"
+                className="mt-1 !h-auto !px-0 py-0.5"
+                data-testid="pp-see-details"
+                onClick={(e) => {
+                  // Inside the option's <label>: open the drawer without picking the option.
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setDrawer(true);
+                }}
+              >
+                {C2M.ppSeeDetails}
+              </Button>
+            }
+          />
+        )}
       </div>
       <p className="m-0 mt-3 text-base leading-4 font-body text-secondary-text">{C2M.changeLater}</p>
+      {status && <PackPointDrawer open={drawer} onClose={() => setDrawer(false)} pincode={address.pincode} onChoose={() => o.set({ fulfilment: 'packPoint' })} />}
     </section>
   );
 }

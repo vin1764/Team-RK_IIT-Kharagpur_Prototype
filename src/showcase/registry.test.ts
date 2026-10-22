@@ -80,6 +80,7 @@ describe('features (the jump list)', () => {
   // Where each jump lands. Keep in step with features.json.
   const LANDS: Record<string, string> = {
     'fo-outreach': 'outreach',
+    'pp-drawer': 'pickup-address',
     'fo-checks-maker': 'business-details',
     'fo-checks-reseller': 'business-details',
     'fo-ship-choice': 'pickup-address',

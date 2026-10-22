@@ -16,7 +16,7 @@ const EXPECTED = [
   'LW-2', 'LW-3', 'LW-4', 'LW-5', 'LW-6', 'LW-7', 'LW-8',
   'GL-2', 'GL-3', 'GL-4', 'GL-5', 'GL-6',
   'PI-2', 'PI-3',
-  'PP-3', 'PP-4', 'PP-5',
+  'PP-3', 'PP-4', 'PP-5', 'PP-10',
 ];
 
 const files = sourceFiles();

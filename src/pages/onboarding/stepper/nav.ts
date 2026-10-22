@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 
-/** Navigate while keeping the demo query params (?persona=&day=&lang=). Drops our dev-only ?state=. */
+/** Navigate while keeping the demo query params (?persona=&day=&lang=). Drops our dev-only ?state= and the ?drawer= jump. */
 export function useGo() {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -9,6 +9,7 @@ export function useGo() {
     (path: string) => {
       const q = new URLSearchParams(search);
       q.delete('state');
+      q.delete('drawer');
       const s = q.toString();
       navigate(s ? `${path}?${s}` : path);
     },
