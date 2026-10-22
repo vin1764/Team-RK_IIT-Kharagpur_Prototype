@@ -429,7 +429,7 @@
   "cost.row.gst": "GST (₹{price} का {rate}%, कीमत में शामिल)",
   "cost.priceTitle": "आपकी कीमत",
   "cost.yourPrice": "आपकी कीमत: ₹{price} · आपकी कमाई ₹{take} प्रति यूनिट",
-  "cost.priceHow": "बनाने की लागत + फ़ीस + आपकी कमाई, साथ में {rate}% GST, नज़दीकी रुपये तक",
+  "cost.priceHow": "आपकी लागत + फ़ीस + आपकी कमाई, साथ में {rate}% GST, नज़दीकी रुपये तक",
   "cost.launch.qualifies": "इस कीमत पर Factory Launch Week के लिए योग्य है",
   "cost.launch.notEligible": "इस कीमत पर योग्य नहीं · कम कीमत योग्य हो सकती है",
   "cost.launch.stale": "Factory Launch की स्थिति देखने के लिए कीमत जांचें",

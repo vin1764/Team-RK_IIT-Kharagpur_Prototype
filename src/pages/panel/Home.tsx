@@ -2,7 +2,7 @@
 //   default    → reference/screens/home.png: step 1 "Upload catalogs to get started"
 //   ?state=qc  → reference/html/meesho-home.html: step 2 with the QC status table
 //   live       → (C2M, LB-8) after "Go live" from photos: step 2 shows the live catalog
-// C2M LW-6: the Factory Launch banner sits above "Welcome…" for makers who passed the checks.
+// C2M LW-6: the Factory Launch banner sits above "Welcome…" for every seller whose product is in the launch category.
 // Later phases will pick the state from the demo day instead of the query string.
 import { useSearchParams } from 'react-router';
 import { notInPrototype } from '../../components/Toast';

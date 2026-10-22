@@ -20,7 +20,7 @@ function NoticeCard({ title, date, body }: Notice) {
 }
 
 export default function Notices() {
-  // C2M LW-6: a pinned Factory Launch notice on top, for makers who passed the checks.
+  // C2M LW-6: a pinned Factory Launch notice on top, for every seller whose product is in the launch category.
   const pinned = useFlVisible();
   return (
     <div>

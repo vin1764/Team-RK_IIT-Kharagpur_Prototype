@@ -130,7 +130,7 @@ function FilterBar() {
   );
 }
 
-/** C2M PI-2: the fifth tab, only for a maker who passed the checks and has a Factory Launch listing (doc p.7). */
+/** C2M PI-2: the fifth tab, only for a seller with a Factory Launch listing (doc p.7). */
 export const PRICE_POSITION_TAB = 'price-position';
 
 export default function ManagePricing() {

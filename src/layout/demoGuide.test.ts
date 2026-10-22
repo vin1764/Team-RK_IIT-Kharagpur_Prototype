@@ -25,7 +25,7 @@ describe('demo guide numbers — recomputed from engine/seed', () => {
     expect([n.listPrice, n.takeHome]).toEqual([147, 14]);
     expect(checkListingPrice('steel-bottle-1l', 147, 133)).toBe('qualifies');
     expect(n.listQualifies).toBe(true);
-    expect(text(1)).toContain('₹80 making cost and ₹14 to earn → “Your price: ₹147 · you earn ₹14” → Check price: qualifies');
+    expect(text(1)).toContain('₹80 cost and ₹14 to earn → “Your price: ₹147 · you earn ₹14” → Check price: qualifies');
     // Teaser after onboarding, for the type she picks (plan §10 step 1, updated)
     expect(text(1)).toContain('picks the 1 L steel water bottle → teaser “about 300 orders a week at ₹150–170”');
     expect(text(1)).toContain('Home & Kitchen invitation');
@@ -33,10 +33,14 @@ describe('demo guide numbers — recomputed from engine/seed', () => {
     expect(text(3)).toContain('List at ₹147 · take home ₹14, Qualifies');
   });
 
-  it('Jasmeet eligible, reseller not eligible (step 2)', () => {
-    expect([n.jasmeetEligible, n.resellerEligible]).toEqual(['eligible', 'notEligible']);
-    expect(text(2)).toContain('→ eligible');
-    expect(text(2)).toContain('Reseller: not eligible');
+  it('Jasmeet Factory verified; the reseller’s ₹120 + ₹20 → ₹195 doesn’t qualify (step 2)', () => {
+    expect(n.jasmeetEligible).toBe('eligible');
+    const r = costStack('steel-bottle-1l', 120, 16.7, 'selfShip');
+    expect([r.takeHome, r.breakEven, r.listPrice]).toEqual([20, 175, 195]);
+    expect(checkListingPrice('steel-bottle-1l', 195, 175)).toBe('aboveCap');
+    expect([n.resellerPrice, n.resellerQualifies]).toEqual([195, false]);
+    expect(text(2)).toContain('Factory verified ✓');
+    expect(text(2)).toContain('As Reseller: cost check ₹120 + ₹20 to earn → “Your price: ₹195” → Check price: not eligible at this price');
   });
 
   it('Meesho fills 21, she adds 14 (step 3)', () => {
@@ -121,8 +125,8 @@ describe('demo guide jumps', () => {
     expect(jumpHref(DEMO_GUIDE[3]!.jump)).toMatch(/\?tab=FACTORY_LAUNCH&persona=jasmeet&day=5&lang=en$/);
   });
 
-  it('step 6 links the Business Dashboard; step 2 offers the Reseller', () => {
+  it('step 6 links the Business Dashboard; step 2 offers the Reseller’s cost check (checked)', () => {
     expect(DEMO_GUIDE[5]!.also.map((a) => a.path)).toContain(paths.businessDashboard);
-    expect(DEMO_GUIDE[1]!.also[0]).toMatchObject({ persona: 'reseller', path: onboarding.businessDetails });
+    expect(DEMO_GUIDE[1]!.also[0]).toMatchObject({ persona: 'reseller', path: `${onboarding.done}?state=checked` });
   });
 });

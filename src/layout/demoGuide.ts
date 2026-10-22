@@ -43,6 +43,18 @@ function makerRecords(p: typeof J | typeof R): MakerRecords {
   return { taxId: p.taxId, businessType: p.businessType, gstNatureOfBusiness: p.gstNatureOfBusiness, udyamMajorActivity: p.udyam.majorActivity } as MakerRecords;
 }
 
+/** The reseller's cost check (team, 22 Oct 2026): his bought-in bottle at his own margin, self-ship. */
+function resellerNumbers() {
+  const p = R.product!;
+  const s = costStack(p.type as ProductTypeId, p.makingCost, p.marginPct, 'selfShip');
+  return {
+    resellerCost: p.makingCost,
+    resellerEarn: s.takeHome,
+    resellerPrice: s.listPrice,
+    resellerQualifies: checkListingPrice(p.type as ProductTypeId, s.listPrice, s.breakEven) === 'qualifies',
+  };
+}
+
 /** Every value the guide quotes, from the engine and the seed. */
 export function guideNumbers() {
   const stack = costStack(J_TYPE, J.product.makingCost, J.product.marginPct, 'selfShip');
@@ -71,7 +83,7 @@ export function guideNumbers() {
     bandLow: demandForType(J_TYPE).priceBand!.low,
     bandHigh: demandForType(J_TYPE).priceBand!.high,
     jasmeetEligible: eligibility(makerRecords(J)).status,
-    resellerEligible: eligibility(makerRecords(R)).status,
+    ...resellerNumbers(),
     botFills: BOT_FILLED_COUNT,
     makerAdds: MAKER_COUNT,
     suggestedLot: suggestedLot(J_TYPE, J.product.makingCost).units,
@@ -143,7 +155,7 @@ export function buildGuide(): GuideStep[] {
       D.onboarding,
       'jasmeet',
       'Outreach, onboarding, what she makes',
-      `${jn} gets a ${n.category} invitation (no product named) → Meesho’s own sign-up → onboarding → finish screen: she picks the ${n.jasmeetType} → teaser “about ${n.gapLow} orders a week at ₹${n.bandLow}–${n.bandHigh}” → cost check: she types ₹${n.makingCost} making cost and ₹${n.takeHome} to earn → “Your price: ₹${n.listPrice} · you earn ₹${n.takeHome}” → Check price: ${yes(n.listQualifies, 'qualifies', 'doesn’t qualify')} → Check my eligibility opens the checklist drawer.`,
+      `${jn} gets a ${n.category} invitation (no product named) → Meesho’s own sign-up → onboarding → finish screen: she picks the ${n.jasmeetType} → teaser “about ${n.gapLow} orders a week at ₹${n.bandLow}–${n.bandHigh}” → cost check: she types ₹${n.makingCost} cost and ₹${n.takeHome} to earn → “Your price: ₹${n.listPrice} · you earn ₹${n.takeHome}” → Check price: ${yes(n.listQualifies, 'qualifies', 'doesn’t qualify')} → Check my eligibility opens the checklist drawer.`,
       { label: 'Open outreach', persona: 'jasmeet', day: D.onboarding, path: onboarding.outreach },
       [
         { label: 'Sign-up', persona: 'jasmeet', day: D.onboarding, path: onboarding.signup },
@@ -154,10 +166,10 @@ export function buildGuide(): GuideStep[] {
       2,
       D.onboarding,
       'jasmeet',
-      'Business Details checks',
-      `Business Details: GST + Udyam pass → ${n.jasmeetEligible === 'eligible' ? 'eligible' : n.jasmeetEligible}. (Switch to Reseller: ${n.resellerEligible === 'notEligible' ? 'not eligible' : n.resellerEligible}.)`,
+      'Factory verified · resellers can join, but their margin prices them out',
+      `Business Details: GST + Udyam checks run silently → ${yes(n.jasmeetEligible === 'eligible', 'Factory verified ✓', 'no badge')} (the “Direct from the maker” label and Pack Point access; not a launch gate). As Reseller: cost check ₹${n.resellerCost} + ₹${n.resellerEarn} to earn → “Your price: ₹${n.resellerPrice}” → Check price: ${yes(n.resellerQualifies, 'qualifies', 'not eligible at this price')}. He can still list and sell at ₹${n.resellerPrice}.`,
       { label: 'Open Business Details', path: onboarding.businessDetails },
-      [{ label: 'As Reseller', persona: 'reseller', day: D.onboarding, path: onboarding.businessDetails }],
+      [{ label: 'Reseller’s cost check', persona: 'reseller', day: D.onboarding, path: `${onboarding.done}?state=checked` }],
     ),
     step(
       3,

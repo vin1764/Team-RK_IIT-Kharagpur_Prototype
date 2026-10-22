@@ -35,7 +35,7 @@ export const FIN = {
   noDemand: 'No demand data for this product type yet', // prompt
   // FO-5 cost check (the new copy, from the earning input to the Factory Launch status, is in src/i18n: cost.*)
   costTitle: 'See your take-home in 5 minutes', // doc
-  costSub: (mode: 'selfShip' | 'packPoint') => `Cost check · ${mode === 'packPoint' ? 'shipping through the Pack Point' : 'shipping from your factory'}`, // ours (FO-8 choice)
+  costSub: (mode: 'selfShip' | 'packPoint') => `Cost check · ${mode === 'packPoint' ? 'shipping through the Pack Point' : 'Self-ship'}`, // ours (FO-8 choice)
   feeStack: 'Fee stack per order', // ours
   breakEven: 'Break-even', // ours
   noFeeCard: 'The cost check needs this product type’s fee card, which isn’t in this prototype yet.', // ours

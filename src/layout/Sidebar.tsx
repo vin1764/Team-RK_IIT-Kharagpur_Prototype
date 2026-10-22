@@ -85,13 +85,13 @@ function Group({ item, pathname, onNavigate, inactive }: { item: SidebarGroup; p
   );
 }
 
-/** C2M LW-6: "Factory Launch" under Boost Sales, for makers who passed the checks; Promotions → Factory Launch tab. */
+/** C2M LW-6: "Factory Launch" under Boost Sales, for every seller whose product is in the launch category; Promotions → Factory Launch tab. */
 const FL_LEAF: SidebarLeaf = { label: FL.sidebar, icon: '/brand/msa/merlin/filled/promotions-v2.svg', to: paths.factoryLaunch };
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { pathname, search } = useLocation();
   const noticesActive = matches(pathname, paths.notices);
-  // LW-6: eligible makers also get the pinned Factory Launch notice, counted in "Notices (n)", and the sidebar item.
+  // LW-6: sellers in the launch category also get the pinned Factory Launch notice, counted in "Notices (n)", and the sidebar item.
   const flEligible = useFlVisible();
   const noticeCount = 1 + (flEligible ? 1 : 0);
   const flActive =

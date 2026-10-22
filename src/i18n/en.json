@@ -446,7 +446,7 @@
   "cost.row.gst": "GST ({rate}% of ₹{price}, in price)",
   "cost.priceTitle": "Your price",
   "cost.yourPrice": "Your price: ₹{price} · you earn ₹{take} per unit",
-  "cost.priceHow": "Making cost + fees + what you earn, plus {rate}% GST, to the nearest rupee",
+  "cost.priceHow": "Your cost + fees + what you earn, plus {rate}% GST, to the nearest rupee",
   "cost.launch.qualifies": "Qualifies for Factory Launch Week at this price",
   "cost.launch.notEligible": "Not eligible at this price · a lower price may qualify",
   "cost.launch.stale": "Check price to see Factory Launch status",

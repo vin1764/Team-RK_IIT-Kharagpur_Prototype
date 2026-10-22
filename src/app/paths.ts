@@ -49,7 +49,7 @@ export const onboarding = {
   pickupAddress: '/onboarding/pickup-address',
   bankDetails: '/onboarding/bank-details',
   supplierDetails: '/onboarding/supplier-details',
-  /** C2M (FO-4, FO-5, FO-7): after Submit, verified manufacturers only — "What do you make?" */
+  /** C2M (FO-4, FO-5, FO-7): after Submit, every seller — "What do you sell?" */
   done: '/onboarding/done',
 } as const;
 
