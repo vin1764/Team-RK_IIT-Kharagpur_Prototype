@@ -39,6 +39,7 @@ import {
 } from '../engine/ui';
 import { BOT_FILLED_COUNT, MAKER_COUNT, MANDATORY_IDS } from '../pages/panel/catalog/bot';
 import { MAX_PRICE_CHECKS } from '../pages/panel/catalog/launchCheck';
+import { stockAtNode } from '../pages/panel/warehouse/lots';
 import type { Persona } from '../store/demo';
 import type { BehindCtx } from './types';
 
@@ -503,6 +504,18 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
       ...lines,
       `${fmt(r.expected)} expected · ${fmt(r.received)} received · every unit weighed: ${fmt(lotSeed.packedWeightG)} g ± ${fmt(lotSeed.weightTolerancePct)}% = ${fmt(r.weightRangeG.low)}–${fmt(r.weightRangeG.high)} g`,
       `Storage free to D${r.storageFreeUntilDay} (${short(r.storageFreeUntilDay)}), then ${fmt(r.received)} × ${rs(lotSeed.storage.perUnitPerDay)} = ${rs2(r.storagePerDayAfterFree)} a day`,
+    ];
+  },
+
+  /** PP-6: stock at the Pack Point (Samar's received lot) */
+  stockAtNode: ({ persona, day }) => {
+    const s = persona === lotSeed.persona ? stockAtNode(day, modeOf(persona) === 'packPoint') : null;
+    if (!s) return [`Stock shows once a lot is received at the Pack Point (Samar’s: D${lotSeed.day}, ${short(lotSeed.day)}).`];
+    const held = s.rows[0]?.daysHeld ?? 0;
+    return [
+      `${fmt(s.units)} on hand (${s.rows.map((r) => `${r.size ? `UK ${r.size}` : ''} ${fmt(r.units)}`.trim()).join(' · ')}) · held ${fmt(held)} days since D${lotSeed.day}; no later sales are seeded, so on hand = received`,
+      `Free storage: D${lotSeed.day} + ${fmt(lotSeed.storage.freeDays)} days = D${s.freeUntilDay} (${short(s.freeUntilDay)}); then ${fmt(s.units)} × ${rs(s.perUnitPerDay)} = ${rs2(s.perDayAfterFree)} a day`,
+      s.chargedDays > 0 ? `Charged so far: ${fmt(s.chargedDays)} days × ${rs2(s.perDayAfterFree)} = ${rs2(s.chargedSoFar)}` : 'Nothing charged yet',
     ];
   },
 };

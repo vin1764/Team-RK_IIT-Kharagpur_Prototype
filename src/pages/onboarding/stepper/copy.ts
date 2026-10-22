@@ -123,6 +123,7 @@ export const C2M = {
   ppNeedsReview: 'Needs your review', // existing bot chip copy (filled.chipNeeds)
   // PP-5 "Plan first lot" (side panel)
   ppLotTitle: (city: string) => `Plan first lot · ${city}`, // ours
+  ppLotTitleNext: (city: string) => `Plan a lot · ${city}`, // ours (Lots tab)
   ppLotProduct: 'Units to send', // ours
   ppLotSuggested: (units: string, days: number) => `Suggested ${units} ≈ ${days} days of expected sales`, // ours
   ppLotSizes: 'Units per size', // ours

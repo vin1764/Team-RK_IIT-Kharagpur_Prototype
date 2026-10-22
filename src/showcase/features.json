@@ -273,7 +273,7 @@
       "title": "Cluster Pack Point program",
       "tag": "EXTENDED",
       "part": "packpoint",
-      "what": "A second program card on Warehouse: one lot a week, the partner packs, ships and takes returns. “Use this Pack Point” opens a confirm panel in place: apply to all or chosen live products, each with its new take-home and launch status, what changes, Confirm / Cancel. After it: “You’re on Pack Point · <city> · first lot not sent yet” with “Plan first lot”, and the switched listings go back to “Needs your review” (Packer changed). “Switch back to self-ship” opens the reverse panel.",
+      "what": "The Warehouse page gets two tabs for Factory-verified makers with a Pack Point within 150 km: “Meesho Warehouse” (unchanged) and “Cluster Pack Point” NEW (default if he ships through one). Inside: Overview, and once he’s on a Pack Point, Lots, Stock at Pack Point and Returns. “Switch to Pack Point” / “Use this Pack Point” opens a confirm panel in place (all or chosen products, each with its new take-home and launch status); after it, “You’re on Pack Point · <city> · first lot not sent yet” with “Plan first lot”, and the switched listings go back to “Needs your review”. “Switch back to self-ship” opens the reverse panel.",
       "why": "Meesho Warehouse serves top sellers in three cities; makers in clusters need a shared node.",
       "behind": "packPointProgram"
     },
@@ -288,12 +288,29 @@
     },
     {
       "docId": "PP-5",
-      "title": "Lot inbound",
+      "title": "Lots",
       "tag": "NEW",
       "part": "packpoint",
-      "what": "The first lot sized from demand, received, counted, and every unit weighed.",
-      "why": "Weights at inbound make every later claim provable.",
+      "what": "Cluster Pack Point → Lots: every lot as a row (Planned / In transit / Received), newest first, with “Plan a lot”. A row opens its detail: Samar’s D50 lot shows Expected 90 · Received 90 · Weighed 90 of 90 ✓ (the weight range in the (i)) · Stocked at Agra, the size split (UK 6–10) and “≈ 14 days of expected sales”.",
+      "why": "The lot is sized from demand, and weights at inbound make every later claim provable.",
       "behind": "lotInbound"
+    },
+    {
+      "docId": "PP-6",
+      "title": "Stock at Pack Point",
+      "tag": "NEW",
+      "part": "packpoint",
+      "what": "Cluster Pack Point → Stock at Pack Point: units on hand per product and size, days held, the free-storage end date (12 Jan 2027 for Samar’s D50 lot), then ₹0.29 per unit per day. On Inventory, a product stocked at a Pack Point carries an “At <city> Pack Point” tag.",
+      "why": "Today there is no view of stock held for the seller; the maker sees what sits at the node and when storage starts costing.",
+      "behind": "stockAtNode"
+    },
+    {
+      "docId": "PP-8",
+      "title": "Returns at the Pack Point",
+      "tag": "EXTENDED",
+      "part": "packpoint",
+      "what": "Cluster Pack Point → Returns: returns received at the node, each weighed against its dispatch weight and graded A/B/C. Empty until he has returns.",
+      "why": "Return Tracking shows status only today; a weight and a grade decide who pays."
     },
     {
       "docId": "PP-10",
@@ -687,22 +704,41 @@
     {
       "id": "pp-samar",
       "docId": "PP-3",
-      "title": "Cluster Pack Point on Warehouse (Samar)",
+      "title": "Pack Point Overview (Samar, Agra)",
       "part": "packpoint",
       "tag": "EXTENDED",
       "persona": "samar",
       "day": 50,
-      "route": "/panel/v3/new/fulfillment/demo/warehouse"
+      "route": "/panel/v3/new/fulfillment/demo/warehouse?tab=pack-point&view=overview",
+      "prep": [
+        "clean"
+      ]
     },
     {
       "id": "pp-lot",
       "docId": "PP-5",
-      "title": "Samar’s first lot in, every pair weighed",
+      "title": "Lots: Samar’s first lot in, every pair weighed",
       "part": "packpoint",
       "tag": "NEW",
       "persona": "samar",
       "day": 50,
-      "route": "/panel/v3/new/fulfillment/demo/warehouse"
+      "route": "/panel/v3/new/fulfillment/demo/warehouse?tab=pack-point&view=lots&lot=seed",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
+      "id": "pp-stock",
+      "docId": "PP-6",
+      "title": "Stock at Pack Point: days held, free storage to 12 Jan",
+      "part": "packpoint",
+      "tag": "NEW",
+      "persona": "samar",
+      "day": 60,
+      "route": "/panel/v3/new/fulfillment/demo/warehouse?tab=pack-point&view=stock",
+      "prep": [
+        "clean"
+      ]
     },
     {
       "id": "pp-jasmeet",
@@ -712,7 +748,10 @@
       "tag": "EXTENDED",
       "persona": "jasmeet",
       "day": 28,
-      "route": "/panel/v3/new/fulfillment/demo/warehouse"
+      "route": "/panel/v3/new/fulfillment/demo/warehouse?tab=pack-point",
+      "prep": [
+        "clean"
+      ]
     },
     {
       "id": "pp-switch-confirm",
@@ -918,7 +957,7 @@
       "id": "warehouse",
       "title": "Warehouse",
       "match": "^/panel/v3/new/fulfillment/demo/warehouse",
-      "today": "Meesho Warehouse: send stock, Meesho ships. A rate card and a “Join Us Now” form for top sellers in Bengaluru, Gurugram and Kolkata.",
+      "today": "A single Meesho Warehouse page: send stock, Meesho ships. A rate card and a “Join Us Now” form for top sellers in Bengaluru, Gurugram and Kolkata. No tabs, no Pack Point.",
       "nearest": "pp-samar"
     },
     {

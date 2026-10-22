@@ -117,7 +117,8 @@ export function SwitchConfirm({
                           )}
                         </span>
                         <span className={SUB}>
-                          Catalog Id {r.id} · {rupee(r.price)}
+                          {r.id ? `Catalog Id ${r.id} · ` : ''}
+                          {rupee(r.price)}
                         </span>
                         {r.takeHomeAfter !== null && r.takeHomeNow !== null ? (
                           <span className={TEXT} data-pp-takehome={r.takeHomeAfter}>

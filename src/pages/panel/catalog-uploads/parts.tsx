@@ -168,7 +168,7 @@ const MAIN_TAB =
 const SUB_TAB =
   'px-4 cursor-pointer duration-200 ease-in-out bg-transparent border-0 border-solid whitespace-nowrap [font-family:inherit] hover:text-brand-primary-bg focus-visible:outline-1 focus-visible:outline-brand-primary-bg focus-visible:rounded-md border-b border-b-transparent data-[active=true]:text-brand-primary-bg data-[active=true]:bg-primary-bg data-[active=true]:border data-[active=false]:border-b rounded-t-lg py-2.5 font-body text-lg leading-5 font-normal text-secondary-text transition-none hover:bg-secondary-bg focus-visible:rounded-t-lg focus-visible:rounded-b-none data-[active=false]:border-b-tertiary-bg data-[active=false]:hover:text-secondary-text data-[active=true]:rounded-t-lg data-[active=true]:border-tertiary-bg data-[active=true]:border-b-primary-bg data-[active=true]:font-normal data-[active=true]:hover:bg-tertiary-bg data-[active=true]:hover:border-b-tertiary-bg';
 
-export function MainTabs({ tabs, active, onSelect }: { tabs: Array<{ id: string; label: string }>; active: string; onSelect: (id: string) => void }) {
+export function MainTabs({ tabs, active, onSelect }: { tabs: Array<{ id: string; label: ReactNode }>; active: string; onSelect: (id: string) => void }) {
   return (
     <div role="tablist" className="flex overflow-scroll max-w-screen [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-0 border-b border-solid border-b-tertiary-border" aria-orientation="horizontal">
       {tabs.map((t) => (
@@ -180,7 +180,7 @@ export function MainTabs({ tabs, active, onSelect }: { tabs: Array<{ id: string;
   );
 }
 
-export function SubTabs({ tabs, active, onSelect }: { tabs: Array<{ id: string; label: string }>; active: string; onSelect: (id: string) => void }) {
+export function SubTabs({ tabs, active, onSelect }: { tabs: Array<{ id: string; label: ReactNode }>; active: string; onSelect: (id: string) => void }) {
   return (
     <div className="border-0 border-b border-solid border-tertiary-bg">
       <div className="bg-white pt-3 pl-4">

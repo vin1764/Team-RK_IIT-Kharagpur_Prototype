@@ -113,6 +113,7 @@ describe('features (the jump list)', () => {
     'pi-hold': 'price-position',
     'pp-samar': 'warehouse',
     'pp-lot': 'warehouse',
+    'pp-stock': 'warehouse',
     'pp-jasmeet': 'warehouse',
   };
 

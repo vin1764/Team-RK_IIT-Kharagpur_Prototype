@@ -1,7 +1,7 @@
-// PP-5 · "Plan first lot" after a Warehouse switch to a Pack Point: the growth-loop side panel frame (SidePanel)
+// PP-5 · "Plan first lot" after a Warehouse switch to a Pack Point (and "Plan a lot" on the Lots tab): the growth-loop side panel frame (SidePanel)
 // with one row per product the switch applied to: units to send (pre-filled with the engine's suggested lot,
 // ≈ 14 days of expected sales, never below his minimum run), units per size where the seed has a split for that
-// lot, and the send date. "Save plan" stores it (src/store/fulfilmentSwitch.ts firstLots; Reset demo clears).
+// lot, and the send date. "Save plan" stores it (src/store/fulfilmentSwitch.ts lots; Reset demo clears).
 import { useId, useState } from 'react';
 import calendar from '../../../data/calendar.json';
 import { Button, cx } from '../../../components/ui';
@@ -29,7 +29,24 @@ function splitFor(type: ProductTypeId, units: number) {
   }
 }
 
-export function FirstLotPanel({ city, day, products, initial, onClose, onSave }: { city: string; day: number; products: LotProduct[]; initial: FirstLot | null; onClose: () => void; onSave: (lot: FirstLot) => void }) {
+export function FirstLotPanel({
+  city,
+  day,
+  products,
+  initial,
+  title,
+  onClose,
+  onSave,
+}: {
+  city: string;
+  day: number;
+  products: LotProduct[];
+  initial: FirstLot | null;
+  /** default "Plan first lot · <city>" */
+  title?: string;
+  onClose: () => void;
+  onSave: (lot: FirstLot) => void;
+}) {
   const dateId = useId();
   const maxDay = calendar.maxDay;
   const clamp = (d: number) => Math.min(maxDay, Math.max(day, d));
@@ -43,7 +60,7 @@ export function FirstLotPanel({ city, day, products, initial, onClose, onSave }:
 
   return (
     <SidePanel
-      title={C2M.ppLotTitle(city)}
+      title={title ?? C2M.ppLotTitle(city)}
       closeLabel={C2M.ppClose}
       onClose={onClose}
       c2m="PP-5"
