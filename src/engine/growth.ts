@@ -9,6 +9,7 @@ import { switchSuggestions, type SwitchSuggestion } from './demand';
 import { funnelStats, pctDisplay, type FunnelStats } from './funnel';
 import { launchProgress, trailingRunRate } from './launch';
 import { restock, type Restock } from './restock';
+import { landsDayOf, stockOn, type PlannedBatch, type StockBase } from './restockPlan';
 import type { ProductTypeId } from './types';
 import { verdict, type Verdict } from './verdict';
 
@@ -50,9 +51,16 @@ export interface GrowthView {
   weekFrom: string;
   weekTo: string;
   restock: Restock;
-  /** stock of the bottle at the start of the snapshot day */
+  /** stock of the bottle at the start of the stock day */
   onHand: number;
-  /** units of the lot sold up to the end of the day before the snapshot (lot − onHand) */
+  /**
+   * The day the stock numbers (onHand, restock, the bottle's verdict) are for: the snapshot day (D28) until a
+   * planned batch lands, then the demo day (projected from the snapshot with its run-rate, src/engine/restockPlan.ts).
+   */
+  stockDay: number;
+  /** the D28 stock snapshot a restock plan projects from */
+  stockBase: StockBase;
+  /** units of the lot sold up to the end of the day before the snapshot (lot − the snapshot's on-hand) */
   soldBefore: number;
   /** the bottle's daily orders over the week (D21–D27), oldest first, with ISO dates */
   weekDaily: { date: string; orders: number }[];
@@ -80,15 +88,25 @@ const SKUS = growth.skus as SkuSeed[];
 /**
  * The growth-loop snapshot for a demo day, or null before the snapshot day (D28).
  * From D28 on it always shows the D28 week, as the team specified ("last 7 days at D28").
+ *
+ * `batches` are the restock batches the maker confirmed ("Plan this batch", GL-2). Until one has landed the
+ * stock numbers stay the D28 snapshot. From a batch's landing day the bottle's on-hand is projected to the
+ * demo day (snapshot on-hand − run-rate per day, floored at 0, + each landed batch: stockOn), and its restock
+ * numbers, cover and verdict are recomputed with the same rules (restock(), verdict()). The run-rate stays the
+ * D28 week's: the seeded daily series ends at D30, so there are no later sales to average.
  */
-export function growthAt(day: number, maker: MakerInputs): GrowthView | null {
+export function growthAt(day: number, maker: MakerInputs, batches: PlannedBatch[] = []): GrowthView | null {
   const asOfDay = growth.asOfDay;
   if (day < asOfDay) return null;
 
   const daily = launch.dailyOrders;
   const runRate = trailingRunRate(daily, asOfDay);
-  const onHand = launchProgress(daily, maker.lot, asOfDay - 1).left;
+  const snapshotOnHand = launchProgress(daily, maker.lot, asOfDay - 1).left;
   const asOf = dayToDate(asOfDay);
+  const stockBase: StockBase = { asOfDay, onHand: snapshotOnHand, runRate };
+  const landed = batches.some((b) => landsDayOf(b) <= day);
+  const stockDay = landed ? day : asOfDay;
+  const onHand = landed ? stockOn(day, stockBase, batches) : snapshotOnHand;
   const r = restock({
     runRate,
     onHand,
@@ -96,7 +114,7 @@ export function growthAt(day: number, maker: MakerInputs): GrowthView | null {
     safetyDays: growth.safetyDays,
     makingCost: maker.makingCost,
     minRun: maker.minRun,
-    today: asOf,
+    today: dayToDate(stockDay),
   });
 
   const bands = growth.coachBands;
@@ -161,7 +179,9 @@ export function growthAt(day: number, maker: MakerInputs): GrowthView | null {
     weekTo: dayToDate(asOfDay - 1),
     restock: r,
     onHand,
-    soldBefore: maker.lot - onHand,
+    stockDay,
+    stockBase,
+    soldBefore: maker.lot - snapshotOnHand,
     weekDaily,
     runRate,
     verdicts,
