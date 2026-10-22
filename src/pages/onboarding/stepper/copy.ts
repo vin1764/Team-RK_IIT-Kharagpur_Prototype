@@ -62,7 +62,8 @@ export const C2M = {
   ppKm: (km: number) => `${km.toLocaleString('en-IN')} km`,
   ppOpen: 'Open', // team (seller view spec)
   ppOpeningSoonPill: 'Opening soon', // team (seller view spec)
-  ppFeeLine: (fee: number) => `₹${fee.toLocaleString('en-IN')} per delivered order`, // team (seller view spec; the 18% inside the fee is the partner's margin, not GST)
+  ppFeeLine: (fee: number) => `₹${fee.toLocaleString('en-IN')} + GST per delivered order`, // team (Q20: ₹30 in every calculation; GST shown as + GST)
+  ppFeeGstTip: '18% GST on this service. GST-registered sellers claim it back as input credit, so it isn’t counted in your cost.', // team (Q20)
   ppServicesLine: 'Stores · packs · ships · takes returns', // team (seller view spec)
   ppUse: 'Use this Pack Point', // team (seller view spec)
   ppInUse: 'You’re on this Pack Point', // ours
@@ -117,9 +118,6 @@ export const C2M = {
   ppLotPlanned: (units: string, date: string) => `first lot planned · ${units} units · send on ${date}`, // ours
   ppPlanLot: 'Plan first lot', // team
   ppEditLot: 'Edit first lot', // ours
-  ppSwitchedToast: (city: string, n: number) => `Switched to Pack Point · ${city} for ${n} product${n === 1 ? '' : 's'}`, // ours
-  ppSwitchedBackToast: (n: number) => `Switched back to self-ship for ${n} product${n === 1 ? '' : 's'}`, // ours
-  ppWaitlistToast: (city: string) => `You’re on the ${city} waitlist · we’ll notify you when it opens`, // ours
   ppPackerToNode: (city: string) => `Packer details changed to the ${city} Pack Point partner`, // ours
   ppPackerToSelf: 'Packer details changed back to your factory', // ours
   ppNeedsReview: 'Needs your review', // existing bot chip copy (filled.chipNeeds)
@@ -131,7 +129,6 @@ export const C2M = {
   ppLotSendOn: 'Send on', // ours
   ppLotTotal: (units: string) => `${units} units in this lot`, // ours
   ppLotSave: 'Save plan', // ours
-  ppLotSaved: 'First lot plan saved', // ours
   ppLotNone: 'No live products to send yet.', // ours
   sameAsRegistered: 'Same as registered address', // prompt
   useDemoBank: 'Use demo bank details', // ours (prototype helper)

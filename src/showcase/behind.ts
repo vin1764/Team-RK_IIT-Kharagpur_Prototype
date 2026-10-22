@@ -221,11 +221,11 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
   /** FO-8: shipping choice at Pickup Address (seller view) + the cluster economics the seller doesn't see */
   fulfilment: ({ persona }) => {
     const r = P[persona];
-    const near = packPointsNear(PP_NODES, r.address.pincode);
+    const near = packPointsNear(PP_NODES, r.address.pincode, model.nearRadiusKm);
     if (!near) return [`${r.address.city} has no Pack Point cluster yet → “No Pack Point near you yet. You’ll be notified when one opens.” Self-ship, as today.`, MEESHO_VIEW_LADDER()];
-    const seen = near.map((n) => `${n.node.city} ${n.km === null ? 'in your district' : `${fmt(n.km)} km`} · ${isLiveNode(n.node) ? `Open, ${rs(packPointFee(n.node.makersPooled).feePerDeliveredOrder)}` : 'Opening soon'}`);
+    const seen = near.map((n) => `${n.node.city} ${n.km === null ? 'in your district' : `${fmt(n.km)} km`} · ${isLiveNode(n.node) ? `Open, ${rs(packPointFee(n.node.makersPooled).feePerDeliveredOrder)} + GST` : 'Opening soon'}`);
     return [
-      `Seller sees: ${seen.join('; ')} (city-centre distances, rounded to 10 km)`,
+      `Seller sees: ${seen.join('; ')} (only Pack Points within ${fmt(model.nearRadiusKm)} km; city-centre distances, rounded to 10 km)`,
       MEESHO_VIEW_SIGNUPS(),
       MEESHO_VIEW_LADDER(),
     ];
@@ -480,7 +480,7 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     const marginPct = fmt(Math.round((model.partnerMarginMultiplier - 1) * 100));
     const norm = model.partnerMarginNorm;
     return [
-      `${MEESHO_VIEW} (the seller sees only “${rs(f.feePerDeliveredOrder)} per delivered order”)`,
+      `${MEESHO_VIEW} (the seller sees only “${rs(f.feePerDeliveredOrder)} + GST per delivered order”: 18% GST on this service, which GST-registered sellers claim back as input credit, so it isn’t counted in their cost; every price uses ${rs(f.feePerDeliveredOrder)})`,
       `${rs(Math.round(f.monthlyCost))} a month ÷ ${fmt(f.ordersPerMonth)} orders = ${rs2(f.costPerOrderHandled)} per order handled → × ${fmt(model.partnerMarginMultiplier)} (+ ${marginPct}% partner margin, 3PL norm ${fmt(norm.low * 100)}–${fmt(norm.high * 100)}%) = ${rs2(f.feePerOrderHandled)} → ÷ (1 − ${fmt3(model.blendedRtoRate)}) = ÷ ${fmt3(1 - model.blendedRtoRate)} (${pct(model.blendedRtoRate)} RTO) = ${rs(Math.round(f.feePerDeliveredOrderExact * 10) / 10)} → ${rs(f.feePerDeliveredOrder)} per delivered order at ${fmt(base)} makers`,
       MEESHO_VIEW_LADDER(false),
       MEESHO_VIEW_SIGNUPS(false),

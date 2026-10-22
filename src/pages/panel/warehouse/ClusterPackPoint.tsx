@@ -16,9 +16,8 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import lotSeed from '../../../data/packPointLot.json';
 import model from '../../../data/packPointModel.json';
-import { Button, Pill, cx } from '../../../components/ui';
-import { toast } from '../../../components/Toast';
-import { costStack, dayLabel, likelyOrdersPerDay, lotInbound, productTypeName, sizeSplitFor, suggestedLot, typicalForType, type ProductTypeId } from '../../../engine/ui';
+import { Button, InfoTip, Pill, cx } from '../../../components/ui';
+import { checkListingPrice, costStack, dayLabel, likelyOrdersPerDay, lotInbound, productTypeName, sizeSplitFor, suggestedLot, typicalForType, type ProductTypeId } from '../../../engine/ui';
 import { fmt, useT, type T as Tr } from '../../../i18n';
 import { useDemo } from '../../../store/demo';
 import { useShipSwitch, type ShipMode } from '../../../store/fulfilmentSwitch';
@@ -72,7 +71,18 @@ function Line({ label, value, strong }: { label: ReactNode; value: ReactNode; st
 
 const Rule = () => <hr className="m-0 border-0 border-t border-solid border-tertiary-border" />;
 
-/** PP-4: the maker's cost per unit at their Pack Point (cost stack in Pack Point mode). */
+/** Factory Launch status of a list price (engine: checkListingPrice; B stays inside). Only for launch product types. */
+function LaunchStatus({ type, price, breakEven, t }: { type: ProductTypeId; price: number; breakEven: number; t: Tr }) {
+  if (!LAUNCH.productTypes.includes(type)) return null;
+  const ok = checkListingPrice(type, price, breakEven) === 'qualifies';
+  return (
+    <Pill tone={ok ? 'success' : 'warning'} className="!text-body-small shrink-0" data-pp-fl={ok ? 'qualifies' : 'notEligible'}>
+      {t(ok ? 'pp.fl.qualifies' : 'pp.fl.notEligible')}
+    </Pill>
+  );
+}
+
+/** PP-4: the maker's own cost per unit at the Pack Point (cost stack in Pack Point mode), with self-ship today below. */
 function StackCard({ type, makingCost, marginPct, node, selfShip, t }: { type: ProductTypeId; makingCost: number; marginPct: number; node: LiveNode; selfShip: boolean; t: Tr }) {
   const s = costStack(type, makingCost, marginPct, 'packPoint', node.makersPooled);
   const own = selfShip ? costStack(type, makingCost, marginPct, 'selfShip') : null;
@@ -81,21 +91,33 @@ function StackCard({ type, makingCost, marginPct, node, selfShip, t }: { type: P
       <p className={SUB}>{productTypeName(type)}</p>
       <div className="flex flex-col gap-1.5" data-stack>
         <Line label={t('pp.stack.making')} value={rupees(s.makingCost)} />
-        <Line label={t('pp.stack.fee')} value={rupees(s.fees.packPointFee ?? 0)} />
+        <Line
+          label={
+            <span className="inline-flex items-center gap-1">
+              {t('pp.stack.fee')} <InfoTip text={C2M.ppFeeGstTip} />
+            </span>
+          }
+          value={rupees(s.fees.packPointFee ?? 0)}
+        />
         <Line label={t('pp.stack.shipping')} value={rupees(s.fees.shippingAndFixed)} />
         <Line label={t('pp.stack.returns')} value={rupees(s.fees.returnsBuffer)} />
         <Rule />
         <Line strong label={t('pp.stack.breakEven', { pct: fmt(Math.round(s.gstRate * 100)) })} value={rupees(s.breakEven)} />
         <Line label={t('pp.stack.takeHome')} value={rupees(s.takeHome)} />
         <Line strong label={t('pp.stack.list')} value={rupees(s.listPrice)} />
-        <Line label={t('pp.stack.gst')} value={rupees(s.fees.gst)} />
+      </div>
+      <div className="flex" data-stack-fl>
+        <LaunchStatus type={type} price={s.listPrice} breakEven={s.breakEven} t={t} />
       </div>
       {own && (
-        <p className={cx(TEXT, 'font-button')} data-stack-selfship>
-          {t('pp.stack.selfShipNow', { breakEven: fmt(own.breakEven), list: fmt(own.listPrice) })}
-        </p>
+        <>
+          <Rule />
+          <div className="flex flex-wrap items-center justify-between gap-2" data-stack-selfship>
+            <p className={cx(TEXT, 'font-button')}>{t('pp.stack.selfShipNow', { breakEven: fmt(own.breakEven), list: fmt(own.listPrice) })}</p>
+            <LaunchStatus type={type} price={own.listPrice} breakEven={own.breakEven} t={t} />
+          </div>
+        </>
       )}
-      <p className={SUB}>{t('pp.stack.note')}</p>
     </Box>
   );
 }
@@ -257,30 +279,11 @@ export function ClusterPackPoint() {
           </div>
           <p className={SUB}>{t('pp.sub')}</p>
           {statusLine}
-          {stackNode ? (
-            <p className="m-0 p-0 font-heading text-3xl leading-7 text-primary-text pt-1" data-pp-fee-line>
-              {C2M.ppFeeLine(costStack(type, makingCost, marginPct, 'packPoint', stackNode.makersPooled).fees.packPointFee ?? 0)}
-            </p>
-          ) : (
-            <p className={cx(TEXT, 'pt-1')} data-pp-opening>
+          {!stackNode && (
+            <p className={TEXT} data-pp-opening>
               {C2M.ppOpeningNote(node.city)}
             </p>
           )}
-          <ul className="m-0 p-0 pl-5 flex flex-col gap-1">
-            <li className={TEXT}>{t('pp.storageTerms', { free: fmt(model.storage.freeDays), rate: fmt(model.storage.perUnitPerDayAfter) })}</li>
-            <li className={TEXT}>{t('pp.lotWeek')}</li>
-            <li className={TEXT}>{t(onPP ? 'pp.selfShip' : 'pp.selfShipNow')}</li>
-          </ul>
-          <div className="flex flex-wrap items-center gap-x-4 pt-1">
-            <Button variant="text" size="sm" className="!h-auto !px-0 py-0.5" onClick={() => setDrawer(true)} data-pp-details>
-              {C2M.ppSeeDetails}
-            </Button>
-            {switchBack && (
-              <Button variant="text" size="sm" className="!h-auto !px-0 py-0.5" onClick={switchBack} data-pp-switch-back>
-                {C2M.ppSwitchBack}
-              </Button>
-            )}
-          </div>
         </div>
         {action}
       </div>
@@ -294,24 +297,26 @@ export function ClusterPackPoint() {
           productType={type}
           onCancel={() => setConfirm(null)}
           onConfirm={(keys) => {
+            // No toast: the card's status line ("You're on Pack Point · <city> · first lot not sent yet") shows the result.
             applySwitch(persona, { mode: confirm.to, node: confirm.to === 'packPoint' ? confirm.node.city : null, listings: keys, day });
-            toast(confirm.to === 'packPoint' ? C2M.ppSwitchedToast(confirm.node.city, keys.length) : C2M.ppSwitchedBackToast(keys.length));
             setConfirm(null);
           }}
         />
       )}
       <div className="grid grid-cols-2 gap-4 max-[767px]:grid-cols-1">
         <Box title={C2M.ppNearHeading} c2m="PP-4">
-          <NearList
-            pincode={p.address.pincode}
-            current={onPP ? onNode!.city : null}
-            onUse={(n) => openConfirm('packPoint', n)}
-            onSwitchBack={switchBack}
-            onWaitlist={(n) => toast(C2M.ppWaitlistToast(n.city))}
-          />
+          <NearList compact pincode={p.address.pincode} current={onPP ? onNode!.city : null} onUse={(n) => openConfirm('packPoint', n)} onSwitchBack={switchBack} />
+          <div>
+            <Button variant="text" size="sm" className="!h-auto !px-0 py-0.5" onClick={() => setDrawer(true)} data-pp-details>
+              {C2M.ppSeeDetails}
+            </Button>
+          </div>
         </Box>
         {stackNode && <StackCard type={type} makingCost={makingCost} marginPct={marginPct} node={stackNode} selfShip={!onPP} t={t} />}
       </div>
+      <p className={TEXT} data-pp-storage>
+        <span className="font-button">{t('pp.storage')}:</span> {t('pp.storageTerms', { free: fmt(model.storage.freeDays), rate: fmt(model.storage.perUnitPerDayAfter) })}
+      </p>
       {seededMember && <LotCard type={type} makingCost={makingCost} node={node} day={day} t={t} />}
       <PackPointDrawer
         open={drawer}
@@ -321,7 +326,6 @@ export function ClusterPackPoint() {
         current={onPP ? onNode!.city : null}
         onUse={(n) => openConfirm('packPoint', n)}
         onSwitchBack={switchBack}
-        onWaitlist={(n) => toast(C2M.ppWaitlistToast(n.city))}
       />
       {lotOpen && onPP && ship.switched && (
         <FirstLotPanel
@@ -333,7 +337,6 @@ export function ClusterPackPoint() {
           onSave={(lot) => {
             saveFirstLot(persona, lot);
             setLotOpen(false);
-            toast(C2M.ppLotSaved);
           }}
         />
       )}

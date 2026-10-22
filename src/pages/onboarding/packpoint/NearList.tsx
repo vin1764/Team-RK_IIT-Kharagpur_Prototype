@@ -4,7 +4,7 @@
 // Opening ones: "Join waitlist" (persisted per persona + node; Reset demo clears). No maker counts, no opening
 // rule, no fee build-up: those stay Meesho's view (showcase sidebar).
 import lotData from '../../../data/packPointLot.json';
-import { Button, Pill, cx } from '../../../components/ui';
+import { Button, InfoTip, Pill, cx } from '../../../components/ui';
 import { useDemo } from '../../../store/demo';
 import { useShipSwitch, waitlistKey } from '../../../store/fulfilmentSwitch';
 import { C2M } from '../stepper/copy';
@@ -20,6 +20,7 @@ export function NearList({
   onSwitchBack,
   onWaitlist,
   useFor,
+  compact,
 }: {
   pincode: string;
   /** the Pack Point he is on now (city), if any */
@@ -32,6 +33,8 @@ export function NearList({
   onWaitlist?: (node: PackPointNode) => void;
   /** which open nodes get "Use this Pack Point" (default: all) */
   useFor?: (node: PackPointNode) => boolean;
+  /** one line per Pack Point (Warehouse card: storage is its own line there, services are in the drawer) */
+  compact?: boolean;
 }) {
   const persona = useDemo((s) => s.persona);
   const waitlist = useShipSwitch((s) => s.waitlist);
@@ -68,11 +71,16 @@ export function NearList({
               </div>
               {fee !== null ? (
                 <>
-                  <p className={BODY} data-pp-fee={fee}>
+                  <p className={cx(BODY, 'flex items-center gap-1')} data-pp-fee={fee}>
                     {C2M.ppFeeLine(fee)}
+                    <InfoTip text={C2M.ppFeeGstTip} />
                   </p>
-                  <p className={SUB}>{C2M.ppStorage(storage.freeDays, storage.perUnitPerDay)}</p>
-                  <p className={SUB}>{C2M.ppServicesLine}</p>
+                  {!compact && (
+                    <>
+                      <p className={SUB}>{C2M.ppStorage(storage.freeDays, storage.perUnitPerDay)}</p>
+                      <p className={SUB}>{C2M.ppServicesLine}</p>
+                    </>
+                  )}
                   {onIt ? (
                     <div className="mt-1 flex flex-wrap items-center gap-3">
                       <Pill tone="brand" bordered>

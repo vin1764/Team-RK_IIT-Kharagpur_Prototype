@@ -282,7 +282,7 @@
       "title": "Pack Points near you and the maker’s cost",
       "tag": "NEW",
       "part": "packpoint",
-      "what": "Pack Points near the maker with his fee at each (₹30 per delivered order, storage, services), beside his own cost stack. No fee build-up, pool size or sign-up count on the maker’s screen.",
+      "what": "Pack Points near the maker, sorted by distance from his pickup pincode (“₹30 per delivered order” and “Use this Pack Point” at each open one, “Join waitlist” for one opening soon), beside his own cost at his Pack Point (making + fee + shipping and fixed fee + returns → break-even, take-home, list) and “Self-ship today” below it, each with its Factory Launch status (qualifies / not eligible at this price, never by how much). Storage: free for 30 days, then ₹0.29 per unit per day. No fee build-up, pool size or maker count.",
       "why": "The maker needs what he pays, not how it’s built; the fee build-up and the 40-maker density gate are Meesho’s view (Behind it).",
       "behind": "packPointFee"
     },

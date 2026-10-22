@@ -28,12 +28,13 @@ describe('Warehouse Pack Point switch: confirm panel rows (engine numbers)', () 
     expect(r).toMatchObject({ takeHomeNow: 14, takeHomeAfter: 38 });
   });
 
-  it('Samar’s sneakers have no self-ship packaging value: no self-ship numbers, no status', () => {
-    expect(canSelfShip('sneakers-slip-on-men')).toBe(false);
+  it('Samar switching back to self-ship (₹10 mailer): at his ₹336 the take-home goes ₹30 → ₹50 and it still qualifies', () => {
+    expect(canSelfShip('sneakers-slip-on-men')).toBe(true);
     expect(canSelfShip('steel-bottle-1l')).toBe(true);
     const [r] = switchRows([{ ...bottle(336, 'packPoint'), typeId: 'sneakers-slip-on-men', makingCost: 200, marginPct: 15 }], 'selfShip', 40);
-    expect(r).toMatchObject({ takeHomeAfter: null, statusAfter: null });
     expect(r!.takeHomeNow).toBe(30);
+    expect(r!.takeHomeAfter).toBeCloseTo(336 / 1.05 - 270, 6); // = ₹50
+    expect(r!.statusAfter).toBe('qualifies');
   });
 });
 

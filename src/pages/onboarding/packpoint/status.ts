@@ -2,6 +2,7 @@
 // src/data/packPointNodes.json; the pincode is matched by postal prefix (engine clusterForPincode).
 // The seller sees only "Open / Opening soon", the distance and his fee: no maker counts, no opening rule,
 // no fee build-up (those are Meesho's view, in the showcase sidebar only).
+import model from '../../../data/packPointModel.json';
 import nodesData from '../../../data/packPointNodes.json';
 import { clusterForPincode, packPointFee, packPointsNear, type GeoPoint, type NearNode } from '../../../engine/ui';
 import { C2M } from '../stepper/copy';
@@ -42,9 +43,13 @@ export function nodeFee(n: PackPointNode): number | null {
   return isOpen(n) ? packPointFee(n.makersPooled).feePerDeliveredOrder : null;
 }
 
-/** "Pack Points near you": every node, own district first, then by city-centre distance; null = none near (unknown district). */
+/** Only Pack Points within this many km are listed (team answer; others aren't shown). */
+export const NEAR_RADIUS_KM = model.nearRadiusKm;
+
+/** "Pack Points near you": nodes within NEAR_RADIUS_KM, own district first, then by city-centre distance; null = none near. */
 export function packPointsNearPincode(pincode: string, nodes: PackPointNode[] = PACK_POINT_NODES): NearNode<PackPointNode>[] | null {
-  return packPointsNear(nodes, pincode);
+  const near = packPointsNear(nodes, pincode, NEAR_RADIUS_KM);
+  return near && near.length > 0 ? near : null;
 }
 
 /** "Agra · in your district" / "Moradabad · 200 km". */

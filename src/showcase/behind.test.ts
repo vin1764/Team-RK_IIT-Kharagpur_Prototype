@@ -146,7 +146,10 @@ describe('Behind it: hero numbers (plan §8b)', () => {
     const t = lines.join('\n');
     expect(t).toContain('₹1,26,444 a month ÷ 6,000 orders = ₹21.07');
     expect(t).toContain('× 1.18 (+ 18% partner margin, 3PL norm 15–20%) = ₹24.87');
-    expect(t).not.toMatch(/GST/);
+    // Q20: the 1.18 is the partner margin; GST (18%) on the service sits on top and is reclaimed, so prices use ₹30
+    expect(t).not.toMatch(/18% GST\)|× 1\.18 \(\+ 18% GST/);
+    expect(lines[0]).toContain('“₹30 + GST per delivered order”: 18% GST on this service, which GST-registered sellers claim back as input credit');
+    expect(lines[0]).toContain('every price uses ₹30');
     expect(t).toContain('÷ 0.822');
     expect(t).toContain('= ₹30.3 → ₹30 per delivered order at 40 makers');
     expect(t).toContain('₹44 at 20 · ₹30 at 40 · ₹26 at 60 · ₹23 at 80 makers; a Pack Point opens only at 40 makers');
@@ -155,7 +158,8 @@ describe('Behind it: hero numbers (plan §8b)', () => {
 
   it('Pack Point at Pickup Address: what the seller sees vs Meesho’s view', () => {
     const lines = BEHIND.fulfilment!(at('samar', J.onboarding));
-    expect(lines[0]).toBe('Seller sees: Agra in your district · Open, ₹30; Moradabad 200 km · Opening soon; Rajkot 910 km · Open, ₹30 (city-centre distances, rounded to 10 km)');
+    // only Pack Points within 150 km: Moradabad (200 km) and Rajkot (910 km) aren't listed for Agra
+    expect(lines[0]).toBe('Seller sees: Agra in your district · Open, ₹30 + GST (only Pack Points within 150 km; city-centre distances, rounded to 10 km)');
     // every economics line is labelled
     for (const l of lines.slice(1)) expect(l).toMatch(/^Meesho’s view, not shown to sellers: /);
     expect(lines.join('\n')).toContain('Moradabad: 32/40 makers signed up');

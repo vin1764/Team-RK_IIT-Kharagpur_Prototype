@@ -227,8 +227,8 @@
       "Casual Shoes"
     ],
     "fees": {
-      "_source": "team Q4: Pack Point stack — fee ₹30 (Agra, 40 makers) + shipping and fixed ₹40 + returns buffer ₹20; GST 5% included in the price (footwear up to ₹2,500). Self-ship packaging was not given.",
-      "packaging": null,
+      "_source": "team Q4: Pack Point stack — fee ₹30 (Agra, 40 makers) + shipping and fixed ₹40 + returns buffer ₹20; GST 5% included in the price (footwear up to ₹2,500). Self-ship packaging (shoe-box mailer) ₹10: team answer, 22 Oct 2026 (self-ship: 200 + 10 + 40 + 20 = 270 → break-even ₹284, list ₹315).",
+      "packaging": 10,
       "shippingAndFixed": 40,
       "returnsBuffer": 20,
       "gstRate": 0.05

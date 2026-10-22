@@ -48,7 +48,7 @@ export const FL = {
   expectedRange: (low: number, high: number) => `${fmt(low)}–${fmt(high)} a day`, // prompt
   forecast: 'A forecast, not a guarantee', // doc
   units: (n: number) => s(n, 'unit', 'units'),
-  ppFeeValue: (fee: number) => `₹${fmt(fee)} per delivered order`, // doc
+  ppFeeValue: (fee: number) => `₹${fmt(fee)} + GST per delivered order`, // doc; team Q20 (+ GST)
   ppFeeYours: 'In your cost stack', // ours (doc: "goes straight into the cost stack")
   ppFeeInfo: 'For Pack Point makers', // ours
   priceCapValue: 'Checked at commit', // doc

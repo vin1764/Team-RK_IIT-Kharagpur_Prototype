@@ -37,10 +37,12 @@ describe('finish screen: teaser and cost check numbers', () => {
     const j = costStack('steel-bottle-1l', 80, 17.5, 'selfShip');
     expect([j.breakEven, j.listPrice, j.takeHome]).toEqual([133, 147, 14]);
     expect(finishMode('packPoint', { fulfilment: 'packPoint' }, 'sneakers-slip-on-men')).toBe('packPoint');
-    // no self-ship packaging value for sneakers: Pack Point stack whatever the choice
-    expect(finishMode('selfShip', { fulfilment: 'packPoint' }, 'sneakers-slip-on-men')).toBe('packPoint');
     const s = costStack('sneakers-slip-on-men', 200, 15, 'packPoint');
     expect([s.breakEven, s.listPrice]).toEqual([305, 336]);
+    // shoe-box mailer ₹10 (team, 22 Oct 2026): if he picks self-ship, the self-ship stack: 270 → ₹284 / ₹315
+    expect(finishMode('selfShip', { fulfilment: 'packPoint' }, 'sneakers-slip-on-men')).toBe('selfShip');
+    const ss = costStack('sneakers-slip-on-men', 200, 15, 'selfShip');
+    expect([ss.breakEven, ss.listPrice]).toEqual([284, 315]);
     expect(hasFeeCard('steel-casserole-1-5l')).toBe(true); // seeded for What to make instead (team)
   });
 });

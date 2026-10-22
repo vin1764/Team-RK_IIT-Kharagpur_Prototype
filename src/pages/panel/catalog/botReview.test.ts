@@ -169,8 +169,16 @@ describe('Price: fulfilment per product', () => {
   it('Samar Pack Point: break-even ₹305 · list ₹336 · take-home ₹30 · Qualifies (Samar has no bot data: model test only)', () => {
     const q = shipQuote(SNEAKERS, 200, 15, 'packPoint', 40);
     expect([q.breakEven, q.listPrice, q.takeHome, q.status]).toEqual([305, 336, 30, 'qualifies']);
-    expect(selfShipPossible(SNEAKERS)).toBe(false);
-    expect(packPointExtra(SNEAKERS)).toBeNull();
+  });
+  it('Samar self-ship (shoe-box mailer ₹10, team): 200 + 10 + 40 + 20 = 270 → break-even ₹284 · list ₹315 · GST ₹15 · take-home ₹30 · Qualifies', () => {
+    expect(selfShipPossible(SNEAKERS)).toBe(true);
+    const q = shipQuote(SNEAKERS, 200, 15, 'selfShip');
+    expect(q.stack.fees.packaging).toBe(10);
+    expect(q.stack.costBeforeGst).toBe(270);
+    expect(270 * 1.05).toBeCloseTo(283.5, 9);
+    expect([q.breakEven, q.listPrice, q.stack.fees.gst, q.takeHome, q.status]).toEqual([284, 315, 15, 30, 'qualifies']);
+    expect(tEn(`status.${q.status}`)).not.toMatch(/\d/); // the status says nothing about B
+    expect(packPointExtra(SNEAKERS)).toBe(20); // ₹30 fee − ₹10 mailer
   });
   it('"+₹24 per order" = Pack Point fee − packaging, from the two stacks', () => {
     expect(packPointExtra(BOTTLE)).toBe(24);
@@ -189,6 +197,7 @@ describe('Price: fulfilment per product', () => {
     expect(productShipMode('selfShip', 'packPoint', live, BOTTLE)).toBe('packPoint');
     expect(productShipMode('selfShip', 'packPoint', opening, BOTTLE)).toBe('selfShip');
     expect(productShipMode('selfShip', 'packPoint', null, BOTTLE)).toBe('selfShip');
-    expect(productShipMode('packPoint', 'selfShip', live, SNEAKERS)).toBe('packPoint');
+    expect(productShipMode('packPoint', 'selfShip', live, SNEAKERS)).toBe('selfShip'); // sneakers can self-ship now (₹10 mailer)
+    expect(productShipMode('packPoint', null, live, SNEAKERS)).toBe('packPoint');
   });
 });

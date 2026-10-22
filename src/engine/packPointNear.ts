@@ -1,5 +1,5 @@
-// "Pack Points near you" (FO-8 drawer, PP-3 Warehouse card): every Pack Point, sorted by distance from the
-// maker's pickup pincode. There is no distance data, so distances are approximations:
+// "Pack Points near you" (FO-8 drawer, PP-3 Warehouse card): the Pack Points within a radius (150 km, team answer,
+// packPointModel.json nearRadiusKm), sorted by distance from the maker's pickup pincode. There is no distance data, so distances are approximations:
 //  - a pincode resolves to its 3-digit postal district (the nodes' pincodePrefixes);
 //  - a node's location is its city's public city-centre coordinates (src/data/packPointNodes.json);
 //  - the maker's own district → "in your district" (we can't measure within a district, km = null);
@@ -48,13 +48,15 @@ export function districtNode<N extends LocatedNode>(nodes: N[], pincode: string)
 }
 
 /**
- * Every node with its distance from the pickup pincode's district centre: own district first, then nearest first
- * (ties by city name). Null when the pincode's district isn't a Pack Point district (no location to measure from).
+ * The nodes within `maxKm` (rounded distance, inclusive) of the pickup pincode's district centre, with their distance:
+ * own district first, then nearest first (ties by city name). The own district's node is always within range.
+ * Null when the pincode's district isn't a Pack Point district (no location to measure from).
  */
-export function packPointsNear<N extends LocatedNode>(nodes: N[], pincode: string): NearNode<N>[] | null {
+export function packPointsNear<N extends LocatedNode>(nodes: N[], pincode: string, maxKm = Infinity): NearNode<N>[] | null {
   const home = districtNode(nodes, pincode);
   if (!home) return null;
   return nodes
-    .map((node) => (node === home ? { node, own: true, km: null } : { node, own: false, km: roundTo10Km(greatCircleKm(home.location, node.location)) }))
+    .map((node): NearNode<N> => (node === home ? { node, own: true, km: null } : { node, own: false, km: roundTo10Km(greatCircleKm(home.location, node.location)) }))
+    .filter((r) => r.km === null || r.km <= maxKm)
     .sort((a, b) => (a.own !== b.own ? (a.own ? -1 : 1) : (a.km ?? 0) - (b.km ?? 0) || a.node.city.localeCompare(b.node.city)));
 }

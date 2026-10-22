@@ -22,7 +22,10 @@ describe('Samar — cost stack at the Agra Pack Point (40 makers)', () => {
     expect(gstAt(336, s)).toBe(16);
     expect(s.fees).toEqual({ packPointFee: 30, shippingAndFixed: 40, returnsBuffer: 20, gst: 16 });
   });
-  it('no self-ship stack (packaging not given)', () => expect(() => costStack(T, 200, 15, 'selfShip')).toThrow(/packaging/));
+  it('self-ship (shoe-box mailer ₹10, team): 200 + 10 + 40 + 20 = 270 → break-even 283.5 → ₹284 · list (270 + 30) × 1.05 = ₹315 · GST ₹15 · take-home ₹30', () => {
+    const s = costStack(T, 200, 15, 'selfShip');
+    expect([s.costBeforeGst, s.breakEven, s.listPrice, s.fees.gst, s.takeHome]).toEqual([270, 284, 315, 15, 30]);
+  });
 });
 
 describe('Samar — hidden B ₹370', () => {
