@@ -90,13 +90,6 @@ export function usePriceHold(): PriceHoldView | null {
   const c2m = useDemo((s) => s.c2m);
   return useMemo(() => {
     if (!c2m || !listing) return null;
-    const elig = eligibility({
-      taxId: record.taxId,
-      businessType: record.businessType,
-      gstNatureOfBusiness: record.gstNatureOfBusiness,
-      udyamMajorActivity: record.udyam?.majorActivity ?? null,
-    });
-    if (elig.status === 'notEligible') return null;
     try {
       checkListingPrice(listing.typeId, listing.price, listing.breakEven);
     } catch {

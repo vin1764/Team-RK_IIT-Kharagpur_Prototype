@@ -106,7 +106,6 @@ export const FL = {
   // who passed the seller-type + GST/Udyam checks.
   banner: {
     openToAll: 'Open to every seller whose price qualifies · no ads, no listing fee', // team, 22 Oct 2026 (replaces "Manufacturers only")
-    noAds: 'No ads, no listing fee', // doc (FO-9 offer: "no ads, no listing fee")
     slotsFor: (slots: string, type: string) => `${slots} for ${type.endsWith('s') ? type : `${type}s`}`, // prompt
     liveOn: (dates: string) => `Live ${dates}`, // prompt
     check: 'Check my eligibility', // prompt
@@ -115,15 +114,7 @@ export const FL = {
     commitStock: 'Commit stock', // prompt
     closeBy: (date: string) => `Commitments close ${date}`, // prompt
     item: {
-      product: 'Tell us what you make', // prompt
-      productSub: 'Your category, or one product photo', // ours
-      manufacturer: 'Manufacturer', // prompt
-      manufacturerSub: 'GST nature of business + Udyam', // prompt
-      records: 'Records agree', // prompt
-      recordsSub: 'Your business type matches GST and Udyam', // ours (FO-7: "matched to seller type")
-      price: 'Product listed at a qualifying price', // prompt
-      priceListed: (type: string) => `Your ${type} qualifies`, // ours
-      priceNotListed: (type: string) => `List your ${type}; the price check shows Qualifies or not`, // ours
+      product: 'Tell us what you sell', // prompt (team, 22 Oct 2026: every seller)
       priceFails: 'Not eligible at this price · lower your price to join', // team spec (price never blocks listing)
       stock: 'Stock committed', // prompt
       stockDone: (units: number, stock: string) => `${s(units, 'unit', 'units')} · ready by ${stock}`, // ours

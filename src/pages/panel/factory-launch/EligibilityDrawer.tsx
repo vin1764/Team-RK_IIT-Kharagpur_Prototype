@@ -2,11 +2,10 @@
 // the Pack Point drawer's frame), opened in place by every "Check my eligibility" (finish screen, Home banner,
 // pinned notice) and by ?fl=open. Opening it never changes the route; closing it (×, Esc, the overlay, Close) leaves
 // the maker where he was. Only the buttons inside move him to the next step.
-// Rows (entry.ts drawerModel, the same checklist as the Home banner's "n of 5 done"): manufacturer, records agree,
-// price qualifies (his listing's price, else his last "Check price" from the cost check or the bot), product listed,
-// stock committed. The price row shows Qualifies or not, never B. A declared manufacturer whose records don't confirm
-// it sees one neutral note (or that only his Udyam number is missing), never itemised reasons. Resellers and other
-// non-manufacturing business types never get the drawer (nor any other Factory Launch surface).
+// Three rows for every seller (entry.ts drawerModel, the same checklist as the Home banner's "n of 3 done"): price
+// qualifies (his listing's price, else his last "Check price" from the cost check or the bot: 3 a day per product),
+// product listed ("List this product"), stock committed ("Go to order book"). No seller-type or GST/Udyam row: those
+// checks only give the "Factory verified" badge. The price row shows Qualifies or not, never B.
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { onboarding, paths } from '../../../app/paths';
@@ -23,7 +22,7 @@ import { T } from '../manage-pricing/crystal';
 import { FL } from './copy';
 import type { ChecklistItem, ItemAction } from './entry';
 import { LAUNCH, liveDatesShort, shortDay } from './launch';
-import { useFlAudience, useLaunchEntry } from './useLaunchEntry';
+import { useLaunchEntry } from './useLaunchEntry';
 
 const B = FL.banner;
 
@@ -39,8 +38,6 @@ export function EligibilityDrawerHost() {
   const show = useEligibilityDrawer((s) => s.show);
   const hide = useEligibilityDrawer((s) => s.hide);
   const c2m = useDemo((s) => s.c2m);
-  // Resellers and other non-manufacturing business types: no Factory Launch anywhere, so no drawer either.
-  const audience = useFlAudience();
   const { pathname } = useLocation();
   const [params, setParams] = useSearchParams();
   const flOpen = params.get(FL_OPEN_PARAM) === 'open';
@@ -54,7 +51,7 @@ export function EligibilityDrawerHost() {
   // ?fl=open (showcase jumps, older links): open, then drop the param so a reload or Back doesn't reopen it.
   useEffect(() => {
     if (!flOpen) return;
-    if (audience) show();
+    if (c2m) show();
     setParams(
       (p) => {
         p.delete(FL_OPEN_PARAM);
@@ -62,10 +59,10 @@ export function EligibilityDrawerHost() {
       },
       { replace: true },
     );
-  }, [flOpen, audience, show, setParams]);
+  }, [flOpen, c2m, show, setParams]);
 
-  // "Today vs ours" (plain mode) and non-manufacturers: no drawer.
-  if (!open || !c2m || !audience) return null;
+  // "Today vs ours" (plain mode): no C2M drawer.
+  if (!open || !c2m) return null;
   return <EligibilityDrawer onClose={hide} />;
 }
 
@@ -88,13 +85,9 @@ function EligibilityDrawer({ onClose }: { onClose: () => void }) {
   };
 
   const label = (it: ChecklistItem) =>
-    ({ manufacturer: B.item.manufacturer, records: B.item.records, price: t('fl.drawer.price'), listed: t('fl.drawer.listed'), stock: B.item.stock })[it.key];
+    ({ price: t('fl.drawer.price'), listed: t('fl.drawer.listed'), stock: B.item.stock })[it.key];
   const sub = (it: ChecklistItem): string => {
     switch (it.key) {
-      case 'manufacturer':
-        return B.item.manufacturerSub;
-      case 'records':
-        return B.item.recordsSub;
       case 'price':
         if (v.listing) return it.done ? t('fl.drawer.price.listedOk') : B.item.priceFails;
         if (checked) return t(checked.status === 'qualifies' ? 'fl.drawer.price.checkedOk' : 'fl.drawer.price.checkedNo', { price: fmt(checked.price) });
@@ -109,14 +102,13 @@ function EligibilityDrawer({ onClose }: { onClose: () => void }) {
   };
   const actionLabel = (a: ItemAction) => (a === 'tellUs' ? t('fl.drawer.tellUs') : a === 'createFromPhotos' ? t('fl.drawer.list') : a === 'pricePosition' ? FL.toPricePosition : B.toOrderBook);
 
-  if (!m) return null;
   return (
     <SidePanel
       title={t('fl.drawer.title')}
       closeLabel={t('fl.drawer.close')}
       onClose={onClose}
       c2m="LW-4"
-      panelAttrs={{ 'data-fl-drawer': m.access }}
+      panelAttrs={{ 'data-fl-drawer': true }}
       overlayAttrs={{ 'data-fl-drawer-overlay': true }}
       footer={
         <Button variant="outline" onClick={onClose} data-fl-drawer-close>
@@ -126,37 +118,30 @@ function EligibilityDrawer({ onClose }: { onClose: () => void }) {
     >
       <section className="border-0 border-b border-solid border-neutral-light px-5 py-4">
         <p className={cx(T.bodyMd, 'font-bold')}>{FL.eventTitle(LAUNCH.name, LAUNCH.category)}</p>
-        <p className={cx(T.bodySm, 'mt-1 text-neutral-secondary')}>{[B.liveOn(liveDatesShort()), B.manufacturersOnly, B.closeBy(close)].join(' · ')}</p>
+        <p className={cx(T.bodySm, 'mt-1 text-neutral-secondary')}>{[B.liveOn(liveDatesShort()), B.openToAll, B.closeBy(close)].join(' · ')}</p>
       </section>
 
-      {m.access === 'eligible' ? (
-        <section className="px-5 py-4" data-fl-checklist>
-          <p className={cx(T.bodyLg, 'font-bold')} data-fl-count data-done={m.done} data-total={m.total}>
-            {B.progress(m.done, m.total)}
-          </p>
-          <ul className="m-0 mt-2 list-none p-0">
-            {m.items.map((it) => (
-              <li key={it.key} className="flex items-center gap-3 border-0 border-b border-solid border-neutral-light py-3 last:border-b-0" data-fl-item={it.key} data-done={it.done}>
-                <Mark done={it.done} />
-                <div className="min-w-0 flex-1">
-                  <p className={cx(T.bodyMd, !it.done && 'font-bold')}>{label(it)}</p>
-                  <p className={cx(T.bodySm, 'mt-0.5 text-neutral-secondary')}>{sub(it)}</p>
-                </div>
-                {!it.done && it.action && (
-                  <Button size="sm" variant={it === m.next ? 'primary' : 'outline'} className="shrink-0" onClick={() => go(it.action)} data-fl-action={it.action}>
-                    {actionLabel(it.action)}
-                  </Button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : (
-        // Records don't confirm manufacturing yet: one neutral note, no itemised reasons.
-        <section className="px-5 py-4" data-fl-unverified={m.access}>
-          <p className={T.bodyMd}>{t(m.access === 'udyamMissing' ? 'fl.drawer.udyamMissing' : 'fl.drawer.unverified')}</p>
-        </section>
-      )}
+      <section className="px-5 py-4" data-fl-checklist>
+        <p className={cx(T.bodyLg, 'font-bold')} data-fl-count data-done={m.done} data-total={m.total}>
+          {B.progress(m.done, m.total)}
+        </p>
+        <ul className="m-0 mt-2 list-none p-0">
+          {m.items.map((it) => (
+            <li key={it.key} className="flex items-center gap-3 border-0 border-b border-solid border-neutral-light py-3 last:border-b-0" data-fl-item={it.key} data-done={it.done}>
+              <Mark done={it.done} />
+              <div className="min-w-0 flex-1">
+                <p className={cx(T.bodyMd, !it.done && 'font-bold')}>{label(it)}</p>
+                <p className={cx(T.bodySm, 'mt-0.5 text-neutral-secondary')}>{sub(it)}</p>
+              </div>
+              {!it.done && it.action && (
+                <Button size="sm" variant={it === m.next ? 'primary' : 'outline'} className="shrink-0" onClick={() => go(it.action)} data-fl-action={it.action}>
+                  {actionLabel(it.action)}
+                </Button>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
     </SidePanel>
   );
 }
