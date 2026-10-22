@@ -69,5 +69,53 @@ describe('growthAt', () => {
     expect([g.weekDaily[0]!.date, g.weekDaily[6]!.date]).toEqual(['2026-11-14', '2026-11-20']);
   });
 
-  it('after D28 the D28 week stays', () => expect(growthAt(35, jasmeet)).toEqual(g));
+  it('after D28 the D28 week stays (only the coach’s follow-up moves on: not applied by D35 → “Still pending”)', () => {
+    const { coachFollowUp, ...rest } = growthAt(35, jasmeet)!;
+    const { coachFollowUp: at28, ...rest28 } = g;
+    expect(rest).toEqual(rest28);
+    expect(at28!.stage).toBe('fix');
+    expect(coachFollowUp!.stage).toBe('pending');
+  });
+});
+
+describe('SKU Health Coach after the fix (lunch box, team seed)', () => {
+  const at = (day: number, appliedDay: number | null) => growthAt(day, jasmeet, [], appliedDay === null ? null : { sku: 'lunchbox', day: appliedDay })!;
+
+  it('D28–D34 without applying: this week’s fix; from D35 the same fix, “Still pending”', () => {
+    expect(at(34, null).coachFollowUp).toMatchObject({ stage: 'fix', checkDay: 35 });
+    expect(at(35, null).coachFollowUp).toMatchObject({ stage: 'pending', checkDay: 35 });
+    expect(at(35, null).coach!.fix.fix).toBe('changeMainPhoto');
+  });
+
+  it('applied on D28: no new fix until D35 (the lunch box stays “Fix” until it’s checked)', () => {
+    const g30 = at(30, 28);
+    expect(g30.coachFollowUp).toMatchObject({ stage: 'applied', appliedDay: 28, checkDay: 35, result: null });
+    expect(g30.coach).toBeNull();
+    expect(g30.verdicts.find((v) => v.id === 'lunchbox')!.verdict).toBe('fix');
+  });
+
+  it('D35: the next 7 days — 2,400 views, 94 clicks (3.9%), 8 orders, 8 ÷ 94 = 8.5%; click-through up from 1.6% to 3.9%; no fix needed', () => {
+    const f = at(35, 28).coachFollowUp!;
+    expect(f.stage).toBe('result');
+    expect([f.resultFrom, f.resultTo]).toEqual(['2026-11-21', '2026-11-27']);
+    expect(f.result).toEqual({
+      views: 2400,
+      clicks: 94,
+      orders: 8,
+      ctrBeforeDisplay: '1.6%',
+      ctrAfterDisplay: '3.9%',
+      ctrUp: true,
+      conversionDisplay: '8.5%',
+      nextFix: null,
+    });
+    expect(((94 / 2400) * 100).toFixed(1)).toBe('3.9');
+    expect(((8 / 94) * 100).toFixed(1)).toBe('8.5');
+    expect(at(35, 28).coach).toBeNull();
+    expect(at(35, 28).verdicts.find((v) => v.id === 'lunchbox')!.verdict).not.toBe('fix');
+  });
+
+  it('applied late (D33): checked on D40', () => {
+    expect(at(39, 33).coachFollowUp!.stage).toBe('applied');
+    expect(at(40, 33).coachFollowUp).toMatchObject({ stage: 'result', resultFrom: '2026-11-26', resultTo: '2026-12-02' });
+  });
 });

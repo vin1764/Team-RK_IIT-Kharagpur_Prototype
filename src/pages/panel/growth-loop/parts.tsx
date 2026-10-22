@@ -4,6 +4,8 @@ import type { ReactNode } from 'react';
 import { Pill, cx } from '../../../components/ui';
 import type { Verdict, VerdictReason } from '../../../engine/ui';
 import type { T as Tr } from '../../../i18n';
+import { useCoachFix } from '../../../store/coachFix';
+import { useDemo } from '../../../store/demo';
 import { CrystalTip, T } from '../manage-pricing/crystal';
 
 const VERDICT_TONE: Record<Verdict, 'success' | 'info' | 'warning' | 'error' | 'brand'> = {
@@ -65,5 +67,19 @@ export function Thumb({ src }: { src?: string }) {
   );
 }
 
-/** The seeded SKU that has a product photo in this prototype (the bot's cleaned cover). */
-export const THUMBS: Record<string, string> = { bottle: '/brand/local/catalog/demo-product-bottle-cleaned.png' };
+/** Seeded SKU photos: the bottle (the bot's cleaned cover) and the lunch box's current main photo (placeholder). */
+export const THUMBS: Record<string, string> = {
+  bottle: '/brand/local/catalog/demo-product-bottle-cleaned.png',
+  lunchbox: '/brand/local/catalog/demo-lunchbox-now.svg',
+};
+
+/** The coach's suggested main photo: the same photo cleaned offline to a white background (placeholder). */
+export const SUGGESTED_PHOTOS: Record<string, string> = { lunchbox: '/brand/local/catalog/demo-lunchbox-cleaned.svg' };
+
+/** A SKU's main image now: the photo he applied through the coach (from its day on), else the seeded one. */
+export function useSkuImage(skuId: string): string | undefined {
+  const persona = useDemo((s) => s.persona);
+  const day = useDemo((s) => s.day);
+  const applied = useCoachFix((s) => s.applied[persona]);
+  return applied && applied.sku === skuId && applied.day <= day ? applied.image : THUMBS[skuId];
+}

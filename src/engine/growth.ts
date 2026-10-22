@@ -4,7 +4,7 @@
 import growth from '../data/growth.json';
 import launch from '../data/launch.json';
 import { dayToDate } from './calendar';
-import { coachFix, type CoachFix } from './coach';
+import { coachFix, coachResult, coachStage, type CoachFix, type CoachResult, type CoachStage } from './coach';
 import { switchSuggestions, type SwitchSuggestion } from './demand';
 import { funnelStats, pctDisplay, type FunnelStats } from './funnel';
 import { launchProgress, trailingRunRate } from './launch';
@@ -43,6 +43,29 @@ export interface CoachCard {
   conversionDisplay: string;
 }
 
+/** The coach's fix on its SKU after the week it was given: applied or not, and the check a week later (GL-3). */
+export interface CoachFollowUp {
+  skuId: string;
+  skuName: string;
+  stage: CoachStage;
+  /** the day the fix was given (the snapshot day, D28) */
+  givenDay: number;
+  /** the day the maker applied it, or null */
+  appliedDay: number | null;
+  /** the day the coach checks again (applied + 7; or given + 7 when not applied: "Still pending" from then) */
+  checkDay: number;
+  /** stage 'result': the 7 days after the fix (applied day … applied + 6) and their numbers */
+  resultFrom: string | null;
+  resultTo: string | null;
+  result: CoachResult | null;
+}
+
+/** A fix the maker applied (src/store/coachFix.ts): which SKU, on which demo day. */
+export interface CoachApplied {
+  sku: string;
+  day: number;
+}
+
 export interface GrowthView {
   /** the snapshot day (D28) and its date */
   asOfDay: number;
@@ -66,7 +89,10 @@ export interface GrowthView {
   weekDaily: { date: string; orders: number }[];
   runRate: number;
   verdicts: SkuVerdict[];
+  /** this week's one fix: null while an applied fix waits for its check, and after a check that needs no new fix */
   coach: CoachCard | null;
+  /** the coached SKU's fix after its week (applied / pending / result); null when the coach never fired */
+  coachFollowUp: CoachFollowUp | null;
   /** "What to make instead" for each SKU whose verdict is stop or switch */
   switchTo: Record<string, SwitchSuggestion[]>;
   dashboard: FunnelStats;
@@ -78,6 +104,8 @@ interface SkuSeed {
   id: string;
   name: string;
   funnel?: { views: number; clicks: number; orders: number };
+  /** the SKU's 7 days after its main photo was changed (team seed) */
+  afterPhotoFix?: { views: number; clicks: number; orders: number };
   weeksSellThroughBelowP25?: number;
   typeDemandSteady?: boolean;
   stopped?: boolean;
@@ -95,7 +123,7 @@ const SKUS = growth.skus as SkuSeed[];
  * numbers, cover and verdict are recomputed with the same rules (restock(), verdict()). The run-rate stays the
  * D28 week's: the seeded daily series ends at D30, so there are no later sales to average.
  */
-export function growthAt(day: number, maker: MakerInputs, batches: PlannedBatch[] = []): GrowthView | null {
+export function growthAt(day: number, maker: MakerInputs, batches: PlannedBatch[] = [], coachApplied: CoachApplied | null = null): GrowthView | null {
   const asOfDay = growth.asOfDay;
   if (day < asOfDay) return null;
 
@@ -128,6 +156,7 @@ export function growthAt(day: number, maker: MakerInputs, batches: PlannedBatch[
 
   const verdicts: SkuVerdict[] = [];
   let coach: CoachCard | null = null;
+  let coachFollowUp: CoachFollowUp | null = null;
   const switchTo: Record<string, SwitchSuggestion[]> = {};
 
   for (const sku of SKUS) {
@@ -146,27 +175,53 @@ export function growthAt(day: number, maker: MakerInputs, batches: PlannedBatch[
       verdicts.push({ id: sku.id, name: sku.name, verdict: v, reason: reasonFor(v) });
       continue;
     }
-    const fix = sku.funnel ? coachFix(sku.funnel, bands) : null;
+    const given = sku.funnel ? coachFix(sku.funnel, bands) : null;
+    // A fix given at the snapshot: applied or not, and the check a week later (team: 7 days).
+    let funnel = sku.funnel;
+    let fix = given; // this week's fix card
+    let verdictFix = given; // the listing stays "Fix" until a check says otherwise
+    if (given && sku.funnel && !coachFollowUp) {
+      const appliedDay = coachApplied?.sku === sku.id ? coachApplied.day : null;
+      const { stage, checkDay } = coachStage(day, asOfDay, appliedDay, growth.coachCheckAfterDays);
+      const result = stage === 'result' && sku.afterPhotoFix ? coachResult(sku.funnel, sku.afterPhotoFix, bands) : null;
+      coachFollowUp = {
+        skuId: sku.id,
+        skuName: sku.name,
+        stage,
+        givenDay: asOfDay,
+        appliedDay,
+        checkDay,
+        resultFrom: result && appliedDay !== null ? dayToDate(appliedDay) : null,
+        resultTo: result && appliedDay !== null ? dayToDate(appliedDay + growth.coachCheckAfterDays - 1) : null,
+        result,
+      };
+      if (stage === 'applied') fix = null; // no new fix until the check
+      if (result && sku.afterPhotoFix) {
+        funnel = sku.afterPhotoFix; // the checked week replaces the old one
+        fix = result.nextFix;
+        verdictFix = result.nextFix;
+      }
+    }
     const v = verdict({
       sku: sku.id,
       coverDays: null,
       leadTimeDays: maker.leadTimeDays,
       safetyDays: growth.safetyDays,
-      outOfBand: fix ? ['clickThrough'] : [],
+      outOfBand: verdictFix ? ['clickThrough'] : [],
       weeksSellThroughBelowP25: sku.weeksSellThroughBelowP25 ?? 0,
       typeDemandSteady: sku.typeDemandSteady ?? true,
       stopped: sku.stopped ?? false,
     });
     verdicts.push({ id: sku.id, name: sku.name, verdict: v, reason: reasonFor(v) });
-    if (fix && sku.funnel && !coach) {
+    if (fix && funnel && !coach) {
       coach = {
         skuId: sku.id,
         skuName: sku.name,
         fix,
-        views: sku.funnel.views,
-        clicks: sku.funnel.clicks,
-        orders: sku.funnel.orders,
-        conversionDisplay: pctDisplay(sku.funnel.orders / sku.funnel.clicks),
+        views: funnel.views,
+        clicks: funnel.clicks,
+        orders: funnel.orders,
+        conversionDisplay: pctDisplay(funnel.orders / funnel.clicks),
       };
     }
     if ((v === 'stop' || v === 'switch') && sku.line) switchTo[sku.id] = switchSuggestions(sku.line, [BOTTLE_TYPE]);
@@ -186,6 +241,7 @@ export function growthAt(day: number, maker: MakerInputs, batches: PlannedBatch[
     runRate,
     verdicts,
     coach,
+    coachFollowUp,
     switchTo,
     dashboard,
   };

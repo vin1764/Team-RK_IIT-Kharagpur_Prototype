@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { costStack, gstAt, takeHomeAt } from './costStack';
+import { costStack, costStackAtTakeHome, gstAt, takeHomeAt, takeHomeFromPct } from './costStack';
 
 // plan §8 costStack · §8b Break-even, Take-home, List price
 // GST (team answer Q18): 5% of the selling price, included in it → GST = price × 5/105.
@@ -84,5 +84,29 @@ describe('costStack — 500 ml steel flask (₹100, 15%, self-ship)', () => {
   it('take-home ₹15 → list (146 + 15) × 1.05 = 169.05 → ₹169', () => {
     expect(c.takeHome).toBe(15);
     expect(c.listPrice).toBe(169);
+  });
+});
+
+// FO-5 cost check: the maker types what he wants to earn per unit in rupees (or a % of making cost)
+describe('costStackAtTakeHome — the cost check’s rupee path', () => {
+  it('Jasmeet: ₹80 making + ₹14 to earn, self-ship → break-even ₹133, list (126 + 14) × 1.05 = ₹147', () => {
+    const s = costStackAtTakeHome('steel-bottle-1l', 80, 14, 'selfShip');
+    expect([s.breakEven, s.takeHome, s.listPrice]).toEqual([133, 14, 147]);
+  });
+
+  it('Samar: ₹200 making + ₹30 to earn, Pack Point → break-even ₹305, list (290 + 30) × 1.05 = ₹336', () => {
+    const s = costStackAtTakeHome('sneakers-slip-on-men', 200, 30, 'packPoint');
+    expect([s.costBeforeGst, s.breakEven, s.takeHome, s.listPrice]).toEqual([290, 305, 30, 336]);
+  });
+
+  it('₹ and % give the same stack: 17.5% of ₹80 = ₹14; 15% of ₹200 = ₹30', () => {
+    expect(takeHomeFromPct(80, 17.5)).toBe(14);
+    expect(takeHomeFromPct(200, 15)).toBe(30);
+    expect(costStackAtTakeHome('steel-bottle-1l', 80, 14, 'selfShip')).toEqual(costStack('steel-bottle-1l', 80, 17.5, 'selfShip'));
+    expect(costStackAtTakeHome('sneakers-slip-on-men', 200, 30, 'packPoint')).toEqual(costStack('sneakers-slip-on-men', 200, 15, 'packPoint'));
+  });
+
+  it('the list price rounds to the nearest rupee: ₹80 + ₹15 → (126 + 15) × 1.05 = 148.05 → ₹148', () => {
+    expect(costStackAtTakeHome('steel-bottle-1l', 80, 15, 'selfShip').listPrice).toBe(148);
   });
 });

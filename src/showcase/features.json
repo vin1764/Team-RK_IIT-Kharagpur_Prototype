@@ -219,7 +219,7 @@
       "title": "SKU Health Coach",
       "tag": "NEW",
       "part": "growth",
-      "what": "One SKU, one cause, one fix a week, at the top of the Business Dashboard and on Home.",
+      "what": "One SKU, one cause, one fix a week, at the top of the Business Dashboard and on Home. “Change main photo” opens a panel: the current photo (with its click-through) beside the suggested one, cleaned to a white background, plus a shot tip; or upload another photo, cleaned the same way. “Apply” swaps the main image everywhere it shows (nothing else changes). The card turns green until the check a week later, then shows the next 7 days and the next fix (or none). Not applied after a week: the same fix, “Still pending”.",
       "why": "The dashboard shows numbers only; the coach says what to change.",
       "behind": "coach"
     },
@@ -228,7 +228,7 @@
       "title": "Per-SKU funnel",
       "tag": "EXTENDED",
       "part": "growth",
-      "what": "The coached SKU’s own views, clicks, orders and conversion. The trigger that fired stays internal.",
+      "what": "The coached SKU’s own views, clicks, orders and conversion — for the week the fix was given, and a week after it was applied (the result). The trigger that fired stays internal.",
       "why": "The fix is tied to that listing’s numbers, not to seller-wide totals.",
       "behind": "coach"
     },
@@ -669,6 +669,36 @@
       "persona": "jasmeet",
       "day": 28,
       "route": "/panel/v3/new/insights/demo/business-dashboard"
+    },
+    {
+      "id": "gl-coach-applied",
+      "docId": "GL-3",
+      "title": "Coach fix applied: new main photo",
+      "part": "growth",
+      "tag": "NEW",
+      "persona": "jasmeet",
+      "day": 28,
+      "route": "/panel/v3/new/insights/demo/business-dashboard",
+      "selector": "[data-coach]",
+      "prep": [
+        "clean",
+        "coachApplied"
+      ]
+    },
+    {
+      "id": "gl-coach-result",
+      "docId": "GL-4",
+      "title": "Fix result D35: click-through 1.6% → 3.9%",
+      "part": "growth",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 35,
+      "route": "/panel/v3/new/insights/demo/business-dashboard",
+      "selector": "[data-coach]",
+      "prep": [
+        "clean",
+        "coachApplied"
+      ]
     },
     {
       "id": "pi-position",

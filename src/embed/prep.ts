@@ -13,6 +13,9 @@ import { resetPriceEdits } from '../store/priceEdits';
 import { resetRestockPlans } from '../store/restockPlan';
 import { resetLotPlans } from '../store/lotPlans';
 import { resetShipSwitch } from '../store/fulfilmentSwitch';
+import { resetCoachFix, useCoachFix } from '../store/coachFix';
+import { SUGGESTED_PHOTOS } from '../pages/panel/growth-loop/parts';
+import growthSeed from '../data/growth.json';
 import { resetLaunch } from '../store/timeline';
 import { LAUNCH } from '../pages/panel/factory-launch/launch';
 import { resetLaunchBanner } from '../store/launchBanner';
@@ -35,6 +38,7 @@ export function resetInteractive() {
   resetMakerProduct();
   resetLaunchBanner();
   resetShipSwitch();
+  resetCoachFix();
 }
 
 /** Onboarding resets on a persona switch, so the fulfilment choice only carries over for the same persona. */
@@ -67,10 +71,18 @@ function botFilled(persona: Persona) {
   s.setBot({ botReview: confirmReview(s.values, s.botFilled, LAUNCH.listingDay, SCRIPTED_REVIEW_TIME) });
 }
 
+/** The coach's "Change main photo" applied with the suggested photo on the snapshot day (D28), as a presenter would. */
+function coachApplied(persona: Persona) {
+  const sku = 'lunchbox';
+  const image = SUGGESTED_PHOTOS[sku];
+  if (image) useCoachFix.getState().apply(persona, { sku, day: growthSeed.asOfDay, image, source: 'suggested' });
+}
+
 /** Runs the prep steps in a sensible order and returns the route to open (with ?commit=1 for 'commitModal'). */
 export function runPrep(prep: Prep[] | undefined, persona: Persona, to: string): string {
   const steps = new Set(prep ?? []);
   if (steps.has('clean')) resetInteractive();
+  if (steps.has('coachApplied')) coachApplied(persona);
   if (steps.has('botFilled')) botFilled(persona);
   else if (steps.has('botPhotos')) botPhotos(persona);
   if (!steps.has('commitModal')) return to;

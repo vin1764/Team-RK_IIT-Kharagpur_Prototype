@@ -127,11 +127,11 @@ function priceOn(p: Persona, day: number, listPrice: number): { price: number; e
   return p === EDIT.persona && day >= EDIT.day ? { price: EDIT.price, edited: true } : { price: listPrice, edited: false };
 }
 
-function growthFor(p: Persona, day: number) {
+function growthFor(p: Persona, day: number, coachApplied: { sku: string; day: number } | null = null) {
   if (p !== J) return null;
   const s = stackOf(J)!;
   const typical = typicalForType(s.prod.type)!;
-  return growthAt(day, { lot: LOT, leadTimeDays: typical.leadTimeDays, minRun: typical.minRun, makingCost: s.prod.makingCost, listPrice: s.stack.listPrice });
+  return growthAt(day, { lot: LOT, leadTimeDays: typical.leadTimeDays, minRun: typical.minRun, makingCost: s.prod.makingCost, listPrice: s.stack.listPrice }, [], coachApplied);
 }
 const notInLoop = (p: Persona, day: number) =>
   p !== J
@@ -418,10 +418,19 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     if (!g) return notInLoop(persona, day);
     const c = g.coach;
     if (!c) return ['Nothing to fix this week.'];
-    return [
+    const lines = [
       `${c.skuName}: ${fmt(c.clicks)} clicks ÷ ${fmt(c.views)} views = ${c.fix.ctrDisplay} click-through vs ${c.fix.similarDisplay} for similar listings`,
       `${fmt(c.orders)} orders ÷ ${fmt(c.clicks)} clicks = ${c.conversionDisplay} conversion → one fix: change the main photo`,
     ];
+    // The check a week after the fix, as the showcase jumps set it up (photo changed on D28, checked on D35).
+    const after = growthFor(persona, Math.max(day, g.asOfDay + growthSeed.coachCheckAfterDays), { sku: c.skuId, day: g.asOfDay })?.coachFollowUp?.result;
+    if (after) {
+      lines.push(
+        `Applied on D${g.asOfDay} → checked on D${g.asOfDay + growthSeed.coachCheckAfterDays}: ${fmt(after.clicks)} ÷ ${fmt(after.views)} = ${after.ctrAfterDisplay} click-through (was ${after.ctrBeforeDisplay}); ${fmt(after.orders)} ÷ ${fmt(after.clicks)} = ${after.conversionDisplay} conversion`,
+        after.nextFix ? 'Still in the bottom quarter of similar listings → the next fix' : 'Out of the bottom quarter of similar listings → no fix needed that week; not applied after a week → “Still pending”',
+      );
+    }
+    return lines;
   },
 
   /** PI-2: price position */

@@ -9,6 +9,8 @@
     "ctrSimilar": 0.042,
     "ctrTrigger": 0.025
   },
+  "coachCheckAfterDays": 7,
+  "_coachCheckAfterDaysSource": "team, 22 Oct 2026: after a fix is applied the coach checks again a week later (7 days); no new fix until then",
   "dashboard": {
     "_source": "team Q13: Business Dashboard, 1 L bottle, last 7 days at D28. Orders must equal the launch series D21–D27 (77); sales = orders × list price.",
     "sku": "bottle",
@@ -34,7 +36,13 @@
       },
       "weeksSellThroughBelowP25": 0,
       "typeDemandSteady": true,
-      "stopped": false
+      "stopped": false,
+      "afterPhotoFix": {
+        "_source": "team, 22 Oct 2026: the lunch box's 7 days after the main photo change (shown 7 days after it is applied: D35 for a D28 change)",
+        "views": 2400,
+        "clicks": 94,
+        "orders": 8
+      }
     },
     {
       "id": "sipper",

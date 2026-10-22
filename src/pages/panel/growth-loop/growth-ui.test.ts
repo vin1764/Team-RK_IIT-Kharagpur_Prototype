@@ -22,10 +22,24 @@ describe('growth loop UI wiring', () => {
 
   it('no snapshot before D28, the D28 week after', () => {
     expect(growthAt(27, maker)).toBeNull();
-    expect(growthAt(40, maker)).toEqual(growthAt(28, maker));
+    // the week stays; only the coach's follow-up moves on (fix not applied → "Still pending" from D35)
+    const { coachFollowUp: f40, ...at40 } = growthAt(40, maker)!;
+    const { coachFollowUp: f28, ...at28 } = growthAt(28, maker)!;
+    expect(at40).toEqual(at28);
+    expect([f28!.stage, f40!.stage]).toEqual(['fix', 'pending']);
   });
 
   const g = growthAt(28, maker)!;
+
+  it('coach copy after the fix: applied line, result line, no fix needed (EN and HI keys exist)', () => {
+    expect(translate('en', 'gl.coach.applied', { date: '21 Nov 2026' })).toBe('Fix applied · main photo changed on 21 Nov 2026 · we\'ll check again next week');
+    const r = growthAt(35, maker, [], { sku: 'lunchbox', day: 28 })!.coachFollowUp!.result!;
+    expect(translate('en', 'gl.coach.ctrUp', { before: r.ctrBeforeDisplay, after: r.ctrAfterDisplay })).toBe('Click-through up from 1.6% to 3.9%');
+    expect(translate('en', 'gl.coach.noFix')).toBe('No fix needed this week');
+    expect(translate('en', 'gl.photo.now', { ctr: '1.6%' })).toBe('Now · 1.6% click-through');
+    for (const k of ['gl.coach.applied', 'gl.coach.ctrUp', 'gl.coach.noFix', 'gl.coach.pending', 'gl.photo.title', 'gl.photo.tip', 'gl.photo.useSuggested', 'gl.photo.upload', 'gl.photo.apply'])
+      expect(translate('hi', k, { date: 'x', before: 'a', after: 'b', sku: 's', ctr: 'c' })).not.toBe(k);
+  });
 
   it('restock card copy: "Start 230 by 21 Nov", lands 26 Nov with 18 left', () => {
     expect(translate('en', 'gl.restock.startBy', { n: g.restock.nextBatch, date: shortDate(g.restock.startBy) })).toBe('Start 230 by 21 Nov');

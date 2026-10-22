@@ -6,6 +6,7 @@
 import { useMemo } from 'react';
 import { formatDate, growthAt, type GrowthView, type MakerInputs } from '../../../engine/ui';
 import { useDemo, type Persona } from '../../../store/demo';
+import { useCoachFix } from '../../../store/coachFix';
 import { useRestockBatches } from '../../../store/restockPlan';
 import { useScriptedCommit, useScriptedListing } from '../../../store/timeline';
 
@@ -27,7 +28,8 @@ export function makerInputs(
 /**
  * The growth-loop view on the demo day: null before D28, for other personas, without a launch commit, or in
  * plain mode ("Today vs ours", c2m off), where Inventory, Business Dashboard and Home show their captured state.
- * Restock batches the maker confirmed ("Plan this batch", src/store/restockPlan.ts) are applied from the day they land.
+ * Restock batches the maker confirmed ("Plan this batch", src/store/restockPlan.ts) are applied from the day they land;
+ * a coach fix he applied counts from its day (moving the demo day back before it shows the fix again).
  */
 export function useGrowth(): GrowthView | null {
   const day = useDemo((s) => s.day);
@@ -36,11 +38,16 @@ export function useGrowth(): GrowthView | null {
   const listing = useScriptedListing();
   const commit = useScriptedCommit();
   const batches = useRestockBatches(persona, STOCKED_SKU);
+  // The coach fix he applied ("Change main photo"): its check a week later (src/store/coachFix.ts).
+  const fix = useCoachFix((s) => s.applied[persona]);
+  const appliedSku = fix?.sku;
+  const appliedDay = fix && fix.day <= day ? fix.day : undefined;
   return useMemo(() => {
     if (!c2m || persona !== GROWTH_PERSONA) return null;
     const maker = makerInputs(listing, commit);
-    return maker ? growthAt(day, maker, batches) : null;
-  }, [c2m, day, persona, listing, commit, batches]);
+    const applied = appliedSku && appliedDay !== undefined ? { sku: appliedSku, day: appliedDay } : null;
+    return maker ? growthAt(day, maker, batches, applied) : null;
+  }, [c2m, day, persona, listing, commit, batches, appliedSku, appliedDay]);
 }
 
 /** "2026-11-21" → "21 Nov" (the year is implied on these cards). */

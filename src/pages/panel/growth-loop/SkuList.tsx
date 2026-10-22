@@ -9,7 +9,7 @@ import { fmt, useT } from '../../../i18n';
 import { CrystalTip, T } from '../manage-pricing/crystal';
 import { RestockCard } from './RestockCard';
 import { SwitchPanel } from './SwitchPanel';
-import { THUMBS, Thumb, VerdictChip } from './parts';
+import { Thumb, VerdictChip, useSkuImage } from './parts';
 import { STOCKED_SKU as STOCKED } from './useGrowth';
 import { useDemo } from '../../../store/demo';
 import { useShipSwitch, type PlannedLot } from '../../../store/fulfilmentSwitch';
@@ -49,6 +49,7 @@ function SkuRow({ g, sku, tab, onTab }: { g: GrowthView; sku: SkuVerdict; tab: s
   const navigate = useNavigate();
   const stocked = sku.id === STOCKED;
   const atPackPoint = usePackPointTag();
+  const image = useSkuImage(sku.id);
   const link =
     sku.verdict === 'makeMore' && tab !== 'low_stock' ? (
       <LinkText onClick={() => onTab('low_stock')}>{t('gl.sku.viewRestock')}</LinkText>
@@ -58,7 +59,7 @@ function SkuRow({ g, sku, tab, onTab }: { g: GrowthView; sku: SkuVerdict; tab: s
   return (
     <div className="rounded-8 border border-solid border-neutral-light bg-neutral-base p-4" data-sku={sku.id}>
       <div className="flex items-start gap-3">
-        <Thumb src={THUMBS[sku.id]} />
+        <Thumb src={image} />
         <div className="flex-1 min-w-0 flex flex-col gap-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className={cx(T.bodyMd, 'font-medium text-neutral-primary')}>{sku.name}</p>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <!-- Placeholder illustration (Team RK prototype): the lunch box's current main photo, shot on a table with props,
+       small and off-centre. No brand. -->
+  <defs>
+    <linearGradient id="steel" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#8e959c"/>
+      <stop offset="0.22" stop-color="#e6e9ec"/>
+      <stop offset="0.5" stop-color="#c3c8cd"/>
+      <stop offset="0.8" stop-color="#f0f2f4"/>
+      <stop offset="1" stop-color="#868d94"/>
+    </linearGradient>
+    <linearGradient id="band" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#7d848b"/>
+      <stop offset="0.3" stop-color="#cfd3d7"/>
+      <stop offset="0.7" stop-color="#b5bbc1"/>
+      <stop offset="1" stop-color="#7d848b"/>
+    </linearGradient>
+    <linearGradient id="WOOD" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#b9875a"/>
+      <stop offset="1" stop-color="#8a5d38"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="#e9dcc8"/>
+  <rect y="250" width="400" height="150" fill="url(#WOOD)"/>
+  <path d="M0 290 H400 M0 335 H400 M0 375 H400" stroke="#7a5030" stroke-width="2" opacity="0.35"/>
+  <!-- checked napkin -->
+  <g transform="translate(206 262) rotate(-8)">
+    <rect width="170" height="110" fill="#d64545"/>
+    <path d="M0 18 H170 M0 46 H170 M0 74 H170 M0 100 H170 M22 0 V110 M56 0 V110 M90 0 V110 M124 0 V110 M158 0 V110" stroke="#ffffff" stroke-width="7" opacity="0.55"/>
+  </g>
+  <!-- spoon -->
+  <g transform="translate(250 230) rotate(28)">
+    <ellipse cx="0" cy="0" rx="16" ry="24" fill="#c3c8cd" stroke="#7d848b" stroke-width="2"/>
+    <rect x="-4" y="22" width="8" height="92" rx="4" fill="#c3c8cd" stroke="#7d848b" stroke-width="2"/>
+  </g>
+  <!-- a few chapatis -->
+  <ellipse cx="330" cy="236" rx="52" ry="14" fill="#d9a35f" stroke="#a8743a" stroke-width="2"/>
+  <ellipse cx="326" cy="228" rx="50" ry="13" fill="#e2b06c" stroke="#a8743a" stroke-width="2"/>
+  <ellipse cx="80" cy="318" rx="88" ry="12" fill="#000" opacity="0.18"/>
+  <g transform="translate(14 150) scale(0.78) rotate(-6 100 120)">
+    <g>
+      <!-- carry handle (wire) -->
+      <path d="M38 70 Q38 4 100 4 Q162 4 162 70" fill="none" stroke="#7d848b" stroke-width="7" stroke-linecap="round"/>
+      <!-- side clips -->
+      <rect x="-6" y="72" width="14" height="60" rx="5" fill="#9aa1a8"/>
+      <rect x="192" y="72" width="14" height="60" rx="5" fill="#9aa1a8"/>
+      <!-- lid -->
+      <path d="M8 62 Q100 34 192 62 v10 h-184 z" fill="url(#steel)" stroke="#7d848b" stroke-width="2"/>
+      <!-- upper tier -->
+      <rect x="10" y="72" width="180" height="76" rx="10" fill="url(#steel)" stroke="#7d848b" stroke-width="2"/>
+      <rect x="10" y="140" width="180" height="10" fill="url(#band)"/>
+      <!-- lower tier -->
+      <rect x="10" y="150" width="180" height="84" rx="10" fill="url(#steel)" stroke="#7d848b" stroke-width="2"/>
+      <ellipse cx="100" cy="234" rx="86" ry="6" fill="#7d848b" opacity="0.5"/>
+    </g>
+  </g>
+</svg>

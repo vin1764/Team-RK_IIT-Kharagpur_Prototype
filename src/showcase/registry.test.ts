@@ -54,7 +54,7 @@ describe('registry shape', () => {
 });
 
 describe('features (the jump list)', () => {
-  const PREPS: Prep[] = ['botPhotos', 'botFilled', 'commitModal', 'clean'];
+  const PREPS: Prep[] = ['botPhotos', 'botFilled', 'commitModal', 'coachApplied', 'clean'];
 
   it('each feature’s doc ID has an ElementInfo with the same tag and part', () => {
     for (const f of REGISTRY.features) {
@@ -109,6 +109,8 @@ describe('features (the jump list)', () => {
     'gl-restock': 'inventory',
     'gl-verdicts': 'inventory',
     'gl-coach': 'business-dashboard',
+    'gl-coach-applied': 'business-dashboard',
+    'gl-coach-result': 'business-dashboard',
     'pi-position': 'price-position',
     'pi-hold': 'price-position',
     'pp-samar': 'warehouse',

@@ -5,16 +5,16 @@ import data from '../data/productTypes.json';
 import { benchmarkB, priceCheck, pricePosition, type Comparable, type PricePosition, type PriceStatus } from './benchmark';
 import { MissingPlanValue, type ProductTypeId } from './types';
 
-export { costStack, gstAt, takeHomeAt, typeFees, type CostStack, type Fees } from './costStack';
+export { costStack, costStackAtTakeHome, gstAt, takeHomeAt, takeHomeFromPct, typeFees, type CostStack, type Fees } from './costStack';
 export { demandForType, demoInputsForType, likelyOrdersPerDay, likelyShare, productTypeName, slots, suggestedLot, switchSuggestions, typicalForType } from './demand';
 export { restock, type Restock } from './restock';
 export { launchProgress, trailingRunRate, type LaunchProgress } from './launch';
 export { verdict, type Verdict, type SkuHealth } from './verdict';
-export { coachFix, type CoachFix } from './coach';
+export { coachFix, coachResult, coachStage, type CoachFix, type CoachResult, type CoachStage } from './coach';
 export { funnelStats, pctDisplay, type FunnelStats } from './funnel';
 export { firstLotPlan, type FirstLotInput, type FirstLotPlan } from './firstLot';
 export { planBatch, stockOn, landsDayOf, type BatchPlan, type PlanInput, type PlannedBatch, type StockBase } from './restockPlan';
-export { growthAt, type GrowthView, type MakerInputs, type SkuVerdict, type CoachCard, type VerdictReason } from './growth';
+export { growthAt, type CoachApplied, type CoachFollowUp, type GrowthView, type MakerInputs, type SkuVerdict, type CoachCard, type VerdictReason } from './growth';
 export {
   eligibility,
   BUSINESS_TYPES,

@@ -42,6 +42,7 @@ export type Prep =
   | 'botPhotos' //   draft with photos added and the bot pre-fill run; maker fields empty (Product screen)
   | 'botFilled' //   draft fully filled with the demo values and Pack of 1 confirmed (Quantity/Price reachable)
   | 'commitModal' // open the Factory Launch commit modal on the order book
+  | 'coachApplied' // the SKU Health Coach's "Change main photo" applied on D28 with the suggested photo
   | 'clean'; //      clear the user's interactive demo state (listings, draft, commits, price edits) first
 
 /** One item of "Jump to what's new". */
