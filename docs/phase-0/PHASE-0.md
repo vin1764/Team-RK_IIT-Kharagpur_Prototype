@@ -138,9 +138,10 @@ Real panel URLs from the team (21 Oct 2026). `{sid}` is always the fake supplier
 
 | Route | Page | Reference | C2M |
 | --- | --- | --- | --- |
-| `/outreach` | WhatsApp / IndiaMART teaser (phone mock) | ⚠ **none** (new) | FO-3 |
-| `/signup` (`?ref=outreach` shows the teaser) | Sign-up | `signup.png`; teaser: doc p.11 mock-up | FO-4 |
-| `/cost-check` | 5-minute cost check | ⚠ **no screenshot**; doc p.11 shows it as a card | FO-5 |
+| `/outreach` | Category-level invitation (phone mock) | ⚠ **none** (new) | FO-3 |
+| `/signup` | Sign-up (Meesho's own right panel, also from the outreach link) | `signup.png` | — |
+| `/onboarding/done` | Finish screen after Supplier Details: what do you make → demand teaser → cost check (verified manufacturers only) | ⚠ **none** (new); teaser and cost check: doc p.11 mock-ups | FO-7, FO-4, FO-5 |
+| `/cost-check` | Redirects to `/onboarding/done` (the cost check now runs there) | — | FO-5 |
 | `/onboarding/business-details` | Step 1 | `onb-business-details.png` (Enrolment ID, *after* fetch); checks: doc p.12 | FO-6, FO-7 |
 | `/onboarding/pickup-address` | Step 2 | `onb-pickup.png` (*after* save); choice: doc p.12 | FO-8 |
 | `/onboarding/bank-details` | Step 3 | `onb-bank.png`, `onb-bank-filled.png` | — |

@@ -80,18 +80,22 @@ describe('features (the jump list)', () => {
   // Where each jump lands. Keep in step with features.json.
   const LANDS: Record<string, string> = {
     'fo-outreach': 'outreach',
-    'fo-teaser': 'signup-outreach',
-    'fo-cost-check': 'cost-check',
     'fo-checks-maker': 'business-details',
     'fo-checks-reseller': 'business-details',
     'fo-ship-choice': 'pickup-address',
+    'fo-finish-pick': 'onboarding-finish',
+    'fo-finish-teaser': 'onboarding-finish',
+    'fo-finish-cost': 'onboarding-finish',
     'lb-entry': 'home',
     'lb-product': 'bot-product',
     'lb-hindi': 'bot-product',
     'lb-quantity': 'bot-quantity',
     'lb-price': 'bot-price',
     'lb-go-live': 'bot-price',
-    'lw-home-card': 'home',
+    'lw-banner': 'home',
+    'lw-banner-listed': 'home',
+    'lw-sidebar': 'home',
+    'lw-notice': 'notices',
     'lw-order-book': 'factory-launch',
     'lw-commit': 'factory-launch',
     'lw-live': 'live-launch',
@@ -116,7 +120,7 @@ describe('features (the jump list)', () => {
 
   it('the jump list covers the demo guide’s hero moments in order', () => {
     const ids = REGISTRY.features.map((f) => f.id);
-    const hero = ['fo-outreach', 'fo-teaser', 'fo-cost-check', 'fo-checks-maker', 'fo-checks-reseller', 'fo-ship-choice', 'lb-entry', 'lb-product', 'lb-quantity', 'lb-price', 'lb-go-live', 'lw-order-book', 'lw-commit', 'lw-live', 'lw-score', 'gl-restock', 'gl-verdicts', 'gl-coach', 'pi-position', 'pi-hold', 'pp-samar', 'pp-jasmeet'];
+    const hero = ['fo-outreach', 'fo-checks-maker', 'fo-checks-reseller', 'fo-ship-choice', 'fo-finish-pick', 'fo-finish-teaser', 'fo-finish-cost', 'lb-entry', 'lb-product', 'lb-quantity', 'lb-price', 'lb-go-live', 'lw-banner', 'lw-order-book', 'lw-commit', 'lw-live', 'lw-score', 'gl-restock', 'gl-verdicts', 'gl-coach', 'pi-position', 'pi-hold', 'pp-samar', 'pp-jasmeet'];
     const at = hero.map((id) => ids.indexOf(id));
     expect(at.every((i) => i >= 0)).toBe(true);
     expect([...at].sort((a, b) => a - b)).toEqual(at);
@@ -197,12 +201,14 @@ describe('pages ("On this screen", "Today vs ours")', () => {
     [paths.addSingleDetails, 'add-single-details'],
     [onboarding.outreach, 'outreach'],
     [onboarding.signup, 'signup'],
-    [onboarding.signupFromOutreach, 'signup-outreach'],
-    [onboarding.costCheck, 'cost-check'],
     [onboarding.businessDetails, 'business-details'],
     [onboarding.pickupAddress, 'pickup-address'],
     [onboarding.bankDetails, 'bank-details'],
     [onboarding.supplierDetails, 'supplier-details'],
+    [onboarding.done, 'onboarding-finish'],
+    [`${onboarding.done}?state=picked`, 'onboarding-finish'],
+    // the outreach link now opens Meesho's own sign-up; an old ?ref=outreach link is plain sign-up too
+    ['/signup?ref=outreach', 'signup'],
   ];
 
   it('every route resolves to its page, with or without demo params', () => {
@@ -213,10 +219,10 @@ describe('pages ("On this screen", "Today vs ours")', () => {
     }
   });
 
-  it('App.tsx has no frame route the registry doesn’t know (30 at the time of writing; the showcase itself excluded)', () => {
+  it('App.tsx has no frame route the registry doesn’t know (31 at the time of writing, with /onboarding/done; the showcase itself excluded)', () => {
     const app = readFileSync(join(SRC, 'app', 'App.tsx'), 'utf8');
     const routes = [...app.matchAll(/<Route\s+path=(\{[^}]*\}|"[^"]*")/g)].map((m) => m[1]!).filter((p) => !['"*"', '"/"', '{SHOWCASE_PATH}'].includes(p));
-    expect(routes).toHaveLength(30);
+    expect(routes).toHaveLength(31);
   });
 
   it('every page is covered by the route list above', () => {
@@ -226,7 +232,7 @@ describe('pages ("On this screen", "Today vs ours")', () => {
 
   it('ours-only screens say so; Meesho pages describe what the real page does', () => {
     const ours = REGISTRY.pages.filter((p) => p.onlyOurs).map((p) => p.id).sort();
-    expect(ours).toEqual(['bot-price', 'bot-product', 'bot-quantity', 'cost-check', 'factory-launch', 'live-launch', 'outreach', 'price-position'].sort());
+    expect(ours).toEqual(['bot-price', 'bot-product', 'bot-quantity', 'onboarding-finish', 'factory-launch', 'live-launch', 'outreach', 'price-position'].sort());
     for (const p of REGISTRY.pages) expect(p.today.length, p.id).toBeGreaterThan(10);
   });
 
@@ -239,7 +245,9 @@ describe('pages ("On this screen", "Today vs ours")', () => {
     expect(laterFeature(page('business-details'))?.id).toBe('fo-checks-maker');
     expect(laterFeature(page('inventory'))?.id).toBe('gl-restock');
     expect(laterFeature(page('manage-pricing'))?.id).toBe('pi-position');
-    for (const id of ['notices', 'orders', 'claims', 'payments', 'bank-details', 'signup']) expect(laterFeature(page(id)), id).toBeUndefined();
+    // LW-6: the pinned notice lands on Notices (eligible makers only)
+    expect(laterFeature(page('notices'))?.id).toBe('lw-notice');
+    for (const id of ['orders', 'claims', 'payments', 'bank-details', 'signup']) expect(laterFeature(page(id)), id).toBeUndefined();
     for (const p of REGISTRY.pages) if (p.addsLater) expect(p.nearest, p.id).toBeDefined();
   });
 

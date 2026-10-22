@@ -26,6 +26,10 @@ describe('demo guide numbers — recomputed from engine/seed', () => {
     expect(checkListingPrice('steel-bottle-1l', 147, 133)).toBe('qualifies');
     expect(n.listQualifies).toBe(true);
     expect(text(1)).toContain('“₹147 → ₹14 take-home, qualifies”');
+    // Teaser after onboarding, for the type she picks (plan §10 step 1, updated)
+    expect(text(1)).toContain('picks the 1 L steel water bottle → teaser “about 300 orders a week at ₹150–170”');
+    expect(text(1)).toContain('Home & Kitchen invitation');
+    expect(DEMO_GUIDE[0]!.also.map((a) => a.path)).toEqual([onboarding.signup, `${onboarding.done}?state=picked`]);
     expect(text(3)).toContain('List at ₹147 · take home ₹14, Qualifies');
   });
 

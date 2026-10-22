@@ -8,7 +8,7 @@
 //   3. FO-5 cost check inline, with the maker's Pickup Address shipping choice (FO-8).
 // "Check my eligibility" opens Home with the Factory Launch banner expanded; "Skip for now" opens Home.
 import { useEffect, useRef, useState } from 'react';
-import { Navigate, useLocation } from 'react-router';
+import { Navigate, useLocation, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { Button } from '../../components/ui';
 import { eligibility, productTypeName, type ProductTypeId } from '../../engine/ui';
@@ -112,13 +112,25 @@ function FinishPage() {
     setMaking(String(own.makingCost));
   };
 
-  // Dev / showcase `?state=picked`: the persona's own product picked and its making cost filled.
+  // Dev / showcase `?state=picked`: the persona's own product picked and its making cost filled (again after
+  // a showcase jump's "clean" prep empties the choice).
+  const [, setParams] = useSearchParams();
   useEffect(() => {
-    if (dev === 'picked') demoFill();
+    if (dev === 'picked' && maker.source !== 'chosen') demoFill();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dev, personaId]);
+  }, [dev, personaId, maker.source]);
 
   const changeAnswer = () => {
+    // Leave the dev state, so the pre-pick doesn't come straight back.
+    if (dev)
+      setParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.delete('state');
+          return next;
+        },
+        { replace: true },
+      );
     clear(personaId);
     setPending(null);
     setMaking('');

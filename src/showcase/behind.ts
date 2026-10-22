@@ -150,16 +150,12 @@ const RESULT = { eligible: 'Eligible for Factory Launch', pending: 'Pending (no 
 // ── the calculations ────────────────────────────────────────────────────────────────────────────
 export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
   /** FO-3: the outreach message's teaser */
-  outreach: ({ persona }) => {
-    const prod = productOf(persona) ?? productOf(J)!;
-    const d = demandForType(prod.type);
-    return [
-      `${productTypeName(prod.type)}: ${range(d.gapPerWeek)} orders a week go unserved at ${d.priceBand ? rsRange(d.priceBand) : 'today’s prices'} (confidence ${d.confidence}).`,
-      'Picked from Meesho’s own demand data for the product type, then sent with links to sign-up and the 5-minute cost check.',
-    ];
-  },
+  outreach: () => [
+    `Category-level: ${launch.category} manufacturers invited to ${launch.name.replace(/\s+\d+$/, '')} · no product, demand or price numbers in the message`,
+    'Udyam or IndiaMART data can’t tell us a maker’s exact product, so the maker tells us after onboarding (finish screen); the demand teaser and cost check show there.',
+  ],
 
-  /** FO-4: the sign-up right panel */
+  /** FO-4: the demand teaser on the onboarding finish screen, for the type the maker picked */
   teaser: ({ persona }) => {
     const prod = productOf(persona) ?? productOf(J)!;
     const d = demandForType(prod.type);
@@ -291,14 +287,31 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     ];
   },
 
-  /** LW-6: Home step-3 card */
-  launchCard: (ctx) => {
-    if (ctx.persona !== J) return BEHIND.orderBook!(ctx);
-    if (ctx.day <= L.commitmentsCloseDay) {
-      const total = slots(productOf(J)!.type);
-      return [`${fmt(total - launch.slotsTakenBeforeJasmeet)} of ${fmt(total)} slots left until D${L.commitmentsCloseDay} (${short(L.commitmentsCloseDay)}) · Join opens the order book`];
+  /** LW-6: the Home banner (also the sidebar item and pinned notice), on the scripted story for each persona */
+  launchBanner: (ctx) => {
+    const { persona, day } = ctx;
+    if (eligibility(records(persona)).status !== 'eligible') return [`${RESULT[eligibility(records(persona)).status]} → no banner, no sidebar item, no pinned notice: Meesho as today.`];
+    const own = productOf(persona);
+    if (!own || !launch.productTypes.includes(own.type))
+      return [`${own ? productTypeName(own.type) : 'This product'} has no order book in ${launch.name} (${launch.category}) → a slim “no open order book” note on Home while commitments are open; sidebar item and pinned notice still show.`];
+    const total = slots(own.type);
+    const taken = launch.slotsTakenBeforeJasmeet;
+    const told = day > calendar.jumps.onboarding;
+    const listed = day >= calendar.jumps.listing;
+    const committed = day > L.commitmentsCloseDay;
+    const n = 2 + Number(listed) + Number(committed);
+    const lines = [
+      `Slots: ${fmt(total)} − ${fmt(taken)} taken = ${fmt(total - taken)} left for ${productTypeName(own.type)} (the order book’s count, before ${firstName(persona)} commits)`,
+      `Dates: commitments close D${L.commitmentsCloseDay} (${short(L.commitmentsCloseDay)}) · stock ready D${L.stockAtNodeDay} (${short(L.stockAtNodeDay)}) · live D${L.liveFromDay}–D${L.liveToDay} (${shortSpan(L.liveFromDay, L.liveToDay)})`,
+      told
+        ? `Checklist: manufacturer ✓ + records agree ✓ (GST/Udyam checks) + listed at a qualifying price ${listed ? '✓' : '○'} (listing from D${calendar.jumps.listing}) + stock committed ${committed ? '✓' : '○'} (counts after D${L.commitmentsCloseDay}) = ${n} of 4`
+        : `Checklist: “Tell us what you make” ○ (finish screen; the seeded product counts from D${calendar.jumps.onboarding + 1}) + manufacturer ✓ + records agree ✓ + listed ○ + committed ○ = 2 of 5`,
+    ];
+    if (day >= L.liveFromDay && day <= L.liveToDay) {
+      const g = launchProgress(DAILY, LOT, day);
+      lines.push(`Live now: ${fmt(g.today ?? 0)} orders today (seeded series) · ${fmt(g.soldToDate)} of ${fmt(LOT)} sold`);
     }
-    return BEHIND.launchLive!(ctx);
+    return lines;
   },
 
   /** LW-7: live launch view */

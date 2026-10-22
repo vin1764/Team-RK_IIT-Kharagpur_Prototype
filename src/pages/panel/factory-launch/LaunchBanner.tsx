@@ -57,7 +57,8 @@ export function LaunchBanner() {
   };
   const close = shortDay(LAUNCH.commitmentsCloseDay);
   const title = FL.eventTitle(LAUNCH.name, LAUNCH.category);
-  const typeName = productName ?? v.bookTypeName;
+  // Before the maker has told us the product, the copy stays generic ("your product").
+  const typeName = productName ?? FL.banner.product;
   const slots = row ? B.slotsFor(row.slots.crowded ? FL.slotsFull : FL.slotsLeft(row.slots.left), row.name) : null;
   const pitch = [B.liveOn(liveDatesShort()), B.manufacturersOnly, B.noAds, ...(slots && state === 'join' ? [slots] : [])].join(' · ');
   const dismissBtn = model.dismissible ? <IconButton icon="/brand/msa/merlin/lined/cross-grey.svg" label={B.dismiss} onClick={() => dismiss(persona, state)} data-fl-dismiss /> : null;

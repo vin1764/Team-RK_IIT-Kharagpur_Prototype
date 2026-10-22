@@ -31,6 +31,7 @@ export const FL = {
   endedBanner: 'Launch week ended · orders continue', // prompt
   // Order book
   orderBook: 'Order book', // doc
+  yourProduct: 'Your product', // ours (the type the maker told us after onboarding)
   col: {
     type: 'Product type', // ours
     slots: 'Slots', // doc
@@ -140,6 +141,7 @@ export const FL = {
     },
     createFromPhotos: 'Create from photos', // existing LB-3 button
     tellUs: 'Tell us', // ours
+    product: 'product', // ours ("List your product…" before the maker has told us what they make)
     noBook: (type: string) => `No open order book for ${type} yet · we'll tell you when one opens`, // ours (prompt LW-4 "No open order book for your product type yet")
     toOrderBook: 'Go to order book', // prompt
     in: (name: string, stock: string, live: string) => `You're in ${name} · stock ready by ${stock} · live ${live}`, // prompt

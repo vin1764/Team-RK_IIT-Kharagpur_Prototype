@@ -124,7 +124,24 @@ function OrderBook({ view, onCommit, slotRemoved }: { view: LaunchView; onCommit
   ];
   const rows = view.rows.map((r) => ({
     id: r.typeId,
-    type: <Cell value={<b className="font-button">{r.name}</b>} sub={LAUNCH.category} />,
+    type: (
+      <Cell
+        value={<b className="font-button">{r.name}</b>}
+        sub={
+          // The maker's own product type (what they told us after onboarding, or their listing's).
+          view.eligibility.status !== 'notEligible' && r.typeId === view.ownType ? (
+            <span className="inline-flex flex-col items-start gap-1">
+              {LAUNCH.category}
+              <Pill tone="brand" bordered>
+                <span data-own-type>{FL.yourProduct}</span>
+              </Pill>
+            </span>
+          ) : (
+            LAUNCH.category
+          )
+        }
+      />
+    ),
     slots: (
       <Cell
         value={`${r.slots.taken}/${r.slots.total}`}

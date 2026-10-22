@@ -93,15 +93,16 @@ Routes follow the real panel (`/panel/v3/new/...`). **Bold = has C2M additions.*
 
 | Area | Page (existing) | C2M additions (doc ID) | Priority |
 | --- | --- | --- | --- |
-| Outreach | — (phone mock, new) | WhatsApp/IndiaMART teaser with links to sign-up and cost check (FO-3) | P1 |
-| Onboarding | **Sign-up** | Right panel shows the demand teaser when opened from the outreach link (FO-4) | P1 |
-| Onboarding | — (new page) | 5-minute cost check: product type + making cost → take-home, "a qualifying price exists" (FO-5) | P1 |
+| Outreach | — (phone mock, new) | Category-level invitation ("Meesho is inviting Home & Kitchen manufacturers to Factory Launch Week · no ads, no listing fee · sign up to check your eligibility"); no product or demand numbers; link to the normal sign-up (FO-3) | P1 |
+| Onboarding | Sign-up | none: Meesho's own right panel, also from the outreach link (the teaser moved after onboarding) | — |
+| Onboarding | — (new page, after Supplier Details → Submit, verified manufacturers only) | Finish screen "You're a verified factory seller. What do you make?": category search + tree or one photo the bot recognises → demand teaser for the chosen type (FO-4) → 5-minute cost check inline with the Pickup Address shipping choice (FO-5) → "Check my eligibility" (Home banner) or "Skip for now". `/cost-check` redirects here. Udyam/IndiaMART data can't tell us the exact product, so the maker tells us | P1 |
 | Onboarding | **Business Details** | Business-type question moved here from step 4; GST nature of business + Udyam checks → eligible / pending / not eligible (FO-6, FO-7) | P1 |
 | Onboarding | **Pickup Address** | "How will your orders ship?" Self-ship / Cluster Pack Point / waitlist (FO-8) | P1 |
 | Onboarding | Bank Details | none | — |
-| Onboarding | Supplier Details | business-type field removed (moved to step 1) | P1 |
-| Panel | **Home** | 3rd upload path "Create from photos" (LB-3); step-3 card "Next Factory Launch" (LW-6); right rail "This week's one fix" coach card once live | P1 |
-| Panel | Notices | Factory Launch notice (P2) | P2 |
+| Onboarding | Supplier Details | business-type field removed (moved to step 1); Submit opens the finish screen for verified manufacturers, the dashboard for everyone else | P1 |
+| Panel | **Home** | 3rd upload path "Create from photos" (LB-3); Factory Launch banner at the top of Home with an inline eligibility checklist (LW-6, replaces the step-3 card); right rail "This week's one fix" coach card once live | P1 |
+| Panel | **Sidebar** | "Factory Launch" (NEW) first under Boost Sales → Promotions → Factory Launch; "Notices (2)" (LW-6, eligible makers only) | P1 |
+| Panel | **Notices** | Pinned "Factory Launch Week · Home & Kitchen" notice with "Check my eligibility" (LW-6, eligible makers only) | P1 |
 | Catalog | **Add Single Catalog** | "Create from photos" mode: category auto-detected, image cleanup, field pre-fill per §7, EN / हिंदी toggle (LB-4, LB-10) | P1 |
 | Catalog | **Price table** | Demand card, suggested Inventory, take-home, status chip, go-live checklist, fees locked at dispatch (LB-5, LB-6, LB-9) | P1 |
 | Catalog | Catalog Uploads, Bulk, Image Bulk Upload | none | — |
@@ -200,7 +201,7 @@ Sidebar (exact order and sub-menus), header (Notices, Support, e-signature banne
 *Check:* each page side by side with its screenshot.
 
 **Phase 2 — Onboarding**
-Sign-up (+ teaser when `?ref=outreach`), cost check page, Business Details with checks, Pickup Address with fulfilment choice, Bank Details, Supplier Details; outreach phone mock-up.
+Sign-up (Meesho's own panel), Business Details with checks, Pickup Address with fulfilment choice, Bank Details, Supplier Details, then the finish screen (what do you make → teaser → cost check); category-level outreach phone mock-up.
 *Check:* Jasmeet → eligible; reseller → not eligible; Samar → Pack Point.
 
 **Phase 3 — Engine + listing flow**
@@ -208,7 +209,7 @@ All §8 functions with tests. Home "Create from photos" → Add Single Catalog w
 *Check:* hero numbers in §8 appear exactly; B never rendered.
 
 **Phase 4 — Factory Launch**
-Promotions tab, order book, units to commit, Commit; Home step-3 card; live launch view; Quality listing score.
+Promotions tab, order book, units to commit, Commit; Home banner, sidebar item and pinned notice (LW-6); live launch view; Quality listing score.
 *Check:* D5 commit flow, D23 live view.
 
 **Phase 5 — Growth loop**
@@ -228,7 +229,7 @@ Demo controls, concept label, responsive check, README (what's real vs simulated
 
 ## 10. Demo script (≈ 5 minutes)
 
-1. D1 · Jasmeet gets the outreach message → sign-up shows her teaser → cost check: "₹147 → ₹14 take-home, qualifies".
+1. D1 · Jasmeet gets a category-level outreach message (Home & Kitchen manufacturers, no product named) → Meesho's own sign-up → onboarding → finish screen: she picks the 1 L steel water bottle → teaser "about 300 orders a week at ₹150–170" → cost check: "₹147 → ₹14 take-home, qualifies".
 2. D1 · Business Details: GST + Udyam pass → eligible. (Switch to Reseller: not eligible.)
 3. D3 · Create from photos → 21 fields pre-filled → enters the 14 → price table: Qualifies, 150 suggested → Go live.
 4. D5 · Promotions → Factory Launch → commits units → Commit.

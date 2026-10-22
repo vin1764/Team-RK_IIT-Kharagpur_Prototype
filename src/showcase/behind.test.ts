@@ -69,6 +69,21 @@ describe('Behind it: hero numbers (plan §8b)', () => {
     expect(text('orderBook', 'jasmeet', J.commit)).toContain('600 units already committed ÷ 150 a lot = 4 slots taken → 1 left');
   });
 
+  it('LW-6 banner: 5 − 4 = 1 slot left, the launch dates, 2 → 3 → 4 of 4 from the scripted story', () => {
+    const d1 = text('launchBanner', 'jasmeet', J.onboarding);
+    expect(d1).toContain('5 − 4 taken = 1 left for 1 L steel water bottle');
+    expect(d1).toContain('D7 (31 Oct)');
+    expect(d1).toContain('D18 (11 Nov)');
+    expect(d1).toContain('D21–D25 (14–18 Nov)');
+    expect(d1).toContain('= 2 of 5');
+    expect(text('launchBanner', 'jasmeet', 2)).toContain('= 2 of 4');
+    expect(text('launchBanner', 'jasmeet', J.listing)).toContain('= 3 of 4');
+    expect(text('launchBanner', 'jasmeet', J.restock)).toContain('= 4 of 4');
+    expect(text('launchBanner', 'jasmeet', J.liveLaunch)).toContain('11 orders today');
+    expect(text('launchBanner', 'reseller', J.onboarding)).toMatch(/no banner/);
+    expect(text('launchBanner', 'samar', J.onboarding)).toMatch(/no order book/);
+  });
+
   it('live launch at D23: 11 today, 33 of 150 sold, 117 left; not live before D21', () => {
     const t = text('launchLive', 'jasmeet', J.liveLaunch);
     expect(t).toContain('11 orders today vs 9–13 expected');

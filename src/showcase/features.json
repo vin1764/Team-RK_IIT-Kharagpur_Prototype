@@ -31,17 +31,17 @@
       "title": "Outreach message",
       "tag": "NEW",
       "part": "onboarding",
-      "what": "A message to an offline maker with the open demand for what they make, plus links to sign up and to a 5-minute cost check.",
-      "why": "Makers who aren’t on Meesho never see its demand; we take the demand to them first.",
+      "what": "A category-level invitation to an offline maker (Home & Kitchen manufacturers, Factory Launch Week, no ads, no listing fee) with a link to Meesho’s own sign-up. No product or demand numbers.",
+      "why": "Makers who aren’t on Meesho never hear of the launch; we can’t know their exact product from Udyam or IndiaMART data, so the invitation stays at the category.",
       "behind": "outreach"
     },
     {
       "docId": "FO-4",
-      "title": "Demand teaser at sign-up",
-      "tag": "EXTENDED",
+      "title": "Demand teaser after onboarding",
+      "tag": "NEW",
       "part": "onboarding",
-      "what": "Arriving from the outreach link, the sign-up side panel shows the maker’s own product demand instead of generic stats.",
-      "why": "The first screen answers the maker’s real question: is there demand for what I make?",
+      "what": "On the onboarding finish screen, for the product type the maker just picked: orders a week going unserved and the buyers’ price band, or a neutral “no demand data yet”.",
+      "why": "The maker’s real question is “is there demand for what I make?”; we answer it once they’ve told us what they make.",
       "behind": "teaser"
     },
     {
@@ -49,8 +49,8 @@
       "title": "5-minute cost check",
       "tag": "NEW",
       "part": "onboarding",
-      "what": "Product type + making cost → every fee, break-even, take-home at any price, and whether a qualifying price exists.",
-      "why": "A maker decides on what they keep, not on the selling price, so we show take-home before they sign up.",
+      "what": "Inline on the finish screen: making cost → every fee (with the shipping choice from Pickup Address), break-even, take-home at any price, and whether a qualifying price exists.",
+      "why": "A maker decides on what they keep, not on the selling price, so we show take-home before they list anything.",
       "behind": "costCheck"
     },
     {
@@ -58,8 +58,8 @@
       "title": "Seller-type question, moved to step 1",
       "tag": "EXTENDED",
       "part": "onboarding",
-      "what": "Meesho’s own business-type question, asked right after the GST fetch instead of in the last step.",
-      "why": "Today it’s self-declared and never used; we use it to tell makers from resellers.",
+      "what": "Meesho’s own business-type question, asked right after the GST fetch instead of in the last step — unprompted on purpose: Meesho’s 7 options in Meesho’s order, nothing pre-selected, marked or hinted.",
+      "why": "The maker must declare it without a nudge; eligibility is decided only afterwards, by the GST nature of business and Udyam checks.",
       "behind": "eligibility"
     },
     {
@@ -67,8 +67,8 @@
       "title": "GST and Udyam checks",
       "tag": "EXTENDED",
       "part": "onboarding",
-      "what": "GST nature of business and Udyam activity are matched to the seller type → eligible, pending or not eligible.",
-      "why": "Factory Launch is for real manufacturers, so records decide, not a self-declared answer. Resellers keep selling as today.",
+      "what": "GST nature of business and Udyam activity are matched to the seller type → eligible, pending or not eligible. A verified manufacturer then lands on a finish screen: “What do you make?”",
+      "why": "Factory Launch is for real manufacturers, so records decide, not a self-declared answer. Resellers keep selling as today and go straight to the dashboard.",
       "behind": "eligibility"
     },
     {
@@ -171,12 +171,12 @@
     },
     {
       "docId": "LW-6",
-      "title": "Next Factory Launch card on Home",
+      "title": "Factory Launch on Home, sidebar and Notices",
       "tag": "EXTENDED",
       "part": "launch",
-      "what": "Home step 3 “Get your first order” shows the next launch with slots left, then the launch’s progress.",
-      "why": "Step 3 offers no help today; this gives the first order a date.",
-      "behind": "launchCard"
+      "what": "A banner at the top of Home (dates, slots left, an inline “Check my eligibility” checklist with one button per open step), a “Factory Launch” item under Boost Sales and a pinned notice — only for makers who passed the checks.",
+      "why": "A new manufacturer finds the launch on day one instead of three clicks deep in Promotions, and always sees the one next step.",
+      "behind": "launchBanner"
     },
     {
       "docId": "LW-7",
@@ -308,26 +308,6 @@
       "route": "/outreach"
     },
     {
-      "id": "fo-teaser",
-      "docId": "FO-4",
-      "title": "Sign-up with her demand teaser",
-      "part": "onboarding",
-      "tag": "EXTENDED",
-      "persona": "jasmeet",
-      "day": 1,
-      "route": "/signup?ref=outreach"
-    },
-    {
-      "id": "fo-cost-check",
-      "docId": "FO-5",
-      "title": "5-minute cost check",
-      "part": "onboarding",
-      "tag": "NEW",
-      "persona": "jasmeet",
-      "day": 1,
-      "route": "/cost-check"
-    },
-    {
       "id": "fo-checks-maker",
       "docId": "FO-7",
       "title": "Seller type + GST/Udyam checks: a maker passes",
@@ -356,6 +336,46 @@
       "persona": "samar",
       "day": 1,
       "route": "/onboarding/pickup-address?state=saved"
+    },
+    {
+      "id": "fo-finish-pick",
+      "docId": "FO-7",
+      "title": "After onboarding: “What do you make?”",
+      "part": "onboarding",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 1,
+      "route": "/onboarding/done",
+      "selector": "[data-product-pick]",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
+      "id": "fo-finish-teaser",
+      "docId": "FO-4",
+      "title": "Demand teaser for the product she picked",
+      "part": "onboarding",
+      "tag": "NEW",
+      "persona": "jasmeet",
+      "day": 1,
+      "route": "/onboarding/done?state=picked",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
+      "id": "fo-finish-cost",
+      "docId": "FO-5",
+      "title": "Cost check after onboarding",
+      "part": "onboarding",
+      "tag": "NEW",
+      "persona": "jasmeet",
+      "day": 1,
+      "route": "/onboarding/done?state=picked",
+      "prep": [
+        "clean"
+      ]
     },
     {
       "id": "lb-entry",
@@ -441,17 +461,57 @@
       ]
     },
     {
-      "id": "lw-home-card",
+      "id": "lw-banner",
       "docId": "LW-6",
-      "title": "Next Factory Launch card on Home",
+      "title": "Factory Launch banner on Home",
       "part": "launch",
       "tag": "EXTENDED",
       "persona": "jasmeet",
-      "day": 5,
-      "route": "/panel/v3/new/growth/demo/home",
+      "day": 1,
+      "route": "/panel/v3/new/growth/demo/home?fl=open",
+      "selector": "[data-fl-banner]",
       "prep": [
         "clean"
       ]
+    },
+    {
+      "id": "lw-banner-listed",
+      "docId": "LW-6",
+      "title": "Banner after listing: 3 of 4, commit next",
+      "part": "launch",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 3,
+      "route": "/panel/v3/new/growth/demo/home?fl=open",
+      "selector": "[data-fl-banner]",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
+      "id": "lw-sidebar",
+      "docId": "LW-6",
+      "title": "Factory Launch in the sidebar",
+      "part": "launch",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 1,
+      "route": "/panel/v3/new/growth/demo/home",
+      "selector": "nav [data-c2m-id=\"LW-6\"]",
+      "prep": [
+        "clean"
+      ]
+    },
+    {
+      "id": "lw-notice",
+      "docId": "LW-6",
+      "title": "Pinned Factory Launch notice",
+      "part": "launch",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 1,
+      "route": "/panel/v3/new/growth/demo/notices",
+      "selector": "[data-fl-notice]"
     },
     {
       "id": "lw-order-book",
@@ -735,7 +795,7 @@
       "id": "home",
       "title": "Home",
       "match": "^/panel/v3/new/growth/demo/home(\\?|$)",
-      "today": "A 3-step strip: upload catalogs (Single or Bulk) → catalogs go live → get your first order. Right rail: account setup and videos.",
+      "today": "A 3-step strip: upload catalogs (Single or Bulk) → catalogs go live → get your first order (step 3 has no content). Right rail: account setup and videos.",
       "nearest": "lb-entry"
     },
     {
@@ -743,7 +803,7 @@
       "title": "Notices",
       "match": "^/panel/v3/new/growth/demo/notices(\\?|$)",
       "today": "Sale creatives and generic tips (“keep enough stock”, Sunday working), plus a leave-request form.",
-      "nearest": "lw-home-card"
+      "nearest": "lw-notice"
     },
     {
       "id": "orders",
@@ -805,31 +865,16 @@
       "id": "outreach",
       "title": "Outreach message",
       "match": "^/outreach(\\?|$)",
-      "today": "This screen doesn’t exist on Meesho today. Offline makers get no message about demand for what they make.",
+      "today": "This screen doesn’t exist on Meesho today. Offline makers get no invitation to sell on Meesho.",
       "onlyOurs": true,
       "nearest": "fo-outreach"
-    },
-    {
-      "id": "signup-outreach",
-      "title": "Sign-up · from outreach",
-      "match": "^/signup\\?(.*&)?ref=outreach(&|$)",
-      "today": "Mobile + OTP sign-up; the side panel shows generic stats (suppliers, categories) and what you need to sell.",
-      "nearest": "fo-teaser"
     },
     {
       "id": "signup",
       "title": "Sign-up",
       "match": "^/signup(\\?|$)",
-      "today": "Mobile + OTP sign-up; the side panel shows generic stats (suppliers, categories) and what you need to sell.",
-      "nearest": "fo-teaser"
-    },
-    {
-      "id": "cost-check",
-      "title": "5-minute cost check",
-      "match": "^/cost-check(\\?|$)",
-      "today": "This screen doesn’t exist on Meesho today. A maker sees no fees or take-home until after listing.",
-      "onlyOurs": true,
-      "nearest": "fo-cost-check"
+      "today": "Mobile + OTP sign-up; the side panel shows generic stats (suppliers, categories) and what you need to sell. Ours is the same: the demand teaser now comes after onboarding.",
+      "nearest": "fo-finish-teaser"
     },
     {
       "id": "business-details",
@@ -859,6 +904,14 @@
       "today": "Store name, email, a self-declared business type and a WhatsApp opt-in.",
       "nearest": "fo-checks-maker",
       "changed": "The business-type question is no longer on this step: it moved to step 1, Business Details (FO-6), where the checks use it. Switch to “Today on Meesho” to see it here."
+    },
+    {
+      "id": "onboarding-finish",
+      "title": "After onboarding · What do you make?",
+      "match": "^/onboarding/done(\\?|$)",
+      "today": "This screen doesn’t exist on Meesho today. After Supplier Details Meesho opens the dashboard; it never asks what you make, shows demand or take-home.",
+      "onlyOurs": true,
+      "nearest": "fo-finish-pick"
     }
   ]
 }
