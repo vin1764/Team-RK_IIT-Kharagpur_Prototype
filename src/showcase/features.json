@@ -109,11 +109,11 @@
     },
     {
       "docId": "LB-6",
-      "title": "Take-home and Qualifies chip",
+      "title": "Take-home and Factory Launch status",
       "tag": "EXTENDED",
       "part": "listing",
-      "what": "Price screen: making cost and margin in → every fee, break-even, list price, take-home and a Qualifies / Doesn’t qualify chip. Fulfilment is switchable here for this product only: [Self-ship] [Pack Point] (Pack Point only in a live cluster), recalculating break-even, list price, take-home and Qualifies live, with “+₹24 per order” and the rate-card drawer; the Packer detail follows the choice.",
-      "why": "Today the maker types a price with no fees or take-home shown. Now they see what they keep, while the launch price cap stays hidden.",
+      "what": "Price screen: making cost and margin in → every fee, break-even, list price and take-home, updated live. Under the result, a status banner: green “Qualifies for Factory Launch Week at this price”, yellow “Lists normally on Meesho · not eligible for Factory Launch at this price” (never by how much), or red “You’d lose ₹… per order” below break-even. Any price can go live. The bot’s own price shows its launch status at once; a price the maker types shows it only after “Check price”, three checks a day per product, so the cap can’t be found by trying prices. Fulfilment is switchable here for this product only: [Self-ship] [Pack Point] (Pack Point only in a live cluster), recalculating break-even, list price and take-home, with “+₹24 per order” and the rate-card drawer; the Packer detail follows the choice.",
+      "why": "Today the maker types a price with no fees or take-home shown, and Meesho accepts any price. Ours accepts any price too: it adds what they keep, a warning below break-even, and whether the price qualifies for Factory Launch, while the launch price cap stays hidden.",
       "behind": "price"
     },
     {
@@ -121,8 +121,8 @@
       "title": "Go-live checklist",
       "tag": "EXTENDED",
       "part": "listing",
-      "what": "Images, details, price in band and lot are ticked before Go live, with fees locked at dispatch.",
-      "why": "Today Submit Catalog sends the listing straight to QC; the checklist catches problems first, and the payout matches the quote.",
+      "what": "Images, details, bot details reviewed, price set and lot are ticked before Go live, with fees locked at dispatch. A separate line says “Factory Launch: Qualifies” or “Not eligible at this price”; it never blocks Go live. Listed above the cap, the listing sells as normal and Home and the order book say “Not eligible at this price · lower your price to join” → Price position.",
+      "why": "Today Submit Catalog sends the listing straight to QC; the checklist catches missing details first, and the payout matches the quote. Like today, the price never stops a listing: it only decides launch eligibility.",
       "behind": "goLive"
     },
     {
@@ -444,7 +444,7 @@
     {
       "id": "lb-price",
       "docId": "LB-6",
-      "title": "Price: take-home and Qualifies",
+      "title": "Price: take-home and launch status",
       "part": "listing",
       "tag": "EXTENDED",
       "persona": "jasmeet",
@@ -694,14 +694,14 @@
       "id": "catalog-full-form-bot",
       "title": "Add Single Catalog · full form, pre-filled",
       "match": "^/panel/v3/new/cataloging/demo/catalogs/single/add-product-details\\?(.*&)?view=form(&|$)",
-      "today": "Every field typed by hand; the price table asks for Meesho Price, WDRP, MRP and Inventory, with no fees or take-home shown.",
+      "today": "Every field typed by hand; the price table asks for Meesho Price, WDRP, MRP and Inventory and accepts any price, with no fees or take-home shown.",
       "nearest": "lb-price"
     },
     {
       "id": "bot-price",
       "title": "Create from photos · Price",
       "match": "^/panel/v3/new/cataloging/demo/catalogs/single/add-product-details\\?(.*&)?step=price(&|$)",
-      "today": "This screen doesn’t exist on Meesho today. Its nearest match is the price table: you type a price; no fees or take-home shown.",
+      "today": "This screen doesn’t exist on Meesho today. Its nearest match is the price table: you type any price; no fees or take-home shown.",
       "onlyOurs": true,
       "nearest": "lb-price"
     },
@@ -725,7 +725,7 @@
       "id": "add-single-details",
       "title": "Add Single Catalog · Product details",
       "match": "^/panel/v3/new/cataloging/demo/catalogs/single/add-product-details(\\?|$)",
-      "today": "Every field typed by hand, then a price table: you type a price; no fees or take-home shown.",
+      "today": "Every field typed by hand, then a price table: you type any price; no fees or take-home shown.",
       "nearest": "lb-price"
     },
     {

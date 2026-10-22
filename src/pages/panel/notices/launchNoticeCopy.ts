@@ -12,6 +12,7 @@ type Copy = {
   live: (today: number) => string;
   ended: string;
   slotRemoved: string;
+  priceNotEligible: string;
   closed: (date: string) => string;
   noBook: (type: string) => string;
   check: string;
@@ -34,6 +35,7 @@ const en: Copy = {
   live: (today) => `Live now · ${today} ${today === 1 ? 'order' : 'orders'} today`,
   ended: 'Launch week ended · orders continue',
   slotRemoved: 'Launch slot removed — price no longer qualifies',
+  priceNotEligible: 'Not eligible at this price · lower your price to join',
   closed: (date) => `Commitments closed on ${date}`,
   noBook: (type) => `No open order book for ${plural(type)} yet`,
   check: 'Check my eligibility',
@@ -54,6 +56,7 @@ const hi: Copy = {
   live: (today) => `अभी लाइव · आज ${today} ऑर्डर`,
   ended: 'लॉन्च वीक ख़त्म · ऑर्डर जारी हैं',
   slotRemoved: 'लॉन्च स्लॉट हटाया गया — कीमत अब योग्य नहीं है',
+  priceNotEligible: 'इस कीमत पर योग्य नहीं · जुड़ने के लिए कीमत कम करें',
   closed: (date) => `${date} को कमिटमेंट बंद हो गए`,
   noBook: (type) => `${plural(type)} के लिए अभी कोई ऑर्डर बुक खुली नहीं है`,
   check: 'मेरी योग्यता देखें',

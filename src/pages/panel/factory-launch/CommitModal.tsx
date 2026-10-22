@@ -9,6 +9,7 @@ import { checkListingPrice, dayLabel } from '../../../engine/ui';
 import { useDemo } from '../../../store/demo';
 import { useLaunch } from '../../../store/timeline';
 import { BOT_QUERY } from '../catalog/bot';
+import { usePriceHold } from '../manage-pricing/priceHold';
 import { FL } from './copy';
 import { LAUNCH } from './launch';
 import type { LaunchView, OrderBookRow } from './useLaunchView';
@@ -26,7 +27,10 @@ export function CommitModal({ open, onClose, view, row }: { open: boolean; onClo
   const validUnits = units.trim() !== '' && Number.isInteger(n) && n > 0;
   const listing = view.listing;
   // Re-checked now, against the latest data (LW-5).
-  const status = listing ? checkListingPrice(listing.typeId, listing.price, listing.breakEven) : null;
+  // The listing's price now: an edit on Price position (lowering an above-cap price to join) counts.
+  const hold = usePriceHold();
+  const price = listing ? (hold && hold.listingId === listing.id ? hold.price : listing.price) : 0;
+  const status = listing ? checkListingPrice(listing.typeId, price, listing.breakEven) : null;
   const qualifies = status === 'qualifies';
 
   if (!listing) {
@@ -58,7 +62,7 @@ export function CommitModal({ open, onClose, view, row }: { open: boolean; onClo
 
   const onCommit = () => {
     if (!validUnits || !qualifies) return;
-    commit(persona, { typeId: listing.typeId, units: n, day, price: listing.price });
+    commit(persona, { typeId: listing.typeId, units: n, day, price });
     onClose();
   };
 
@@ -89,7 +93,7 @@ export function CommitModal({ open, onClose, view, row }: { open: boolean; onClo
               <p className="m-0 p-0 text-lg leading-5 font-body text-primary-text truncate">{listing.name}</p>
               <p className={SUB}>
                 {listing.id ? `${FL.catalogId(listing.id)} · ` : ''}
-                {FL.yourPrice(listing.price)}
+                {FL.yourPrice(price)}
               </p>
             </div>
             <Pill tone="success">Live</Pill>

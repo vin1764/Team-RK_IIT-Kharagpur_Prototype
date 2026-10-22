@@ -4,7 +4,7 @@ import { MissingPlanValue, type FulfilmentMode, type ProductTypeId } from './typ
 
 /**
  * Per-delivered-order fees at the list price. Self-ship has `packaging`; Pack Point drops it and
- * adds `packPointFee` (the node packs; GST on its service is inside the fee). `gst` is the OUTPUT
+ * adds `packPointFee` (the node packs; the partner's margin is inside the fee; GST on the service isn't modelled (open question)). `gst` is the OUTPUT
  * GST inside the list price (Q18: 5% of the selling price, included in it → price × 5/105).
  */
 export interface Fees {

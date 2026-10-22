@@ -26,6 +26,7 @@ export {
   type MakerRecords,
 } from './eligibility';
 export { packPointFee } from './packPoint';
+export { packPointsNear, greatCircleKm, type NearNode, type GeoPoint } from './packPointNear';
 export { clusterForPincode, lotInbound, sizeSplit, sizeSplitFor, type LotInbound, type LotSeed } from './lot';
 export { dayToDate, dateToDay, dayLabel, formatDate } from './calendar';
 export type { PricePosition, PriceStatus, ProductTypeId };

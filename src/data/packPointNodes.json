@@ -7,7 +7,11 @@
       "makersPooled": 40,
       "pincodePrefixes": [
         "282"
-      ]
+      ],
+      "location": {
+        "lat": 27.1767,
+        "lon": 78.0081
+      }
     },
     {
       "city": "Rajkot",
@@ -15,7 +19,11 @@
       "makersPooled": 40,
       "pincodePrefixes": [
         "360"
-      ]
+      ],
+      "location": {
+        "lat": 22.3039,
+        "lon": 70.8022
+      }
     },
     {
       "city": "Moradabad",
@@ -24,9 +32,14 @@
       "pincodePrefixes": [
         "244"
       ],
-      "makersSignedUp": 32
+      "makersSignedUp": 32,
+      "location": {
+        "lat": 28.8386,
+        "lon": 78.7733
+      }
     }
   ],
   "_pincodeSource": "team (Phase 6 review): the Pack Point card shows to Factory-verified makers whose pickup pincode is in a cluster. Clusters are matched by the city's 3-digit postal prefix (public India Post district prefixes), not by any real address.",
-  "_signedUpSource": "team (Pickup Address drawer spec): Moradabad 'Opening soon near you (32/40 makers)'"
+  "_signedUpSource": "team (Pickup Address drawer spec): Moradabad 'Opening soon near you (32/40 makers)'",
+  "_locationSource": "public city coordinates (city centre, as published for each city); not node addresses. Distances in the seller UI are great-circle distances between city centres, rounded to the nearest 10 km; the maker's own postal district shows 'in your district'. Replace with real node addresses when the team has them."
 }

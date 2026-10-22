@@ -89,12 +89,18 @@ export function LaunchBanner() {
   const red = state === 'slotRemoved';
   if (state === 'choose' || state === 'join') {
     const next = model.next;
-    const nextLabel = next?.key === 'product' ? B.item.product : next?.key === 'price' ? B.createFromPhotos : next?.key === 'stock' ? B.commitStock : null;
+    const nextLabel =
+      next?.key === 'product' ? B.item.product : next?.key === 'price' ? (next.action === 'pricePosition' ? B.lowerPrice : B.createFromPhotos) : next?.key === 'stock' ? B.commitStock : null;
     // Two short lines, so the pitch line keeps its room: "3 of 4 done · Next: Commit stock" / "Commitments close 31 Oct".
     right =
       state === 'choose'
         ? [B.progress(model.done, model.total), nextLabel && B.next(nextLabel)]
         : [[B.progress(model.done, model.total), nextLabel && B.next(nextLabel)].filter(Boolean).join(' · '), B.closeBy(close)];
+    // Live above the cap: the listing sells as normal; the launch asks for a lower price (Price position, weekly rule).
+    if (model.priceNotEligible) {
+      line = B.notEligiblePrice;
+      button = { label: FL.toPricePosition, onClick: () => navigate(paths.pricePosition) };
+    }
   } else if (state === 'in') {
     heading = B.in(LAUNCH.name, shortDay(LAUNCH.stockAtNodeDay), shortDay(LAUNCH.liveFromDay));
     line = `${title} · ${FL.committedPill(v.commit!.units)}`;
@@ -137,6 +143,7 @@ export function LaunchBanner() {
       data-c2m={tag}
       data-c2m-id={tag}
       data-fl-banner={state}
+      data-fl-price={model.priceNotEligible ? 'notEligible' : undefined}
       data-expanded={expanded}
     >
       <div className="flex items-center gap-4 py-3 pl-3 pr-2 max-[767px]:flex-wrap">

@@ -8,7 +8,9 @@ import type { LaunchPhase } from './launch';
 /**
  *   choose      eligible, hasn't told us the product yet → category-level line, "Tell us what you make"
  *   noBook      told us a product with no open order book (Samar's sneakers) → slim note while commitments are open
- *   join        product has an order book, not committed, commitments open → checklist (2 or 3 of 4)
+ *   join        product has an order book, not committed, commitments open → checklist (2 or 3 of 4); when the
+ *               listing is live at a price that doesn't qualify (priceNotEligible) → "Not eligible at this price ·
+ *               lower your price to join" → Price position (the listing itself stays live: the price never blocks)
  *   closed      commitments closed and never committed → slim, dismissible
  *   in          committed, before the live week → "You're in … · stock ready by … · live …"
  *   live        committed, live week → "Live now · n orders today"
@@ -54,6 +56,8 @@ export interface BannerModel {
   dismissible: boolean;
   /** a full banner with the checklist behind "Check my eligibility" */
   hasChecklist: boolean;
+  /** listed, not committed, and the listing's price (edited or not) doesn't qualify: no slot until it's lowered */
+  priceNotEligible: boolean;
 }
 
 /** The checklist: "Tell us what you make" first while the product is unknown, then the four launch checks. */
@@ -76,7 +80,8 @@ export function bannerModel(i: BannerInput): BannerModel | null {
   if (!i.c2m || i.eligibility.status !== 'eligible') return null;
   const items = checklist(i);
   const done = items.filter((x) => x.done).length;
-  const base = { items, done, total: items.length, next: items.find((x) => !x.done) ?? null };
+  const priceNotEligible = i.listed && i.priceStatus !== null && i.priceStatus !== 'qualifies' && !i.committed;
+  const base = { items, done, total: items.length, next: items.find((x) => !x.done) ?? null, priceNotEligible };
   const open = i.phase === 'open';
   const make = (state: BannerState, hasChecklist: boolean): BannerModel => ({ ...base, state, hasChecklist, dismissible: i.committed || !open });
 

@@ -37,6 +37,12 @@ export function LaunchNotice() {
       button = { label: c.check, to: `${paths.home}?fl=open` };
       break;
     case 'join':
+      if (model.priceNotEligible) {
+        // Listed above the cap: the listing is live; the launch needs a lower price (Price position).
+        status = c.priceNotEligible;
+        button = { label: c.viewPricePosition, to: paths.pricePosition };
+        break;
+      }
       status = row ? (row.slots.crowded ? c.slotsFull(type) : c.slots(row.slots.left, type)) : null;
       // Only the commit is left → straight to the order book; otherwise the Home checklist.
       button = { label: c.check, to: model.next?.key === 'stock' ? paths.factoryLaunch : `${paths.home}?fl=open` };

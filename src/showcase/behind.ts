@@ -37,6 +37,7 @@ import {
   type ProductTypeId,
 } from '../engine/ui';
 import { BOT_FILLED_COUNT, MAKER_COUNT, MANDATORY_IDS } from '../pages/panel/catalog/bot';
+import { MAX_PRICE_CHECKS } from '../pages/panel/catalog/launchCheck';
 import type { Persona } from '../store/demo';
 import type { BehindCtx } from './types';
 
@@ -237,7 +238,7 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
       `Costs: ${costLine(stack)}`,
       breakEvenLine(stack),
       `${takeHomeLine(prod, stack)} → ${listLine(stack).replace('List price: ', 'list ')}`,
-      `${rs(stack.listPrice)} is above break-even ${rs(stack.breakEven)} and within the launch price cap → ${STATUS_WORD[checkListingPrice(prod.type, stack.listPrice, stack.breakEven)]}`,
+      `${rs(stack.listPrice)} is above break-even ${rs(stack.breakEven)} and within the launch price cap → ${STATUS_WORD[checkListingPrice(prod.type, stack.listPrice, stack.breakEven)]} · any price can go live; a typed price shows its launch status after “Check price” (${MAX_PRICE_CHECKS} a day per product)`,
     ];
   },
 
@@ -249,7 +250,8 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     const lot = suggestedLot(prod.type, prod.makingCost);
     const ok = checkListingPrice(prod.type, stack.listPrice, stack.breakEven) === 'qualifies';
     return [
-      `Images ✓ · Details ✓ · Price in band ${ok ? '✓' : '✗'} (${rs(stack.listPrice)}) · Lot ${fmt(lot.units)} ✓ → Go live`,
+      `Images ✓ · Details ✓ · Price set ✓ (${rs(stack.listPrice)}) · Lot ${fmt(lot.units)} ✓ → Go live`,
+      `Factory Launch: ${ok ? 'Qualifies' : 'Not eligible at this price'} (a separate line: it never blocks Go live)`,
       `Fees locked at dispatch: take-home stays ${rs(stack.takeHome)} a unit at ${rs(stack.listPrice)}`,
     ];
   },

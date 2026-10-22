@@ -150,7 +150,7 @@ The day drives what each page shows (empty states before go-live, launch view du
 | --- | --- | --- |
 | `costStack(type, makingCost, marginPct, mode)` | fees + break-even (rounds up) + list price (rounds to the nearest rupee; team rule) + take-home | packaging ₹6, shipping + fixed ₹32, returns ₹8, GST ₹7 → break-even ₹133; margin 17.5% of making cost → take-home ₹14 → list ₹147 |
 | `slots(type)` | open gap ÷ expected orders per listing | 300–450 ÷ 60–90 a week = 5 |
-| `priceCheck(price, breakEven, B)` | `qualifies` / `aboveCap` / `belowCost`; B never returned to UI | ₹147 qualifies; ₹165 doesn't |
+| `priceCheck(price, breakEven, B)` | `qualifies` / `aboveCap` / `belowCost`: Factory Launch eligibility only, never a listing block (any positive price can go live; team). B never returned to UI; a typed price shows its status after "Check price", 3 a day per product | ₹147 qualifies; ₹165 lists normally but isn't eligible |
 | `pricePosition(price, comparables)` | `low` / `mid` / `high` third | ₹147 → low; ₹165 → mid |
 | `demandForType(type)` | gap range, price band, confidence, committed | 300–450/wk, ₹150–170, High, 600 committed |
 | `likelyShare(type)` | share + orders/day range | ~20% → 9–13/day |

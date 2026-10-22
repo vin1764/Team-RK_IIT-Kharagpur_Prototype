@@ -39,15 +39,15 @@ export const C2M = {
   packPointTitle: 'Send one lot a week to a Pack Point', // team (drawer spec)
   packPointBody: 'A partner near you stores, packs, ships and takes returns', // team (drawer spec)
   ppAvailable: 'Available near you', // team (drawer spec)
-  ppOpeningSoon: (signedUp: number, opensAt: number) => `Opening soon near you (${signedUp}/${opensAt} makers)`, // team (drawer spec)
+  ppOpeningSoon: 'Opening soon near you', // team (seller view: no maker counts)
   ppJoinWaitlist: 'Join the waitlist', // prompt (kept from the earlier opening-cluster card)
   ppSeeDetails: 'See details & rate cards', // team (drawer spec)
+  ppUsing: (city: string) => `Pack Point · ${city}`, // ours (the one he picked in the drawer)
   changeLater: 'Can be changed per product later', // doc
-  // FO-8 / PP-10 Pack Point drawer (team drawer spec; numbers come from the seed JSON / engine)
+  // FO-8 / PP-10 Pack Point drawer (team drawer spec; numbers come from the seed JSON / engine).
+  // Seller view only: the cluster economics (fee by size, opening rule, fee build-up, sign-ups) are Meesho's, not shown.
   ppDrawerTitle: 'Pack Point · details & rate cards',
   ppClose: 'Close',
-  ppChoose: 'Choose Pack Point',
-  ppOpensAt: (makers: number) => `Opens at ${makers} makers`,
   ppHowHeading: 'How it works',
   ppHowSteps: (hours: number) => [
     'Send one lot a week to the Pack Point',
@@ -56,11 +56,20 @@ export const C2M = {
     `Orders ship within ${hours} h`,
     'Returns come back to the Pack Point, weighed and graded',
   ],
-  ppNearHeading: 'Pack Point near you',
-  ppYourPincode: 'Your pincode',
-  ppLive: 'Live',
-  ppNodeOpeningSoon: (signedUp: number, opensAt: number) => `Opening soon · ${signedUp}/${opensAt} makers`,
-  ppNoneNear: (pincode: string) => `No Pack Point near ${pincode} yet`,
+  ppNearHeading: 'Pack Points near you', // team (seller view spec)
+  ppNearNote: 'Distances are approximate, from your pickup pincode.', // ours (city-centre approximations)
+  ppInYourDistrict: 'in your district', // team (seller view spec)
+  ppKm: (km: number) => `${km.toLocaleString('en-IN')} km`,
+  ppOpen: 'Open', // team (seller view spec)
+  ppOpeningSoonPill: 'Opening soon', // team (seller view spec)
+  ppFeeLine: (fee: number) => `₹${fee.toLocaleString('en-IN')} per delivered order`, // team (seller view spec; the 18% inside the fee is the partner's margin, not GST)
+  ppServicesLine: 'Stores · packs · ships · takes returns', // team (seller view spec)
+  ppUse: 'Use this Pack Point', // team (seller view spec)
+  ppInUse: 'You’re on this Pack Point', // ours
+  ppSwitchBack: 'Switch back to self-ship', // team
+  ppJoinWaitlistBtn: 'Join waitlist', // team (seller view spec)
+  ppOnWaitlist: 'You’re on the waitlist · we’ll notify you', // team
+  ppNoneNear: 'No Pack Point near you yet. You’ll be notified when one opens.', // team (seller view spec)
   ppProvidersHeading: 'Providers serving your pincode',
   ppProvider: 'Provider',
   ppServices: 'Services',
@@ -68,15 +77,7 @@ export const C2M = {
   ppPerOrder: (rate: number) => `₹${rate} per order`,
   ppOnRequest: 'On request',
   ppNoProviders: 'No providers serve this pincode yet',
-  ppFeeHeading: 'Cluster fee by size',
-  ppFeeMakers: 'Makers in the cluster',
-  ppFeePerOrder: 'Fee per delivered order',
-  ppFeeNote: (floor: number) => `GST included. A Pack Point opens only at ${floor} makers.`,
-  ppMakers: (n: number) => `${n} makers`,
-  ppYourCluster: 'Your cluster',
-  ppWhenItOpens: 'When it opens',
-  ppChargesHeading: 'Other charges',
-  ppStorage: (freeDays: number, perUnitPerDay: number) => `Storage: free for the first ${freeDays} days, then ₹${perUnitPerDay} per unit per day`,
+  ppStorage: (freeDays: number, perUnitPerDay: number) => `Storage free for ${freeDays} days, then ₹${perUnitPerDay} per unit per day`, // team (seller view spec)
   ppNothingAtSignup: 'Nothing to pay at sign-up',
   ppCompareHeading: 'Self-ship or Pack Point',
   ppSelfShip: 'Self-ship',

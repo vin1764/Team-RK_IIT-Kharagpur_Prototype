@@ -51,6 +51,8 @@ export interface OnboardingState {
   /** The pickup address the maker saved, when it differs from the GST record (null = the persona's address). */
   pickupAddress: PersonaRecord['address'] | null;
   fulfilment: Fulfilment | null;
+  /** The Pack Point he picked in the drawer ("Use this Pack Point"), by city; null = the one in his pickup district. */
+  packPointNode: string | null;
   // Step 3 · Bank Details
   bankVerified: boolean;
   // Step 4 · Supplier Details
@@ -73,6 +75,7 @@ const EMPTY = {
   pickupSaved: false,
   pickupAddress: null,
   fulfilment: null,
+  packPointNode: null,
   bankVerified: false,
   supplierSubmitted: false,
 } satisfies Omit<OnboardingState, 'set' | 'reset'>;

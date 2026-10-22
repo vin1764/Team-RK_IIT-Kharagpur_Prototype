@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../../app/paths';
 import { Banner, Button, InfoTip, Pill, cx } from '../../../components/ui';
-import { dayLabel } from '../../../engine/ui';
+import { dayLabel, type PriceStatus } from '../../../engine/ui';
 import { EventsEmpty, NewTag, StatusTabs, eventsEmptyCopy } from '../promotions/PromoParts';
 import { STATUSES } from '../promotions/tabs';
 import { CommitModal } from './CommitModal';
@@ -52,7 +52,11 @@ function EventHeader({ view }: { view: LaunchView }) {
   );
 }
 
-function ActionCell({ view, row, onCommit, slotRemoved }: { view: LaunchView; row: OrderBookRow; onCommit: () => void; slotRemoved: boolean }) {
+/** The maker's own listing is live at a price that doesn't qualify (and he holds no slot): he can't commit until he
+ *  lowers it on Price position. The listing itself sells as normal. Status only, never by how much. */
+const priceNotEligible = (view: LaunchView, priceStatus: PriceStatus | null) => !!view.listing && !view.commit && priceStatus !== null && priceStatus !== 'qualifies';
+
+function ActionCell({ view, row, onCommit, slotRemoved, priceStatus }: { view: LaunchView; row: OrderBookRow; onCommit: () => void; slotRemoved: boolean; priceStatus: PriceStatus | null }) {
   const navigate = useNavigate();
   if (view.eligibility.status === 'notEligible') return <Cell value={<span className="text-error-text">{FL.notEligible}</span>} />;
   if (!view.hasBook || view.ownType !== row.typeId) return <Cell value="—" />;
@@ -83,6 +87,19 @@ function ActionCell({ view, row, onCommit, slotRemoved }: { view: LaunchView; ro
       </div>
     );
   }
+  if (view.phase === 'open' && priceNotEligible(view, priceStatus)) {
+    return (
+      <div className="flex flex-col items-start gap-1.5" data-c2m="PI-3" data-c2m-id="PI-3" data-price-not-eligible>
+        <Button size="sm" disabled>
+          {FL.commit}
+        </Button>
+        <p className={cx(T.bodySm, 'text-neutral-secondary')}>{FL.notEligiblePrice}</p>
+        <button type="button" className="bg-transparent border-0 p-0 cursor-pointer text-body-small leading-4 font-medium text-brand-primary" onClick={() => navigate(paths.pricePosition)}>
+          {FL.toPricePosition}
+        </button>
+      </div>
+    );
+  }
   if (view.phase === 'open') {
     return (
       <Button size="sm" onClick={onCommit} data-commit-open>
@@ -100,7 +117,7 @@ function ActionCell({ view, row, onCommit, slotRemoved }: { view: LaunchView; ro
   );
 }
 
-function OrderBook({ view, onCommit, slotRemoved }: { view: LaunchView; onCommit: (row: OrderBookRow) => void; slotRemoved: boolean }) {
+function OrderBook({ view, onCommit, slotRemoved, priceStatus }: { view: LaunchView; onCommit: (row: OrderBookRow) => void; slotRemoved: boolean; priceStatus: PriceStatus | null }) {
   const holdsSlot = (row: OrderBookRow) => view.commit?.typeId === row.typeId;
   const lostSlot = (row: OrderBookRow) => holdsSlot(row) && slotRemoved;
   const cols: Col[] = [
@@ -163,7 +180,7 @@ function OrderBook({ view, onCommit, slotRemoved }: { view: LaunchView; onCommit
     committed: <Cell value={FL.units(r.committedUnits)} />,
     ppFee: <Cell value={r.packPointFee !== undefined ? FL.ppFeeValue(r.packPointFee) : '—'} sub={view.packPointMaker && view.hasBook ? FL.ppFeeYours : FL.ppFeeInfo} />,
     priceCap: <Cell value={FL.priceCapValue} />,
-    action: <ActionCell view={view} row={r} onCommit={() => onCommit(r)} slotRemoved={slotRemoved} />,
+    action: <ActionCell view={view} row={r} onCommit={() => onCommit(r)} slotRemoved={slotRemoved} priceStatus={priceStatus} />,
   }));
   return (
     <div className="px-4 pb-4" data-c2m="LW-3" data-c2m-id="LW-3">
@@ -205,7 +222,7 @@ function NotEligible({ view }: { view: LaunchView }) {
   );
 }
 
-function StateBanner({ view, slotRemoved }: { view: LaunchView; slotRemoved: boolean }) {
+function StateBanner({ view, slotRemoved, priceStatus }: { view: LaunchView; slotRemoved: boolean; priceStatus: PriceStatus | null }) {
   const navigate = useNavigate();
   const stock = dayLabel(LAUNCH.stockAtNodeDay);
   const viewLive = (
@@ -243,6 +260,23 @@ function StateBanner({ view, slotRemoved }: { view: LaunchView; slotRemoved: boo
       </div>
     );
   }
+  if (view.phase === 'open' && priceNotEligible(view, priceStatus)) {
+    // Live above the cap: the listing sells as normal; no slot until the price is lowered (no number shown).
+    return (
+      <div className="px-4 pb-4" data-c2m="PI-3" data-c2m-id="PI-3" data-launch-banner="priceNotEligible">
+        <Banner
+          tone="info"
+          action={
+            <Button size="sm" variant="outline" onClick={() => navigate(paths.pricePosition)}>
+              {FL.toPricePosition}
+            </Button>
+          }
+        >
+          {FL.notEligiblePriceBanner}
+        </Banner>
+      </div>
+    );
+  }
   let banner = null;
   if (view.commit && live) banner = <Banner tone="success" action={viewLive}>{FL.liveBanner(live.n, live.of)}</Banner>;
   else if (view.commit && view.phase === 'ended') banner = <Banner tone="info" action={viewLive}>{FL.endedBanner}</Banner>;
@@ -259,7 +293,10 @@ function StateBanner({ view, slotRemoved }: { view: LaunchView; slotRemoved: boo
 
 export function FactoryLaunchPanel() {
   const view = useLaunchView();
-  const slotRemoved = usePriceHold()?.slotRemoved ?? false;
+  const hold = usePriceHold();
+  const slotRemoved = hold?.slotRemoved ?? false;
+  // The listing's price now (an edit on Price position counts), checked by the engine: the commit gate.
+  const priceStatus = hold?.status ?? view.priceStatus;
   const [params, setParams] = useSearchParams();
   const [commitRow, setCommitRow] = useState<OrderBookRow | null>(null);
   const persona = useDemo((s) => s.persona);
@@ -299,9 +336,9 @@ export function FactoryLaunchPanel() {
         <div className="p-4">
           <Section className="overflow-hidden">
             <EventHeader view={view} />
-            <StateBanner view={view} slotRemoved={slotRemoved} />
+            <StateBanner view={view} slotRemoved={slotRemoved} priceStatus={priceStatus} />
             {view.eligibility.status === 'notEligible' && <NotEligible view={view} />}
-            <OrderBook view={view} onCommit={setCommitRow} slotRemoved={slotRemoved} />
+            <OrderBook view={view} onCommit={setCommitRow} slotRemoved={slotRemoved} priceStatus={priceStatus} />
           </Section>
         </div>
       ) : (

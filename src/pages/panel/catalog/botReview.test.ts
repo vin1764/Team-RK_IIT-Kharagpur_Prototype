@@ -157,10 +157,10 @@ describe('Price: fulfilment per product', () => {
     expect([q.breakEven, q.listPrice, q.takeHome, q.status]).toEqual([133, 147, 14, 'qualifies']);
     expect(q.stack.fees.packaging).toBe(6);
   });
-  it('Jasmeet Pack Point: break-even ₹158 · list ₹172 · take-home ₹14 · Doesn’t qualify', () => {
+  it('Jasmeet Pack Point: break-even ₹158 · list ₹172 · take-home ₹14 · Not eligible (the bot’s price: shown free)', () => {
     const q = shipQuote(BOTTLE, 80, 17.5, 'packPoint', 40);
     expect([q.breakEven, q.listPrice, q.takeHome, q.status]).toEqual([158, 172, 14, 'aboveCap']);
-    expect(tEn(`status.${q.status}`)).toBe("Doesn't qualify");
+    expect(tEn(`status.${q.status}`)).toBe('Not eligible');
     expect(q.stack.fees.packPointFee).toBe(30);
     // his margin at the bot's list price; any other price → the engine's take-home there
     expect(takeHomeShown(172, q.stack)).toBe(14);

@@ -133,13 +133,15 @@ export const FL = {
       price: 'Product listed at a qualifying price', // prompt
       priceListed: (type: string) => `Your ${type} qualifies`, // ours
       priceNotListed: (type: string) => `List your ${type}; the price check shows Qualifies or not`, // ours
-      priceFails: 'Your price doesn’t qualify', // ours (prompt wording)
+      priceFails: 'Not eligible at this price · lower your price to join', // team spec (price never blocks listing)
       stock: 'Stock committed', // prompt
       stockDone: (units: number, stock: string) => `${s(units, 'unit', 'units')} · ready by ${stock}`, // ours
       stockOpen: (date: string) => `Commit units from the order book by ${date}`, // ours
       stockClosed: (date: string) => `Commitments closed on ${date}`, // prompt
     },
     createFromPhotos: 'Create from photos', // existing LB-3 button
+    notEligiblePrice: 'Not eligible at this price · lower your price to join', // team spec (price never blocks listing)
+    lowerPrice: 'Lower your price', // ours
     tellUs: 'Tell us', // ours
     product: 'product', // ours ("List your product…" before the maker has told us what they make)
     noBook: (type: string) => `No open order book for ${type} yet · we'll tell you when one opens`, // ours (prompt LW-4 "No open order book for your product type yet")
@@ -168,6 +170,9 @@ export const FL = {
   slotRemovedPill: 'Slot removed', // doc
   slotRemovedSub: 'Price no longer qualifies', // doc
   slotRemovedBanner: 'Your price no longer qualifies for Factory Launch · launch slot removed. Sales so far stay as they are.', // doc + ours
+  // Listed above the cap (team spec: the price never blocks listing; it only decides launch eligibility). No number shown.
+  notEligiblePrice: 'Not eligible at this price', // team spec
+  notEligiblePriceBanner: 'Your listing is live on Meesho. Not eligible at this price · lower your price to join.', // team spec + ours
   // Quality (LW-8)
   scoreTitle: (type: string) => `Listing score · ${type}`, // prompt
   scoreLine: 'Built from this listing’s own orders and returns', // prompt
