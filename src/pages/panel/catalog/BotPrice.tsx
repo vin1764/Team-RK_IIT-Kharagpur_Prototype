@@ -112,7 +112,7 @@ export function GoLiveBar({
   status: PriceStatus | null;
   inventory: number | null;
   onGoLive: () => void;
-  onShow: (what: 'images' | 'details' | 'price' | 'lot') => void;
+  onShow: (what: 'images' | 'details' | 'review' | 'price' | 'lot') => void;
 }) {
   const t = useT();
   const priceLabel = !checks.price && status && status !== 'qualifies' ? `${t('check.price')} · ${t(`status.${status}`)}` : t('check.price');
@@ -122,6 +122,7 @@ export function GoLiveBar({
       <div className="flex flex-wrap gap-2">
         <Check ok={checks.images} label={t('check.images')} onClick={() => onShow('images')} />
         <Check ok={checks.details} label={t('check.details')} onClick={() => onShow('details')} />
+        <Check ok={checks.review} label={t('check.review')} onClick={() => onShow('review')} />
         <Check ok={checks.price} label={priceLabel} onClick={() => onShow('price')} />
         <Check ok={checks.lot} label={inventory ? t('check.lot', { units: fmt(inventory) }) : t('check.lotEmpty')} onClick={() => onShow('lot')} />
       </div>

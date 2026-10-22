@@ -13,6 +13,8 @@ export interface UploadRow {
   /** Bulk only: number of rows in the file ("--" until QC finishes). */
   rows?: string;
   status: QcStatus;
+  /** C2M (LB-4): "Confirmed by maker · 27 Oct 2026, 14:05" for catalogs put live from photos. */
+  confirmed?: string;
 }
 
 export interface UploadsState {
@@ -57,6 +59,17 @@ export const STATUS_TABS = [
 export type StatusTabId = (typeof STATUS_TABS)[number]['id'];
 
 /** Catalogs put live from "Create from photos" (LB-8), shown as Single Uploads rows. Ids are fake. */
-export function listingRows(listings: { id: string; typeId: string; createdDay: number }[], categoryOf: (typeId: string) => string, dateOf: (day: number) => string): UploadRow[] {
-  return listings.map((l) => ({ category: categoryOf(l.typeId), id: l.id, created: dateOf(l.createdDay), status: 'QC Pass' as const }));
+export function listingRows(
+  listings: { id: string; typeId: string; createdDay: number; reviewedAt?: { day: number; time: string } }[],
+  categoryOf: (typeId: string) => string,
+  dateOf: (day: number) => string,
+  confirmedOf?: (r: { day: number; time: string }) => string,
+): UploadRow[] {
+  return listings.map((l) => ({
+    category: categoryOf(l.typeId),
+    id: l.id,
+    created: dateOf(l.createdDay),
+    status: 'QC Pass' as const,
+    ...(l.reviewedAt && confirmedOf ? { confirmed: confirmedOf(l.reviewedAt) } : {}),
+  }));
 }

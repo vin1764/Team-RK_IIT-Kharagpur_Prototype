@@ -17,7 +17,7 @@ export function applyPhotos(imgs: DraftImage[], type: ProductTypeId, persona: Pe
     d.setValues(pf.values);
     const size = pf.values.size;
     if (size) d.setPrice(size, pf.price);
-    d.setBot({ botFilled: pf.botFilled, sameAsManufacturer: pf.sameAsManufacturer, netQtyConfirmed: false, categoryConfirmed: true, botStep: 'product' });
+    d.setBot({ botFilled: pf.botFilled, sameAsManufacturer: pf.sameAsManufacturer, netQtyConfirmed: false, categoryConfirmed: true, botStep: 'product', botReview: null, fulfilmentOverride: null });
   }
   // The cleaned cover becomes the product's Front Image; the other photos go under "Uploaded Images".
   d.setImages([cleanedFor(cover) ?? cover]);

@@ -20,12 +20,12 @@ export function Checkbox({ checked, onChange, label, className = '' }: { checked
 }
 
 /** (i) icon; with text it shows the panel's dark tooltip below, left-anchored (catalog-price-table.png). */
-export function Info({ text }: { text: string | true }) {
+export function Info({ text, testId }: { text: string | true; testId?: string }) {
   const [open, setOpen] = useState(false);
   const icon = <img src="/brand/msa/merlin/lined/info-grey.svg" alt="info" width="16" height="16" className="block size-4 shrink-0" />;
   if (text === true) return icon;
   return (
-    <span className="relative inline-flex shrink-0" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+    <span className="relative inline-flex shrink-0" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} data-testid={testId}>
       <span className="cursor-pointer">{icon}</span>
       {open && (
         <span className="absolute top-full -left-3 z-tooltip mt-2 w-50 rounded-sm bg-tooltip-bg px-2.5 py-2 text-left font-body text-base leading-[17px] text-brand-foreground-text shadow-[0_4px_20px_0_rgba(0,0,0,0.2)] animate-fade-in">

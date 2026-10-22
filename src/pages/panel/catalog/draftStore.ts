@@ -23,6 +23,13 @@ export interface PriceRow {
 }
 export const EMPTY_PRICE_ROW: PriceRow = { meeshoPrice: '', wdrp: '', mrp: '', inventory: '', sku: '' };
 
+/** Same shape as bot.ts BotReview (kept here so the store doesn't import the bot module). */
+export interface DraftReview {
+  day: number;
+  time: string;
+  values: Record<string, string>;
+}
+
 interface DraftState {
   categoryPath: string[];
   images: DraftImage[];
@@ -46,13 +53,17 @@ interface DraftState {
   sameAsManufacturer: boolean;
   /** Bot mode: the short screen the maker is on (Product → Quantity → Price), kept across reloads. */
   botStep: 'product' | 'quantity' | 'price';
+  /** Bot mode: the maker's "Confirm details" on the bot's 21 (when, and the values he checked); null = not yet. */
+  botReview: DraftReview | null;
+  /** Bot mode: fulfilment picked on the Price screen for THIS product; null = his default from Pickup Address. */
+  fulfilmentOverride: 'selfShip' | 'packPoint' | null;
   setCategoryPath: (p: string[]) => void;
   setImages: (imgs: DraftImage[]) => void;
   setValue: (id: string, v: string) => void;
   setValues: (v: Record<string, string>) => void;
   setPrice: (size: string, row: Partial<PriceRow>) => void;
   setExtraImages: (productId: string, imgs: DraftImage[]) => void;
-  setBot: (patch: Partial<Pick<DraftState, 'botFilled' | 'photos' | 'categoryConfirmed' | 'netQtyConfirmed' | 'retailPacked' | 'sameAsManufacturer' | 'botStep'>>) => void;
+  setBot: (patch: Partial<Pick<DraftState, 'botFilled' | 'photos' | 'categoryConfirmed' | 'netQtyConfirmed' | 'retailPacked' | 'sameAsManufacturer' | 'botStep' | 'botReview' | 'fulfilmentOverride'>>) => void;
   /** The maker edited a bot-filled field: it is no longer marked "Filled by bot". */
   unmarkBot: (id: string) => void;
   reset: () => void;
@@ -71,6 +82,8 @@ const INITIAL = {
   retailPacked: true,
   sameAsManufacturer: false,
   botStep: 'product' as 'product' | 'quantity' | 'price',
+  botReview: null as DraftReview | null,
+  fulfilmentOverride: null as 'selfShip' | 'packPoint' | null,
 };
 
 let seq = 0;
@@ -102,6 +115,12 @@ export function sanitizeDraft(raw: unknown): Partial<DraftData> {
   const extra = isObj(r.extraImages) ? Object.fromEntries(Object.entries(r.extraImages).map(([k, v]) => [k, imgs(v)])) : {};
   const bool = (x: unknown, d: boolean) => (typeof x === 'boolean' ? x : d);
   const step = r.botStep === 'quantity' || r.botStep === 'price' ? r.botStep : 'product';
+  const rv = r.botReview;
+  const review: DraftReview | null =
+    isObj(rv) && typeof rv.day === 'number' && Number.isFinite(rv.day) && typeof rv.time === 'string' && /^\d{2}:\d{2}$/.test(rv.time) && isObj(rv.values)
+      ? { day: rv.day, time: rv.time, values: textMap(rv.values) }
+      : null;
+  const override = r.fulfilmentOverride === 'selfShip' || r.fulfilmentOverride === 'packPoint' ? r.fulfilmentOverride : null;
   return {
     categoryPath: strings(r.categoryPath),
     images: imgs(r.images),
@@ -115,6 +134,8 @@ export function sanitizeDraft(raw: unknown): Partial<DraftData> {
     retailPacked: bool(r.retailPacked, INITIAL.retailPacked),
     sameAsManufacturer: bool(r.sameAsManufacturer, INITIAL.sameAsManufacturer),
     botStep: step,
+    botReview: review,
+    fulfilmentOverride: override,
   };
 }
 
@@ -143,7 +164,8 @@ export const useDraft = create<DraftState>()(
       name: DRAFT_STORAGE_KEY,
       version: 2,
       storage: safeJSONStorage<DraftData>(),
-      // v1 drafts (and anything malformed) are kept only where each field has the right shape.
+      // v1 drafts (and anything malformed) are kept only where each field has the right shape. Fields added later
+      // (botReview, fulfilmentOverride) are optional: a draft saved before them loads with null, so v2 stays v2.
       migrate: (persisted) => sanitizeDraft(persisted) as DraftData,
       merge: (persisted, current) => ({ ...current, ...sanitizeDraft(persisted) }),
       partialize: (s): DraftData => ({
@@ -159,6 +181,8 @@ export const useDraft = create<DraftState>()(
         retailPacked: s.retailPacked,
         sameAsManufacturer: s.sameAsManufacturer,
         botStep: s.botStep,
+        botReview: s.botReview,
+        fulfilmentOverride: s.fulfilmentOverride,
       }),
     },
   ),

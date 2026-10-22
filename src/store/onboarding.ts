@@ -48,6 +48,8 @@ export interface OnboardingState {
   businessType: BusinessType | null;
   // Step 2 · Pickup Address (FO-8)
   pickupSaved: boolean;
+  /** The pickup address the maker saved, when it differs from the GST record (null = the persona's address). */
+  pickupAddress: PersonaRecord['address'] | null;
   fulfilment: Fulfilment | null;
   // Step 3 · Bank Details
   bankVerified: boolean;
@@ -69,6 +71,7 @@ const EMPTY = {
   businessFetched: false,
   businessType: null,
   pickupSaved: false,
+  pickupAddress: null,
   fulfilment: null,
   bankVerified: false,
   supplierSubmitted: false,
@@ -79,6 +82,13 @@ export const useOnboarding = create<OnboardingState>((set) => ({
   set: (patch) => set(patch),
   reset: () => set({ ...EMPTY }),
 }));
+
+/** The maker's pickup pincode: the saved pickup address if any, else the persona's (GST) address. */
+export function usePickupPincode(): string {
+  const persona = usePersona();
+  const saved = useOnboarding((s) => s.pickupAddress?.pincode);
+  return saved || persona.address.pincode;
+}
 
 // Switching persona starts onboarding over for the new persona (Reset demo also calls reset()).
 useDemo.subscribe((s, prev) => {

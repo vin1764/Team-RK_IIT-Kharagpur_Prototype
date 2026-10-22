@@ -24,6 +24,9 @@ export interface Listing {
   marginPct: number;
   fulfilment: 'selfShip' | 'packPoint';
   createdDay: number;
+  /** "Confirmed by maker": the demo day and clock time ("HH:MM") the maker confirmed the bot's details (LB-4).
+   *  Optional: listings saved before the review step load without it. */
+  reviewedAt?: { day: number; time: string };
   status: 'live';
 }
 
@@ -81,7 +84,7 @@ export const safeStorage: StateStorage = {
 export const safeJSONStorage = <S>() => createJSONStorage<S>(() => safeStorage);
 
 /** Fake catalog ids count up from here (the seeded single upload is 123456789). */
-const FIRST_ID = 900000001;
+export const FIRST_ID = 900000001;
 
 export const useCatalog = create<CatalogState>()(
   persist(

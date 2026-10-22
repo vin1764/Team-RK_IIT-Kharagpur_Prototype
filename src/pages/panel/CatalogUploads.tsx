@@ -4,9 +4,12 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { dayLabel } from '../../engine/ui';
-import { useListingsForPersona } from '../../store/catalog';
+import { tEn } from '../../i18n';
+import { FIRST_ID, useListingsForPersona } from '../../store/catalog';
 import { useDemo } from '../../store/demo';
+import { useScriptedListing } from '../../store/timeline';
 import { botTypeFor } from './catalog/bot';
+import { LAUNCH } from './factory-launch/launch';
 import { CATALOG_UPLOADS_DEFAULT, CATALOG_UPLOADS_SNAPSHOT, listingRows, STATUS_TABS, type StatusTabId } from './catalog-uploads/data';
 import { AddCatalogActions, BannerCarousel, FilterBar, Header, MainTabs, NoResults, Overview, QcTip, SubTabs, UploadsTable } from './catalog-uploads/parts';
 
@@ -18,16 +21,27 @@ export default function CatalogUploads() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const seed = params.get('state') === 'qc' ? CATALOG_UPLOADS_SNAPSHOT : CATALOG_UPLOADS_DEFAULT;
-  // Catalogs the current persona put live from photos (LB-8) join the Single Uploads list.
-  // Plain mode ("Today vs ours"): only the captured rows.
+  // Catalogs the current persona put live from photos (LB-8) join the Single Uploads list; after the listing day a
+  // presenter who jumped ahead sees the scripted one (as Home does). Plain mode ("Today vs ours"): only the captured rows.
   const c2m = useDemo((s) => s.c2m);
+  const day = useDemo((s) => s.day);
   const ours = useListingsForPersona();
-  const listings = c2m ? ours : NONE;
+  const scripted = useScriptedListing();
+  const fallback = useMemo(
+    () => (scripted?.scripted && day > LAUNCH.listingDay ? [{ ...scripted, id: String(FIRST_ID) }] : NONE),
+    [scripted, day],
+  );
+  const listings = c2m ? (ours.length ? ours : fallback) : NONE;
   const data = useMemo(
     () => ({
       bulk: seed.bulk,
       single: [
-        ...listingRows(listings, (typeId) => botTypeFor(typeId as Parameters<typeof botTypeFor>[0])?.categoryPath.at(-1) ?? typeId, dayLabel).reverse(),
+        ...listingRows(
+          listings,
+          (typeId) => botTypeFor(typeId as Parameters<typeof botTypeFor>[0])?.categoryPath.at(-1) ?? typeId,
+          dayLabel,
+          (r) => tEn('filled.confirmedAt', { date: dayLabel(r.day), time: r.time }),
+        ).reverse(),
         ...seed.single,
       ],
     }),

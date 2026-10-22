@@ -2,7 +2,7 @@
 // Each step calls the app's own functions (the same ones the Reset demo button, the photo modal and
 // "Fill demo values" call), so a prepared screen is exactly what a presenter would reach by clicking.
 import { typicalForType } from '../engine/ui';
-import { botTypeFor, demoValues } from '../pages/panel/catalog/bot';
+import { botTypeFor, confirmReview, demoValues, SCRIPTED_REVIEW_TIME } from '../pages/panel/catalog/bot';
 import { DEMO_IMAGE, resetDraft, useDraft } from '../pages/panel/catalog/draftStore';
 import { applyPhotos } from '../pages/panel/catalog/photos';
 import { resetCatalog } from '../store/catalog';
@@ -10,6 +10,7 @@ import { useDemo, type Persona } from '../store/demo';
 import { PERSONAS, useOnboarding } from '../store/onboarding';
 import { resetPriceEdits } from '../store/priceEdits';
 import { resetLaunch } from '../store/timeline';
+import { LAUNCH } from '../pages/panel/factory-launch/launch';
 import { resetLaunchBanner } from '../store/launchBanner';
 import { resetMakerProduct } from '../store/makerProduct';
 import type { Prep } from '../showcase/types';
@@ -40,7 +41,10 @@ function botPhotos(persona: Persona): boolean {
   return applyPhotos([DEMO_IMAGE], type, record, fulfilmentFor(persona));
 }
 
-/** botPhotos + every demo value ("Fill demo values") + Pack of 1 confirmed: Quantity and Price are reachable. */
+/**
+ * botPhotos + every demo value ("Fill demo values") + Pack of 1 confirmed + the bot's details confirmed (a jump past
+ * the Product screen, so the review is done; D3 at the scripted time): Quantity and Price are reachable.
+ */
 function botFilled(persona: Persona) {
   if (!botPhotos(persona)) return;
   const record = PERSONAS[persona];
@@ -51,6 +55,8 @@ function botFilled(persona: Persona) {
   const size = useDraft.getState().values.size;
   if (mrp && size) d.setPrice(size, { mrp });
   d.setBot({ netQtyConfirmed: true });
+  const s = useDraft.getState();
+  s.setBot({ botReview: confirmReview(s.values, s.botFilled, LAUNCH.listingDay, SCRIPTED_REVIEW_TIME) });
 }
 
 /** Runs the prep steps in a sensible order and returns the route to open (with ?commit=1 for 'commitModal'). */

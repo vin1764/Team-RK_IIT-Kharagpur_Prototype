@@ -9,7 +9,7 @@ import { useMemo } from 'react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { checkListingPrice, costStack, productTypeName, suggestedLot, typicalForType } from '../engine/ui';
-import { botTypeFor } from '../pages/panel/catalog/bot';
+import { botTypeFor, SCRIPTED_REVIEW_TIME } from '../pages/panel/catalog/bot';
 import { LAUNCH, effectiveCommit, type Commit } from '../pages/panel/factory-launch/launch';
 import { listingsFor, safeJSONStorage, useCatalog, useListingsForPersona, type Listing } from './catalog';
 import { useDemo, type Persona } from './demo';
@@ -78,6 +78,8 @@ export function scriptedListingFor(persona: Persona, choice?: ProductChoice): Sc
     marginPct,
     fulfilment: mode,
     createdDay: LAUNCH.listingDay,
+    // She confirmed the bot's details on the listing day (fixed time: the presenter skipped the click).
+    reviewedAt: { day: LAUNCH.listingDay, time: SCRIPTED_REVIEW_TIME },
     status: 'live',
     scripted: true,
   };

@@ -1,5 +1,5 @@
 // Screen 1 · Product (LB-4, doc p.14): photos + what the bot recognised + the cleaned cover; the bot's 21 values in
-// one collapsed card; the Pack of 1 confirm row; then the 5 rows only the maker can answer.
+// one collapsed card the maker must review and confirm; the Pack of 1 confirm row; then the 5 rows only he can answer.
 import { useState } from 'react';
 import { Button } from '../../../../components/ui';
 import { productTypeName, type ProductTypeId } from '../../../../engine/ui';
@@ -184,7 +184,7 @@ export function ProductStep({ m, type, onEditPhotos, onChangeCategory, onFullFor
   return (
     <div data-testid="botStep-product">
       <PhotosCard photos={m.d.photos.length ? m.d.photos : m.d.images} type={type} categoryPath={m.d.categoryPath} onEditPhotos={onEditPhotos} onChangeCategory={onChangeCategory} />
-      <FilledCard values={m.values} row={m.row} botFilled={m.d.botFilled} onSave={(id, v) => m.setValue(id, v)} />
+      <FilledCard values={m.values} row={m.row} botFilled={m.d.botFilled} review={m.d.botReview} reviewed={m.reviewed} onSave={(id, v) => m.setValue(id, v)} onConfirm={m.confirm} />
       <NetQtyRow m={m} />
       <ProductMakerCard m={m} />
       <div className="mt-4 flex items-center justify-between px-1" data-c2m="LB-4" data-c2m-id="LB-4">

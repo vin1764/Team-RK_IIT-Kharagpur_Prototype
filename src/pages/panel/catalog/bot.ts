@@ -2,9 +2,11 @@
 // the pre-fill itself, the generated description and the go-live checks. Pure functions only.
 // Who fills what = doc pp.15-18 / plan §7. Numbers come from the engine (src/engine/ui.ts) or seed JSON.
 import data from '../../../data/botListing.json';
-import { suggestedLot, type ProductTypeId, type PriceStatus } from '../../../engine/ui';
+import nodesData from '../../../data/packPointNodes.json';
+import { checkListingPrice, clusterForPincode, costStack, suggestedLot, takeHomeAt, typeFees, type CostStack, type ProductTypeId, type PriceStatus } from '../../../engine/ui';
+import type { T } from '../../../i18n';
 import type { PersonaRecord } from '../../../store/onboarding';
-import type { DraftImage, PriceRow } from './draftStore';
+import type { DraftImage, DraftReview, PriceRow } from './draftStore';
 import { FIELDS, PACKER_FROM_MANUFACTURER, type FieldDef } from './fields';
 import { PRICE_COLUMNS } from './pricing';
 
@@ -181,6 +183,8 @@ export function numberIn(v: string | undefined): number | null {
 
 export interface GoLiveInput {
   hasFrontImage: boolean;
+  /** The maker confirmed the bot's details (and none changed since): see isReviewed. */
+  reviewed: boolean;
   missingFields: string[];
   missingPrices: string[];
   netQtyConfirmed: boolean;
@@ -192,6 +196,7 @@ export interface GoLiveInput {
 export interface GoLiveChecks {
   images: boolean;
   details: boolean;
+  review: boolean;
   price: boolean;
   lot: boolean;
   all: boolean;
@@ -202,7 +207,8 @@ export interface GoLiveChecks {
  *  Images  — a Front Image is present (the bot's cleaned cover counts as the Front Image);
  *  Details — every mandatory field and price cell filled, the 4 new inputs filled, Net Quantity confirmed;
  *  Price   — status is "qualifies";
- *  Lot     — inventory > 0 (any number: no cap, no floor, Q19).
+ *  Lot     — inventory > 0 (any number: no cap, no floor, Q19);
+ *  Review  — the maker confirmed the bot's details ("Bot details reviewed").
  */
 export function goLiveChecks(x: GoLiveInput): GoLiveChecks {
   const inputsOk = BOT_INPUTS.every((f) => {
@@ -213,7 +219,8 @@ export function goLiveChecks(x: GoLiveInput): GoLiveChecks {
   const details = !x.missingFields.length && !x.missingPrices.length && x.netQtyConfirmed && inputsOk;
   const price = x.status === 'qualifies';
   const lot = (x.inventory ?? 0) > 0;
-  return { images, details, price, lot, all: images && details && price && lot };
+  const review = x.reviewed;
+  return { images, details, review, price, lot, all: images && details && review && price && lot };
 }
 
 // ── Three short screens (team redesign spec, Phase 3 review 2) ───────────────────────────────────────────────
@@ -266,6 +273,8 @@ export interface StepState {
   values: Record<string, string>;
   price: Partial<PriceRow>;
   netQtyConfirmed: boolean;
+  /** The bot's details are confirmed (isReviewed). Omitted = not asked (only the fields count). */
+  reviewed?: boolean;
 }
 
 const pos = (v: string | undefined) => (numberIn(v) ?? 0) > 0;
@@ -278,7 +287,8 @@ export function stepDone(step: BotStep, s: StepState): boolean {
     return (
       ['material', 'leakProof', 'addOns', 'volumeUnit', 'productUnit', 'productWeightUnit', 'netQuantity'].every((k) => has(v[k])) &&
       ['capacity', 'length', 'breadth', 'height', 'netWeight', 'productWeight'].every((k) => pos(v[k])) &&
-      s.netQtyConfirmed
+      s.netQtyConfirmed &&
+      s.reviewed !== false
     );
   if (step === 'quantity') return pos(v.minRun) && pos(v.leadTimeDays) && pos(s.price.inventory);
   const margin = numberIn(v.marginPct);
@@ -288,4 +298,123 @@ export function stepDone(step: BotStep, s: StepState): boolean {
 /** The furthest screen the maker may open: every screen before it is done. */
 export function reachableStep(s: StepState): BotStep {
   return BOT_STEPS.find((step) => !stepDone(step, s)) ?? 'price';
+}
+
+// ── Reviewing the bot's details (LB-4: "We filled 21 details for you · please check them") ─────────────────────
+
+/** The bot details the maker checks on Product: the 21 minus the two set on later screens (Inventory, Meesho Price). */
+export const REVIEW_IDS: string[] = FILLED_CARD_IDS.filter((id) => !SET_ON[id]);
+
+/** The review panel's groups, in order. Description is the bot's text (not one of the 21 mandatory fields). */
+export const REVIEW_GROUPS: { id: 'product' | 'size' | 'origin' | 'packer' | 'description' | 'later'; ids: string[] }[] = [
+  { id: 'product', ids: ['productName', 'genericName', 'type', 'color'] },
+  { id: 'size', ids: ['size', 'netQuantity', 'productUnit', 'volumeUnit', 'productWeightUnit'] },
+  { id: 'origin', ids: ['countryOfOrigin', 'manufacturerName', 'manufacturerAddress', 'manufacturerPincode', 'importerName', 'importerAddress', 'importerPincode'] },
+  { id: 'packer', ids: ['packerName', 'packerAddress', 'packerPincode'] },
+  { id: 'description', ids: ['description'] },
+  { id: 'later', ids: FILLED_CARD_IDS.filter((id) => SET_ON[id]) },
+];
+
+/** What the maker confirmed: when (demo day + the real clock time of the click, "HH:MM") and the values he saw. */
+export type BotReview = DraftReview;
+
+/** The values a confirmation covers: the 19 details, plus the description once it is the maker's own text. */
+function reviewedValues(values: Record<string, string>, botFilled: Iterable<string>): Record<string, string> {
+  const ids = new Set(botFilled).has('description') ? REVIEW_IDS : [...REVIEW_IDS, 'description'];
+  return Object.fromEntries(ids.map((id) => [id, values[id] ?? '']));
+}
+
+/** "Confirm details": records the values the maker checked. */
+export function confirmReview(values: Record<string, string>, botFilled: Iterable<string>, day: number, time: string): BotReview {
+  return { day, time, values: reviewedValues(values, botFilled) };
+}
+
+/**
+ * Reviewed = confirmed, and no checked value has changed since. Any change (a pencil edit, a Packer that follows the
+ * fulfilment toggle, Net Quantity) puts the card back to "Needs your review"; a change that leaves the value as it was
+ * does not. The bot's own description is regenerated from the maker's answers, so it counts only once he edits it.
+ */
+export function isReviewed(review: BotReview | null | undefined, values: Record<string, string>, botFilled: Iterable<string>): boolean {
+  return !!review && !changedSinceReview(review, values, botFilled).length;
+}
+
+/** The checked details whose value differs from what the maker confirmed (tagged "Changed since you confirmed"). */
+export function changedSinceReview(review: BotReview | null | undefined, values: Record<string, string>, botFilled: Iterable<string>): string[] {
+  if (!review) return [];
+  return Object.entries(reviewedValues(values, botFilled))
+    .filter(([id, v]) => (review.values[id] ?? '') !== v)
+    .map(([id]) => id);
+}
+
+/** The click's local time of day, "HH:MM" (the one real clock value: user-action data, not content). */
+export const clockTime = (d: Date) => `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+
+/** Confirmation carried by scripted listings and the showcase's "botFilled" jump (presenter skipped the click). */
+export const SCRIPTED_REVIEW_TIME = data.scriptedReview.time;
+
+// ── First lot (Quantity): the reasoning behind the (i) next to "First lot · 150 suggested" ─────────────────────
+
+type LotView = ReturnType<typeof suggestedLot>;
+/** "You'll likely sell 9–13 a day, so 150 is about 2 weeks of stock (≈ ₹12,000 at cost). You can enter any number." */
+export function lotTip(t: T, lot: LotView, makingCost: number | null, fmt: (n: number) => string): string {
+  const weeks = fmt(lot.days / 7);
+  const cost = makingCost && makingCost > 0 ? t('lotTip.atCost', { atCost: fmt(lot.units * makingCost) }) : '';
+  const vars = { low: fmt(lot.perDay.low), high: fmt(lot.perDay.high), weeks, units: fmt(lot.units), twoWeeks: fmt(lot.twoWeeks), cost };
+  return t(lot.raisedToMinRun ? 'lotTip.minRun' : 'lotTip.basis', vars);
+}
+
+// ── Fulfilment per product (Price screen: [Self-ship] [Pack Point]) ─────────────────────────────────────────────
+
+export type ShipMode = 'selfShip' | 'packPoint';
+interface PackPointNode {
+  city: string;
+  status: string;
+  makersPooled?: number;
+  opensAtMakers?: number;
+  pincodePrefixes?: string[];
+}
+const NODES = nodesData.nodes as PackPointNode[];
+
+/** Pack Point on this product: live cluster → choosable; opening → shown disabled; none → no toggle. */
+export type PackPointOption = { state: 'live'; city: string; makersPooled: number } | { state: 'opening'; city: string; opensAtMakers: number } | null;
+
+export function packPointOption(pincode: string): PackPointOption {
+  const n = clusterForPincode(NODES, pincode);
+  if (!n) return null;
+  if (n.status === 'live') return { state: 'live', city: n.city, makersPooled: n.makersPooled ?? 40 };
+  if (n.status === 'opening' && n.opensAtMakers) return { state: 'opening', city: n.city, opensAtMakers: n.opensAtMakers };
+  return null;
+}
+
+/** Self-ship needs the type's packaging cost (Samar's sneakers have none: Pack Point only). */
+export const selfShipPossible = (type: ProductTypeId) => typeFees(type).packaging !== null;
+
+/** The mode this product's price is built on: the maker's choice for it if that option is open, else his default. */
+export function productShipMode(defaultMode: ShipMode, override: ShipMode | null, option: PackPointOption, type: ProductTypeId): ShipMode {
+  if (override === 'packPoint' && option?.state === 'live') return 'packPoint';
+  if (override === 'selfShip' && selfShipPossible(type)) return 'selfShip';
+  return defaultMode;
+}
+
+/** "+₹24 per order": Pack Point fee − self-ship packaging, from the two stacks' fees; null without both. */
+export function packPointExtra(type: ProductTypeId, makersPooled = 40): number | null {
+  if (!selfShipPossible(type)) return null;
+  const pp = costStack(type, 0, 0, 'packPoint', makersPooled).fees.packPointFee;
+  const ss = costStack(type, 0, 0, 'selfShip').fees.packaging;
+  return pp !== undefined && ss !== undefined ? pp - ss : null;
+}
+
+/** Take-home shown at a price: the maker's margin at the bot's own list price (rounding up to the rupee is not his margin), else the engine's take-home at that price. */
+export const takeHomeShown = (price: number, stack: CostStack) => (price === stack.listPrice ? stack.takeHome : takeHomeAt(price, stack));
+
+/** Break-even, list price, take-home and status for one product in one mode (the Price screen's numbers). */
+export function shipQuote(type: ProductTypeId, makingCost: number, marginPct: number, mode: ShipMode, makersPooled = 40) {
+  const stack = costStack(type, makingCost, marginPct, mode, makersPooled);
+  return {
+    stack,
+    breakEven: stack.breakEven,
+    listPrice: stack.listPrice,
+    takeHome: takeHomeShown(stack.listPrice, stack),
+    status: checkListingPrice(type, stack.listPrice, stack.breakEven),
+  };
 }

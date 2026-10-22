@@ -66,6 +66,10 @@
     "_source": "White-background cut-out of the team's demo photo, made offline with OpenCV GrabCut (see Phase 3 report). No runtime ML.",
     "demo-1": "/brand/local/catalog/demo-product-bottle-cleaned.png"
   },
+  "scriptedReview": {
+    "_source": "team (bot review spec): when the presenter jumps past D3 (scripted listing, showcase 'botFilled' jump), the 'Confirmed by maker' record shows the listing day (D3) at this fixed time instead of a real click",
+    "time": "11:20"
+  },
   "maxPhotos": 5,
   "_maxPhotosSource": "doc LB-4: 3-5 phone photos",
   "todayImageSlots": 4,

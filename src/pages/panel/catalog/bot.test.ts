@@ -126,6 +126,7 @@ describe('demoValues', () => {
 describe('goLiveChecks', () => {
   const ok = {
     hasFrontImage: true,
+    reviewed: true,
     missingFields: [],
     missingPrices: [],
     netQtyConfirmed: true,
@@ -137,6 +138,11 @@ describe('goLiveChecks', () => {
   it('Net Quantity must be confirmed', () => expect(goLiveChecks({ ...ok, netQtyConfirmed: false }).details).toBe(false));
   it('price must qualify', () => expect(goLiveChecks({ ...ok, status: 'aboveCap' }).price).toBe(false));
   it('any lot above zero passes, even below the minimum run', () => expect(goLiveChecks({ ...ok, inventory: 20 }).lot).toBe(true));
+  it('the bot details must be reviewed ("Bot details reviewed")', () => {
+    const c = goLiveChecks({ ...ok, reviewed: false });
+    expect(c.review).toBe(false);
+    expect(c.all).toBe(false);
+  });
 });
 
 describe('three short screens (redesign)', () => {

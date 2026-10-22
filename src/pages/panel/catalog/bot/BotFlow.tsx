@@ -7,11 +7,11 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../../../app/paths';
 import { toast } from '../../../../components/Toast';
 import { Button } from '../../../../components/ui';
-import { takeHomeAt } from '../../../../engine/ui';
+
 import { useT } from '../../../../i18n';
 import { useCatalog } from '../../../../store/catalog';
 import { useDemo } from '../../../../store/demo';
-import { BOT_QUERY, BOT_STEPS, isBotStep, numberIn, reachableStep, type BotStep } from '../bot';
+import { BOT_FILLED_COUNT, BOT_QUERY, BOT_STEPS, isBotStep, numberIn, reachableStep, takeHomeShown, type BotStep } from '../bot';
 import { draftJump } from '../draftStore';
 import { BotLayout } from './BotLayout';
 import { CompareFormsModal } from './CompareFormsModal';
@@ -34,10 +34,12 @@ export default function BotFlow() {
   const leaving = useRef(false);
   const d = m.d;
 
-  // URL step wins; else the draft's; never past the first screen that isn't done.
+  // URL step wins; else the draft's; never past the first screen whose fields aren't done. The details review gates
+  // Next and the stepper tabs (reachWithReview), not the URL: a Packer change on Price keeps him on Price.
   const asked = params.get('step');
   const wanted: BotStep = isBotStep(asked) ? asked : d.botStep;
   const reach = reachableStep(m.stepState);
+  const reachWithReview = reachableStep(m.reviewState);
   const step: BotStep = BOT_STEPS.indexOf(wanted) > BOT_STEPS.indexOf(reach) ? reach : wanted;
   const idx = BOT_STEPS.indexOf(step);
 
@@ -63,7 +65,7 @@ export default function BotFlow() {
     next.set('step', s);
     setParams(next);
   };
-  const canOpen = (s: BotStep) => BOT_STEPS.indexOf(s) <= BOT_STEPS.indexOf(reach);
+  const canOpen = (s: BotStep) => BOT_STEPS.indexOf(s) <= Math.max(BOT_STEPS.indexOf(reachWithReview), idx);
 
   const leave = (to: string) => {
     leaving.current = true;
@@ -79,7 +81,7 @@ export default function BotFlow() {
       name: values.productName ?? '',
       price,
       breakEven: stack.breakEven,
-      takeHome: takeHomeAt(price, stack),
+      takeHome: takeHomeShown(price, stack),
       inventory,
       minRun: numberIn(values.minRun) ?? 0,
       leadTimeDays: numberIn(values.leadTimeDays) ?? 0,
@@ -88,12 +90,20 @@ export default function BotFlow() {
       fulfilment: m.mode,
       createdDay: day,
       persona: personaId,
+      ...(d.botReview ? { reviewedAt: { day: d.botReview.day, time: d.botReview.time } } : {}),
     });
     toast(t('check.toast'));
     leave(paths.catalogUploadsSingle);
   };
 
   const back = () => (idx === 0 ? navigate(paths.home) : goTo(BOT_STEPS[idx - 1]!));
+  // Product's Next: review first (the bot's details), then his own questions.
+  const nextBlocked =
+    step !== 'product' || m.done.product
+      ? null
+      : !m.reviewed
+        ? t('flow.nextNeedsReview', { n: BOT_FILLED_COUNT })
+        : t('flow.nextNeedsFields');
   const footer = (
     <>
       <Button variant="outline" onClick={back} data-testid="botBack">
@@ -104,9 +114,12 @@ export default function BotFlow() {
           {t('check.goLive')}
         </Button>
       ) : (
-        <Button disabled={!m.done[step]} onClick={() => goTo(BOT_STEPS[idx + 1]!)} data-testid="botNext">
-          {t('flow.next')}
-        </Button>
+        // A disabled button gets no hover, so the reason sits on its wrapper (native tooltip).
+        <span title={nextBlocked ?? undefined} data-testid="botNextWrap" className="inline-flex">
+          <Button disabled={!m.done[step]} onClick={() => goTo(BOT_STEPS[idx + 1]!)} data-testid="botNext">
+            {t('flow.next')}
+          </Button>
+        </span>
       )}
     </>
   );
@@ -124,7 +137,7 @@ export default function BotFlow() {
             onCompare={() => setCompare(true)}
           />
         )}
-        {step === 'quantity' && <QuantityStep m={m} type={type} />}
+        {step === 'quantity' && <QuantityStep m={m} />}
         {step === 'price' && <PriceStep m={m} onGoTo={goTo} />}
       </BotLayout>
       {compare && <CompareFormsModal onClose={() => setCompare(false)} />}

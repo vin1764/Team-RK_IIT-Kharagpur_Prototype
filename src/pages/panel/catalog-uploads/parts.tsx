@@ -354,7 +354,19 @@ export function UploadsTable({ rows, kind }: { rows: UploadRow[]; kind: 'bulk' |
       ),
     ],
     [kind === 'bulk' ? 'File Id' : 'Catalog Id', (r) => <p className={CELL_TEXT}>{r.id}</p>],
-    ['Created Date', (r) => <p className={CELL_TEXT}>{r.created}</p>],
+    [
+      'Created Date',
+      (r) => (
+        <>
+          <p className={CELL_TEXT}>{r.created}</p>
+          {r.confirmed && (
+            <p className="m-0 mt-1 p-0 font-body text-base leading-4 text-secondary-text" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="reviewedAt">
+              {r.confirmed}
+            </p>
+          )}
+        </>
+      ),
+    ],
     ...(kind === 'bulk' ? [rowsCol] : []),
     [
       'QC Status',

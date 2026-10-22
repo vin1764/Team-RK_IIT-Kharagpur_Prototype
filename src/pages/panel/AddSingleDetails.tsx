@@ -8,12 +8,12 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { toast } from '../../components/Toast';
 import { Banner, Button, Pill } from '../../components/ui';
-import { checkListingPrice, costStack, gstAt, suggestedLot, takeHomeAt, typicalForType } from '../../engine/ui';
+import { checkListingPrice, costStack, gstAt, suggestedLot, typicalForType } from '../../engine/ui';
 import { fmt, useT } from '../../i18n';
 import { useCatalog } from '../../store/catalog';
 import { useDemo } from '../../store/demo';
 import { useBotProductType } from '../../store/makerProduct';
-import { useOnboarding, usePersona } from '../../store/onboarding';
+import { useOnboarding, usePersona, usePickupPincode } from '../../store/onboarding';
 import {
   BOT_INPUTS,
   BOT_PRICE_FIELDS,
@@ -23,11 +23,15 @@ import {
   demoValues,
   describeListing,
   goLiveChecks,
+  isReviewed,
   MAKER_FIELDS,
   MANDATORY_IDS,
   numberIn,
   packerFor,
+  packPointOption,
+  productShipMode,
   stackMode,
+  takeHomeShown,
 } from './catalog/bot';
 import { DemandCard, GoLiveBar, LotLine, StackLine, StatusChip } from './catalog/BotPrice';
 import { BotStrip, type BotTab } from './catalog/BotStrip';
@@ -103,6 +107,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   const [params] = useSearchParams();
   const persona = usePersona();
   const fulfilmentChoice = useOnboarding((s) => s.fulfilment);
+  const pincode = usePickupPincode();
   const day = useDemo((s) => s.day);
   const personaId = useDemo((s) => s.persona);
   const t = useT();
@@ -127,10 +132,14 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   const filled = new Set(d.botFilled);
 
   // ── Bot: cost stack from the maker's making cost and margin (engine), then price, take-home, status ──
-  const mode = stackMode(fulfilmentChoice, persona);
+  // Fulfilment for this product: the choice made on the bot's Price screen (draft), else the Pickup Address default.
+  const defaultMode = stackMode(fulfilmentChoice, persona);
+  const ppOption = packPointOption(pincode);
+  const mode = type ? productShipMode(defaultMode, d.fulfilmentOverride, ppOption, type) : defaultMode;
+  const makersPooled = mode === 'packPoint' && ppOption?.state === 'live' ? ppOption.makersPooled : undefined;
   const makingCost = numberIn(values.makingCost);
   const margin = numberIn(values.marginPct);
-  const stack = bot && type && makingCost !== null && makingCost > 0 && margin !== null && margin >= 0 ? costStack(type, makingCost, margin, mode) : null;
+  const stack = bot && type && makingCost !== null && makingCost > 0 && margin !== null && margin >= 0 ? costStack(type, makingCost, margin, mode, makersPooled) : null;
   const price = numberIn(row.meeshoPrice);
   const status = stack && type && price ? checkListingPrice(type, price, stack.breakEven) : null;
   const inventory = numberIn(row.inventory);
@@ -282,7 +291,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
           const p = numberIn(r.meeshoPrice);
           return stack && p ? (
             <b className="font-button whitespace-nowrap" data-testid="takeHome">
-              {t('takeHome.perUnit', { v: fmt(takeHomeAt(p, stack)) })}
+              {t('takeHome.perUnit', { v: fmt(takeHomeShown(p, stack)) })}
             </b>
           ) : (
             <span className="text-tertiary-text">—</span>
@@ -299,8 +308,11 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
       }
     : undefined;
 
+  // The bot's details are confirmed on the short Product screen ("Review 21 details"); a later change here undoes it.
+  const reviewed = isReviewed(d.botReview, values, d.botFilled);
   const checks = goLiveChecks({
     hasFrontImage: !!d.images[0],
+    reviewed,
     missingFields: [...missing],
     missingPrices: size ? missingPrices(d.prices[size]) : ['meeshoPrice'],
     netQtyConfirmed: d.netQtyConfirmed,
@@ -329,7 +341,11 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   };
 
   // Bot: a failing checklist pill shows what is missing.
-  const show = (what: 'images' | 'details' | 'price' | 'lot') => {
+  const show = (what: 'images' | 'details' | 'review' | 'price' | 'lot') => {
+    if (what === 'review') {
+      navigate(botStepUrl('product'));
+      return;
+    }
     setSubmitted(true);
     const firstInput = BOT_INPUTS.find((f) => !numberIn(values[f.id]))?.id;
     const target =
@@ -354,7 +370,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
       name: values.productName ?? '',
       price,
       breakEven: stack.breakEven,
-      takeHome: takeHomeAt(price, stack),
+      takeHome: takeHomeShown(price, stack),
       inventory,
       minRun: numberIn(values.minRun) ?? 0,
       leadTimeDays: numberIn(values.leadTimeDays) ?? 0,
@@ -363,6 +379,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
       fulfilment: mode,
       createdDay: day,
       persona: personaId,
+      ...(d.botReview ? { reviewedAt: { day: d.botReview.day, time: d.botReview.time } } : {}),
     });
     toast(t('check.toast'));
     leave(paths.catalogUploadsSingle);

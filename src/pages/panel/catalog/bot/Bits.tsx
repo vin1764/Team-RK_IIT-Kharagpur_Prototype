@@ -28,12 +28,12 @@ export function QRow({ children, testId }: { children: ReactNode; testId?: strin
   );
 }
 
-export function QField({ label, info, className, children }: { label: ReactNode; info?: string; className?: string; children: ReactNode }) {
+export function QField({ label, info, infoTestId, className, children }: { label: ReactNode; info?: string; infoTestId?: string; className?: string; children: ReactNode }) {
   return (
     <div className={cx('min-w-0', className)}>
       <div className="mb-2 flex items-center gap-1 font-body text-lg leading-5 text-secondary-text">
         {label}
-        {info && <Info text={info} />}
+        {info && <Info text={info} testId={infoTestId} />}
       </div>
       {children}
     </div>
@@ -79,17 +79,23 @@ export function NumberBox({
 }
 
 /** Choice button: Yes/No segments and add-on chips. Selected = lavender with the brand border. */
-export function Choice({ on, onClick, children, round = false, testId }: { on: boolean; onClick: () => void; children: ReactNode; round?: boolean; testId?: string }) {
+export function Choice({ on, onClick, children, round = false, disabled = false, testId }: { on: boolean; onClick: () => void; children: ReactNode; round?: boolean; disabled?: boolean; testId?: string }) {
   return (
     <button
       type="button"
       aria-pressed={on}
       onClick={onClick}
+      disabled={disabled}
       data-testid={testId}
       className={cx(
-        'inline-flex h-10 min-w-16 cursor-pointer items-center justify-center gap-1.5 border border-solid px-4 font-body text-xl transition-all',
+        'inline-flex h-10 min-w-16 items-center justify-center gap-1.5 border border-solid px-4 font-body text-xl transition-all',
+        disabled ? 'cursor-not-allowed' : 'cursor-pointer',
         round ? 'rounded-full' : 'rounded-sm',
-        on ? 'border-brand-primary-border bg-brand-secondary-bg text-brand-primary-text' : 'border-[rgb(196,196,196)] bg-white text-primary-text',
+        on
+          ? 'border-brand-primary-border bg-brand-secondary-bg text-brand-primary-text'
+          : disabled
+            ? 'border-tertiary-border bg-white text-tertiary-text'
+            : 'border-[rgb(196,196,196)] bg-white text-primary-text',
       )}
     >
       {on && round && (
