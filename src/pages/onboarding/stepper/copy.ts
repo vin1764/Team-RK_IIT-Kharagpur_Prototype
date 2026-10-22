@@ -93,6 +93,46 @@ export const C2M = {
     'The partner packs, ships and grades returns',
   ],
   ppCompareNote: 'You’ll see what each costs for your product once you tell us what you make.',
+  // PP-3 Warehouse switch (team spec: confirm panel, first lot, listings back to review)
+  ppSwitchTitle: (city: string) => `Switch to Pack Point · ${city}`, // team
+  ppSwitchBackTitle: 'Switch back to self-ship', // team
+  ppApplyTo: 'Apply to', // team
+  ppAllProducts: 'All my products', // team
+  ppChooseProducts: 'Choose products', // team
+  ppNoListings: 'You have no live products yet. New products follow this choice when you list them.', // ours
+  ppTakeHome: (now: string, after: string) => `Take-home ${now} → ${after} per order`, // ours
+  ppTakeHomeAt: (price: string) => `at ${price}`, // ours
+  ppQualifies: 'Qualifies', // team (launch status, as on the Price screen)
+  ppNotEligible: 'Not eligible at this price', // team
+  ppCantSelfShip: (type: string) => `Self-ship can’t be priced for ${type}: there’s no self-ship packaging cost for it here, so this switch isn’t available.`, // ours (no invented packaging cost)
+  ppWhatChanges: 'What changes', // team
+  ppWhatChangesBody: 'You stop packing these orders. Send your first lot; orders ship from the Pack Point once it’s received.', // team
+  ppWhatChangesBack: 'You pack and ship these orders from your factory again. Stock already at the Pack Point keeps shipping until it runs out.', // ours
+  ppPackerNote: 'Their Packer details change, so each one goes back to “Needs your review”.', // team
+  ppConfirm: 'Confirm switch', // team
+  ppCancel: 'Cancel', // team
+  ppOnNode: (city: string) => `You’re on Pack Point · ${city}`, // team
+  ppOpeningNote: (city: string) => `The ${city} Pack Point is opening soon. Until then you self-ship.`, // ours (was pp.opening.note, without the maker count)
+  ppNoLotYet: 'first lot not sent yet', // team
+  ppLotPlanned: (units: string, date: string) => `first lot planned · ${units} units · send on ${date}`, // ours
+  ppPlanLot: 'Plan first lot', // team
+  ppEditLot: 'Edit first lot', // ours
+  ppSwitchedToast: (city: string, n: number) => `Switched to Pack Point · ${city} for ${n} product${n === 1 ? '' : 's'}`, // ours
+  ppSwitchedBackToast: (n: number) => `Switched back to self-ship for ${n} product${n === 1 ? '' : 's'}`, // ours
+  ppWaitlistToast: (city: string) => `You’re on the ${city} waitlist · we’ll notify you when it opens`, // ours
+  ppPackerToNode: (city: string) => `Packer details changed to the ${city} Pack Point partner`, // ours
+  ppPackerToSelf: 'Packer details changed back to your factory', // ours
+  ppNeedsReview: 'Needs your review', // existing bot chip copy (filled.chipNeeds)
+  // PP-5 "Plan first lot" (side panel)
+  ppLotTitle: (city: string) => `Plan first lot · ${city}`, // ours
+  ppLotProduct: 'Units to send', // ours
+  ppLotSuggested: (units: string, days: number) => `Suggested ${units} ≈ ${days} days of expected sales`, // ours
+  ppLotSizes: 'Units per size', // ours
+  ppLotSendOn: 'Send on', // ours
+  ppLotTotal: (units: string) => `${units} units in this lot`, // ours
+  ppLotSave: 'Save plan', // ours
+  ppLotSaved: 'First lot plan saved', // ours
+  ppLotNone: 'No live products to send yet.', // ours
   sameAsRegistered: 'Same as registered address', // prompt
   useDemoBank: 'Use demo bank details', // ours (prototype helper)
   useDemoSupplier: 'Use demo store name and email', // ours (prototype helper)

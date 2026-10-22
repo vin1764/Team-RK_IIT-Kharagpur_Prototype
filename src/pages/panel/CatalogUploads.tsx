@@ -5,15 +5,13 @@ import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { paths } from '../../app/paths';
 import { dayLabel } from '../../engine/ui';
 import { tEn } from '../../i18n';
-import { FIRST_ID, useListingsForPersona } from '../../store/catalog';
 import { useDemo } from '../../store/demo';
-import { useScriptedListing } from '../../store/timeline';
+import { listingOverlayKey, useShipSwitch } from '../../store/fulfilmentSwitch';
+import { C2M } from '../onboarding/stepper/copy';
 import { botTypeFor } from './catalog/bot';
-import { LAUNCH } from './factory-launch/launch';
+import { useLiveListings } from './catalog-uploads/liveListings';
 import { CATALOG_UPLOADS_DEFAULT, CATALOG_UPLOADS_SNAPSHOT, listingRows, STATUS_TABS, type StatusTabId } from './catalog-uploads/data';
 import { AddCatalogActions, BannerCarousel, FilterBar, Header, MainTabs, NoResults, Overview, QcTip, SubTabs, UploadsTable } from './catalog-uploads/parts';
-
-const NONE: ReturnType<typeof useListingsForPersona> = [];
 
 export default function CatalogUploads() {
   const { kind: kindParam } = useParams();
@@ -23,17 +21,10 @@ export default function CatalogUploads() {
   const seed = params.get('state') === 'qc' ? CATALOG_UPLOADS_SNAPSHOT : CATALOG_UPLOADS_DEFAULT;
   // Catalogs the current persona put live from photos (LB-8) join the Single Uploads list; after the listing day a
   // presenter who jumped ahead sees the scripted one (as Home does). Plain mode ("Today vs ours"): only the captured rows.
-  const c2m = useDemo((s) => s.c2m);
-  const day = useDemo((s) => s.day);
-  const ours = useListingsForPersona();
-  const scripted = useScriptedListing();
-  // The scripted listing (she went live on D3 without the clicks) shows beside her own later go-lives (e.g. a casserole
-  // from "What to make instead"): it takes the first fake id and hers follow it.
-  const listings = useMemo(() => {
-    if (!c2m) return NONE;
-    if (!(scripted?.scripted && day > LAUNCH.listingDay)) return ours;
-    return [{ ...scripted, id: String(FIRST_ID) }, ...ours.map((l) => ({ ...l, id: String(Number(l.id) + 1) }))];
-  }, [c2m, scripted, day, ours]);
+  const listings = useLiveListings();
+  const persona = useDemo((s) => s.persona);
+  // PP-3: listings a Warehouse Pack Point switch touched: Packer details changed, back to "Needs your review".
+  const overlay = useShipSwitch((s) => s.listings);
   const data = useMemo(
     () => ({
       bulk: seed.bulk,
@@ -43,11 +34,16 @@ export default function CatalogUploads() {
           (typeId) => botTypeFor(typeId as Parameters<typeof botTypeFor>[0])?.categoryPath.at(-1) ?? typeId,
           dayLabel,
           (r) => tEn('filled.confirmedAt', { date: dayLabel(r.day), time: r.time }),
-        ).reverse(),
+        )
+          .map((row, i) => {
+            const o = overlay[listingOverlayKey(persona, listings[i]!.key)];
+            return o?.needsReview ? { ...row, shipReview: o.fulfilment === 'packPoint' && o.node ? C2M.ppPackerToNode(o.node) : C2M.ppPackerToSelf } : row;
+          })
+          .reverse(),
         ...seed.single,
       ],
     }),
-    [seed, listings],
+    [seed, listings, overlay, persona],
   );
 
   const [status, setStatus] = useState<StatusTabId>('ALL');

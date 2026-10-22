@@ -19,6 +19,7 @@ export function NearList({
   onUse,
   onSwitchBack,
   onWaitlist,
+  useFor,
 }: {
   pincode: string;
   /** the Pack Point he is on now (city), if any */
@@ -29,6 +30,8 @@ export function NearList({
   onSwitchBack?: () => void;
   /** also called on "Join waitlist" (the waitlist itself is stored here) */
   onWaitlist?: (node: PackPointNode) => void;
+  /** which open nodes get "Use this Pack Point" (default: all) */
+  useFor?: (node: PackPointNode) => boolean;
 }) {
   const persona = useDemo((s) => s.persona);
   const waitlist = useShipSwitch((s) => s.waitlist);
@@ -82,7 +85,8 @@ export function NearList({
                       )}
                     </div>
                   ) : (
-                    onUse && (
+                    onUse &&
+                    (!useFor || useFor(n)) && (
                       <div className="mt-1">
                         <Button variant="outline" size="sm" onClick={() => onUse(n)} data-testid={`pp-use-${n.city}`}>
                           {C2M.ppUse}

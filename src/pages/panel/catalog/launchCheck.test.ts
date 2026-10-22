@@ -16,7 +16,7 @@ const BOTTLE = 'steel-bottle-1l' as const;
 const stack = costStack(BOTTLE, 80, 17.5, 'selfShip');
 const D = 3;
 /** The view for a price, after the maker checked `checked` (or nothing) today. */
-const view = (price: number | null, entry?: PriceCheckEntry, s = stack) => launchCheckView({ type: BOTTLE, price, stack: s, entry, day: D });
+const view = (price: number | null, entry?: PriceCheckEntry, s = stack, botOwned = false) => launchCheckView({ type: BOTTLE, price, stack: s, entry, day: D, botOwned });
 const checkedAt = (price: number, used = 1): PriceCheckEntry => ({ day: D, used, last: { price, breakEven: stack.breakEven } });
 
 const goLive = (price: number | null) =>
@@ -46,8 +46,12 @@ describe('the price never blocks Go live', () => {
 
 describe('Factory Launch status (rationed "Check price")', () => {
   it('₹147, the bot’s own price: Qualifies with no check used', () => {
-    const v = view(147);
+    const v = view(147, undefined, stack, true);
     expect(v).toMatchObject({ state: 'qualifies', botPrice: true, needsCheck: false, line: 'qualifies', checksLeft: MAX_PRICE_CHECKS });
+  });
+
+  it('₹147 typed by the maker (same as the bot’s): he checks it like any typed price', () => {
+    expect(view(147)).toMatchObject({ state: 'stale', botPrice: false, needsCheck: true });
   });
 
   it('₹165 typed: status out of date until checked ("Price changed · Check price…"), the checklist line says check', () => {
@@ -73,7 +77,7 @@ describe('Factory Launch status (rationed "Check price")', () => {
 
   it('the bot’s price after the fulfilment switch is the bot’s price too: Pack Point ₹172 shows Not eligible, free', () => {
     const pp = costStack(BOTTLE, 80, 17.5, 'packPoint');
-    expect(view(pp.listPrice, undefined, pp)).toMatchObject({ state: 'aboveCap', botPrice: true, needsCheck: false });
+    expect(view(pp.listPrice, undefined, pp, true)).toMatchObject({ state: 'aboveCap', botPrice: true, needsCheck: false });
   });
 
   it('the 4th "Check price" in a demo day is refused; the next demo day has 3 again', () => {

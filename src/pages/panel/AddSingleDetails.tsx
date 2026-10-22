@@ -145,7 +145,7 @@ function DetailsPage({ c2m }: { c2m: boolean }) {
   const price = numberIn(row.meeshoPrice);
   // Factory Launch status: the same rationed "Check price" as the bot's Price screen (launchCheck.ts); never blocks.
   const priceChecks = usePriceCheckEntry(bot ? type : null);
-  const launch = launchCheckView({ type: bot ? type : null, price, stack, entry: priceChecks.entry, day: priceChecks.day });
+  const launch = launchCheckView({ type: bot ? type : null, price, stack, entry: priceChecks.entry, day: priceChecks.day, botOwned: filled.has('meeshoPrice') });
   const checkPrice = () => (launch.canCheck && price && stack ? priceChecks.check(price, stack.breakEven) : false);
   const inventory = numberIn(row.inventory);
   const lot = bot && type ? suggestedLot(type, makingCost ?? 0, numberIn(values.minRun)) : null;

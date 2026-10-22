@@ -4,7 +4,8 @@
 //   · the take-home and break-even maths follow the price live (they are the maker's own numbers);
 //   · below break-even is known live too (break-even is his own number): a red "You'd lose ₹Z per order" warning,
 //     and such a price never qualifies, so it needs no check;
-//   · the bot's own list price (also after the Self-ship / Pack Point switch) shows its Factory Launch status free;
+//   · the bot's own list price (the cell still the bot's; also after the Self-ship / Pack Point switch) shows its
+//     Factory Launch status free;
 //   · any other price shows its status only after "Check price", at most MAX_PRICE_CHECKS times a day per product
 //     (demo day; per persona + product type). A price on screen that differs from the last checked one says
 //     "Price changed · Check price…" rather than showing a stale answer.
@@ -78,6 +79,8 @@ export interface LaunchCheckInput {
   stack: CostStack | null;
   entry: PriceCheckEntry | undefined;
   day: number;
+  /** the price cell is still the bot's (not typed by the maker): its list price shows its status free */
+  botOwned: boolean;
 }
 
 export function launchCheckView(i: LaunchCheckInput): LaunchCheckView {
@@ -85,7 +88,9 @@ export function launchCheckView(i: LaunchCheckInput): LaunchCheckView {
   const base = { loss: null, botPrice: false, checked: false, checksLeft: left, needsCheck: false, canCheck: false };
   if (!i.type || !i.stack || !i.price || i.price <= 0) return { ...base, state: 'none', line: null };
   const { breakEven, listPrice } = i.stack;
-  const botPrice = i.price === listPrice;
+  // The bot's own price: the cell is the bot's and holds its list price (also after the fulfilment switch). A price
+  // the maker types needs a check, even when it equals the bot's (he types it; "Use ₹… again" hands it back free).
+  const botPrice = i.botOwned && i.price === listPrice;
   const last = i.entry?.last;
   const checked = !!last && last.price === i.price && last.breakEven === breakEven;
   if (i.price < breakEven) return { ...base, botPrice, checked, state: 'belowCost', loss: lossPerOrder(i.price, i.stack), line: 'notEligible' };

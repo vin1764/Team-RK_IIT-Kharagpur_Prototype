@@ -3,7 +3,7 @@
 // Button / Banner. Units and start date are the maker's; every number shown (landing date, cost at making
 // price, units on hand when it lands, days of cover after) comes from planBatch() through src/engine/ui.ts.
 // Ship from = the listing's fulfilment, switchable to Pack Point only when his pickup pincode is in a live
-// cluster (an opening cluster shows it disabled, "Opens at 40 makers"), as on the bot's Price screen.
+// cluster (an opening cluster shows it disabled, "Opening soon"; no maker counts), as on the bot's Price screen.
 import { useId, useMemo, useState, type ReactNode } from 'react';
 import calendar from '../../../data/calendar.json';
 import { Banner, Button, cx } from '../../../components/ui';
@@ -185,7 +185,7 @@ export function RestockPlanPanel({
             <ShipOption mode="packPoint" on={ship === 'packPoint'} disabled={!ppLive} onClick={() => setShip('packPoint')}>
               {t('gl.plan.packPoint')}
             </ShipOption>
-            {pp.kind === 'opening' && <span className={cx(T.bodyXs, 'text-neutral-tertiary')}>{t('gl.plan.opensAt', { n: fmt(pp.opensAt) })}</span>}
+            {pp.kind === 'opening' && <span className={cx(T.bodyXs, 'text-neutral-tertiary')}>{t('gl.plan.openingSoon')}</span>}
           </div>
         ) : (
           <p className={cx(T.bodyMd, 'font-medium')} data-plan-ship={ship}>

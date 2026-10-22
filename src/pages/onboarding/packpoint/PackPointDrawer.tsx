@@ -1,16 +1,24 @@
 // FO-8 / PP-10 · "See details & rate cards": right-side drawer behind the generic Pack Point option.
-// Every number comes from seed JSON (packPointNodes, packPointProviders, packPointLot, packPointModel)
-// or the engine (packPointFee). No product-specific prices here: those come after the maker says what
-// he makes (cost check / Warehouse page). Reused by the bot's Price screen ("See rate cards").
+// Seller view: how it works, "Pack Points near you" (sorted by distance, each open one with his fee and
+// "Use this Pack Point", opening ones with "Join waitlist"), the providers serving his pincode with their rate
+// cards, and self-ship vs Pack Point in words. No cluster economics (fee by size, opening rule, fee build-up,
+// sign-ups): those are Meesho's view, shown only in the showcase sidebar. Every number comes from seed JSON
+// (packPointNodes, packPointProviders, packPointLot) or the engine (packPointFee, packPointsNear).
+//
+// Context-aware: what "Use this Pack Point" does depends on where the drawer was opened.
+//   'onboarding' (Pickup Address): picks the Pack Point option on that step with this node, closes the drawer.
+//   'price'      (bot Price screen): this product ships through this node; the caller recalculates the price.
+//   'warehouse'  (Warehouse card): the caller opens its confirm panel in place.
+// The footer has a plain Close; "Switch back to self-ship" shows beside the node he is on when onSwitchBack is given.
 import { useEffect, useId, useRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { Button, Pill, cx } from '../../../components/ui';
-import lotData from '../../../data/packPointLot.json';
-import model from '../../../data/packPointModel.json';
+import { Button, cx } from '../../../components/ui';
 import providersData from '../../../data/packPointProviders.json';
-import { packPointFee } from '../../../engine/ui';
 import { C2M } from '../stepper/copy';
-import { PACK_POINT_NODES, highlightedPoolSize, packPointStatus, type PackPointNode } from './status';
+import { NearList } from './NearList';
+import { packPointStatus, type PackPointNode } from './status';
+
+export type { PackPointNode } from './status';
 
 interface Provider {
   name: string;
@@ -19,10 +27,6 @@ interface Provider {
 }
 const PROVIDERS = providersData.providers as Provider[];
 const SHIP_WITHIN_HOURS = providersData.howItWorks.shipWithinHours;
-const POOL_SIZES = Object.keys(model.staffByPoolSize)
-  .filter((k) => !k.startsWith('_'))
-  .map(Number)
-  .sort((a, b) => a - b);
 
 const H = 'm-0 text-xl leading-5 font-button text-primary-text';
 const BODY = 'm-0 text-lg leading-5 font-body text-primary-text';
@@ -38,34 +42,36 @@ function Section({ title, children, c2m }: { title: string; children: ReactNode;
   );
 }
 
-function NodeRow({ node, own }: { node: PackPointNode; own: boolean }) {
-  const status =
-    node.status === 'live' ? (
-      <Pill tone="success">{C2M.ppLive}</Pill>
-    ) : own && node.makersSignedUp !== undefined && node.opensAtMakers !== undefined ? (
-      <Pill tone="warning">{C2M.ppNodeOpeningSoon(node.makersSignedUp, node.opensAtMakers)}</Pill>
-    ) : (
-      <Pill tone="warning">{C2M.ppOpensAt(node.opensAtMakers ?? model.densityFloorMakers)}</Pill>
-    );
-  return (
-    <li data-testid={`pp-node-${node.city}`} data-own={own} className={cx('flex items-center justify-between gap-3 rounded-lg border border-solid px-3 py-2.5', own ? 'border-brand-primary-border bg-brand-secondary-bg' : 'border-tertiary-border bg-white')}>
-      <span className="flex flex-col">
-        <span className={cx(BODY, own && 'font-button')}>{node.city}</span>
-        {own && <span className="text-base leading-4 font-body text-secondary-text">{C2M.ppYourPincode}</span>}
-      </span>
-      {status}
-    </li>
-  );
+export type PackPointDrawerContext = 'onboarding' | 'price' | 'warehouse';
+
+export interface PackPointDrawerProps {
+  open: boolean;
+  onClose: () => void;
+  /** the maker's pickup pincode: the list is sorted by distance from it */
+  pincode: string;
+  /** where the drawer was opened (default 'onboarding'; 'price' when only the legacy onChoose is passed) */
+  context?: PackPointDrawerContext;
+  /** "Use this Pack Point" on an open node. The drawer closes itself first. No buttons without it (or onChoose). */
+  onUse?: (node: PackPointNode) => void;
+  /** "Switch back to self-ship", beside the node he is on (`current`). The drawer closes itself first. */
+  onSwitchBack?: () => void;
+  /** also called on "Join waitlist" (the drawer stores the waitlist per persona + node itself) */
+  onWaitlist?: (node: PackPointNode) => void;
+  /** the Pack Point he is on now, by city (shows "You're on this Pack Point" instead of the button) */
+  current?: string | null;
+  /** @deprecated legacy alias (bot Price screen): mapped to onUse for the node(s) the caller allows. */
+  onChoose?: () => void;
 }
 
-export function PackPointDrawer({ open, onClose, pincode, onChoose }: { open: boolean; onClose: () => void; pincode: string; onChoose?: () => void }) {
+export function PackPointDrawer({ open, onClose, pincode, context, onUse, onSwitchBack, onWaitlist, current, onChoose }: PackPointDrawerProps) {
   const titleId = useId();
   const panel = useRef<HTMLDivElement>(null);
-  const status = packPointStatus(pincode);
-  const ownNode = status?.node ?? null;
-  const nodes = ownNode ? [ownNode, ...PACK_POINT_NODES.filter((n) => n !== ownNode)] : PACK_POINT_NODES;
-  const highlight = highlightedPoolSize(status);
-  const storage = lotData.storage;
+  const own = packPointStatus(pincode);
+  const ctx: PackPointDrawerContext = context ?? (onChoose && !onUse ? 'price' : 'onboarding');
+  // Legacy onChoose (Price screen, before it passes onUse): it means "this product ships through his own cluster",
+  // so only the node in his district gets the button.
+  const use: ((n: PackPointNode) => void) | undefined = onUse ?? (onChoose ? () => onChoose() : undefined);
+  const legacyOwnOnly = !onUse && !!onChoose;
 
   // Esc closes; Tab stays inside the drawer; focus returns to the opener on close; the page behind doesn't scroll.
   useEffect(() => {
@@ -106,9 +112,6 @@ export function PackPointDrawer({ open, onClose, pincode, onChoose }: { open: bo
 
   if (!open) return null;
 
-  const chooseDisabled = status?.kind !== 'live';
-  const chooseLabel = status?.kind === 'opening' ? C2M.ppOpensAt(status.opensAt) : C2M.ppChoose;
-
   return createPortal(
     <div className="fixed inset-x-0 bottom-0 z-modal" style={{ top: 'var(--concept-strip-h)' }} data-testid="pp-drawer-root">
       <div className="absolute inset-0 bg-overlay-bg" onClick={onClose} data-testid="pp-drawer-overlay" />
@@ -121,6 +124,7 @@ export function PackPointDrawer({ open, onClose, pincode, onChoose }: { open: bo
         data-c2m="FO-8"
         data-c2m-id="FO-8"
         data-testid="pp-drawer"
+        data-context={ctx}
         className="absolute top-0 right-0 bottom-0 flex w-[30rem] max-w-full flex-col bg-white outline-none animate-fade-in"
       >
         <div className="flex items-center justify-between gap-3 border-0 border-b border-solid border-tertiary-border px-5 py-4">
@@ -145,17 +149,34 @@ export function PackPointDrawer({ open, onClose, pincode, onChoose }: { open: bo
           </Section>
 
           <Section title={C2M.ppNearHeading}>
-            {!ownNode && <p className={cx(BODY, 'mb-2 text-secondary-text')}>{C2M.ppNoneNear(pincode)}</p>}
-            <ul className="m-0 flex list-none flex-col gap-2 p-0" data-testid="pp-nodes">
-              {nodes.map((n) => (
-                <NodeRow key={n.city} node={n} own={n === ownNode} />
-              ))}
-            </ul>
+            <NearList
+              pincode={pincode}
+              current={current}
+              onUse={
+                use
+                  ? (n) => {
+                      onClose();
+                      use(n);
+                    }
+                  : undefined
+              }
+              useFor={legacyOwnOnly ? (n) => n === own?.node : undefined}
+              onSwitchBack={
+                onSwitchBack
+                  ? () => {
+                      onClose();
+                      onSwitchBack();
+                    }
+                  : undefined
+              }
+              onWaitlist={onWaitlist}
+            />
+            <p className="m-0 mt-2 text-base leading-4 font-body text-secondary-text">{C2M.ppNothingAtSignup}</p>
           </Section>
 
           {/* PP-10: providers serving the maker's pincode (doc p.20 mock-up) */}
           <Section title={C2M.ppProvidersHeading} c2m="PP-10">
-            {ownNode ? (
+            {own ? (
               <table className="w-full border-collapse" data-testid="pp-providers">
                 <thead>
                   <tr>
@@ -177,41 +198,6 @@ export function PackPointDrawer({ open, onClose, pincode, onChoose }: { open: bo
             ) : (
               <p className={cx(BODY, 'text-secondary-text')}>{C2M.ppNoProviders}</p>
             )}
-          </Section>
-
-          <Section title={C2M.ppFeeHeading}>
-            <table className="w-full border-collapse" data-testid="pp-fees">
-              <thead>
-                <tr>
-                  <th className={TH}>{C2M.ppFeeMakers}</th>
-                  <th className={TH}>{C2M.ppFeePerOrder}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {POOL_SIZES.map((n) => {
-                  const on = n === highlight;
-                  return (
-                    <tr key={n} data-testid={`pp-fee-${n}`} data-current={on} className={on ? 'bg-brand-secondary-bg' : undefined}>
-                      <td className={cx(TD, on && 'font-button')}>
-                        <span className="flex items-center gap-2">
-                          {C2M.ppMakers(n)}
-                          {on && <Pill tone="brand" bordered>{status?.kind === 'opening' ? C2M.ppWhenItOpens : C2M.ppYourCluster}</Pill>}
-                        </span>
-                      </td>
-                      <td className={cx(TD, on && 'font-button')}>₹{packPointFee(n).feePerDeliveredOrder}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <p className="m-0 mt-2 text-base leading-4 font-body text-secondary-text">{C2M.ppFeeNote(model.densityFloorMakers)}</p>
-          </Section>
-
-          <Section title={C2M.ppChargesHeading}>
-            <ul className="m-0 list-disc pl-5" data-testid="pp-charges">
-              <li className={BODY}>{C2M.ppStorage(storage.freeDays, storage.perUnitPerDay)}</li>
-              <li className={cx(BODY, 'mt-1')}>{C2M.ppNothingAtSignup}</li>
-            </ul>
           </Section>
 
           <Section title={C2M.ppCompareHeading}>
@@ -240,18 +226,6 @@ export function PackPointDrawer({ open, onClose, pincode, onChoose }: { open: bo
           <Button variant="outline" onClick={onClose} data-testid="pp-drawer-close">
             {C2M.ppClose}
           </Button>
-          {onChoose && (
-            <Button
-              disabled={chooseDisabled}
-              data-testid="pp-drawer-choose"
-              onClick={() => {
-                onChoose();
-                onClose();
-              }}
-            >
-              {chooseLabel}
-            </Button>
-          )}
         </div>
       </div>
     </div>,

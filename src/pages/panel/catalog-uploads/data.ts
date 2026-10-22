@@ -15,6 +15,8 @@ export interface UploadRow {
   status: QcStatus;
   /** C2M (LB-4): "Confirmed by maker · 27 Oct 2026, 14:05" for catalogs put live from photos. */
   confirmed?: string;
+  /** C2M (PP-3): a Warehouse Pack Point switch changed this listing's Packer details; it needs his review again. */
+  shipReview?: string;
 }
 
 export interface UploadsState {

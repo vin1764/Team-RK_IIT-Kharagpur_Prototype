@@ -24,6 +24,7 @@ import {
   listingPricePosition,
   lotInbound,
   packPointFee,
+  packPointsNear,
   pctDisplay,
   productTypeName,
   qualifyingPriceExists,
@@ -149,6 +150,29 @@ function records(p: Persona): MakerRecords {
 const RESULT = { eligible: 'Eligible for Factory Launch', pending: 'Pending (no Udyam yet)', notEligible: 'Not eligible: sells as today, not factory-track' } as const;
 
 // ── the calculations ────────────────────────────────────────────────────────────────────────────
+// ── Pack Point: Meesho's view (not shown to sellers) ─────────────────────────────────────────────
+// The seller sees only Open / Opening soon, the distance and his fee. The cluster economics below (fee by cluster
+// size, the opening rule, the fee build-up, sign-up counts) appear only here, labelled as Meesho's view.
+type SeedNode = { city: string; status: string; makersPooled?: number; opensAtMakers?: number; makersSignedUp?: number; pincodePrefixes: string[]; location: { lat: number; lon: number } };
+const PP_NODES = nodesSeed.nodes as SeedNode[];
+const isLiveNode = (n: SeedNode): n is SeedNode & { makersPooled: number } => n.status === 'live' && n.makersPooled !== undefined;
+const MEESHO_VIEW = 'Meesho’s view, not shown to sellers';
+const POOL_SIZES = Object.keys(model.staffByPoolSize)
+  .filter((k) => !k.startsWith('_'))
+  .map(Number)
+  .sort((a, b) => a - b);
+/** "Fee by cluster size: ₹44 at 20 · ₹30 at 40 · ₹26 at 60 · ₹23 at 80 makers; a Pack Point opens only at 40 makers" */
+const MEESHO_VIEW_LADDER = (label = true) =>
+  `${label ? `${MEESHO_VIEW}: f` : 'F'}ee by cluster size: ${POOL_SIZES.map((n) => `${rs(packPointFee(n).feePerDeliveredOrder)} at ${n}`).join(' · ')} makers; a Pack Point opens only at ${fmt(model.densityFloorMakers)} makers`;
+/** "Moradabad: 32/40 makers signed up (sellers see “Opening soon”)" */
+const MEESHO_VIEW_SIGNUPS = (label = true) => {
+  const s = PP_NODES.filter((n) => n.status === 'opening' && n.makersSignedUp !== undefined)
+    .map((n) => `${n.city}: ${fmt(n.makersSignedUp!)}/${fmt(n.opensAtMakers ?? model.densityFloorMakers)} makers signed up (sellers see “Opening soon”)`)
+    .join('; ');
+  const live = PP_NODES.filter(isLiveNode).map((n) => `${n.city} ${fmt(n.makersPooled)}`).join(', ');
+  return `${label ? `${MEESHO_VIEW}: ` : ''}${s}${live ? `; live pools: ${live} makers` : ''}`;
+};
+
 export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
   /** FO-3: the outreach message's teaser */
   outreach: () => [
@@ -194,17 +218,16 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     ];
   },
 
-  /** FO-8: shipping choice at Pickup Address */
+  /** FO-8: shipping choice at Pickup Address (seller view) + the cluster economics the seller doesn't see */
   fulfilment: ({ persona }) => {
     const r = P[persona];
-    const node = clusterForPincode(nodesSeed.nodes as { city: string; status: string; makersPooled?: number; opensAtMakers?: number; pincodePrefixes?: string[] }[], r.address.pincode);
-    if (!node) return [`${r.address.city} has no Pack Point cluster yet → self-ship, as today.`];
-    if (node.status !== 'live' || node.makersPooled === undefined)
-      return [`${node.city} Pack Point opens at ${fmt(node.opensAtMakers ?? model.densityFloorMakers)} makers → join the waitlist or self-ship.`];
-    const fee = packPointFee(node.makersPooled);
+    const near = packPointsNear(PP_NODES, r.address.pincode);
+    if (!near) return [`${r.address.city} has no Pack Point cluster yet → “No Pack Point near you yet. You’ll be notified when one opens.” Self-ship, as today.`, MEESHO_VIEW_LADDER()];
+    const seen = near.map((n) => `${n.node.city} ${n.km === null ? 'in your district' : `${fmt(n.km)} km`} · ${isLiveNode(n.node) ? `Open, ${rs(packPointFee(n.node.makersPooled).feePerDeliveredOrder)}` : 'Opening soon'}`);
     return [
-      `Pickup pincode is in the ${node.city} cluster: live, ${fmt(node.makersPooled)} makers pooled`,
-      `Pack Point fee: ${rs(fee.feePerDeliveredOrder)} per delivered order (packing included) · or self-ship as today`,
+      `Seller sees: ${seen.join('; ')} (city-centre distances, rounded to 10 km)`,
+      MEESHO_VIEW_SIGNUPS(),
+      MEESHO_VIEW_LADDER(),
     ];
   },
 
@@ -446,20 +469,21 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
       const s = costStack(prod.type, prod.makingCost, prod.marginPct, 'packPoint');
       lines.push(`Cost stack: ${costLine(s)} → break-even ${rs(s.breakEven)}, list ${rs(s.listPrice)}`);
     }
+    lines.push(`${MEESHO_VIEW}: ${node?.city ?? 'the cluster'} pools ${node?.makersPooled !== undefined ? fmt(node.makersPooled) : '–'} makers; a Pack Point opens only at ${fmt(model.densityFloorMakers)}. ${MEESHO_VIEW_SIGNUPS(false)}`);
     return lines;
   },
 
-  /** PP-4: Pack Point fee */
+  /** PP-4 / PP-10: the Pack Point fee build-up and ladder. Meesho's view only: the seller sees just his ₹ per delivered order. */
   packPointFee: () => {
     const base = model.densityFloorMakers;
     const f = packPointFee(base);
-    const others = Object.keys(model.staffByPoolSize)
-      .filter((k) => !k.startsWith('_') && Number(k) !== base)
-      .map(Number);
+    const marginPct = fmt(Math.round((model.partnerMarginMultiplier - 1) * 100));
+    const norm = model.partnerMarginNorm;
     return [
-      `${rs(Math.round(f.monthlyCost))} a month ÷ ${fmt(f.ordersPerMonth)} orders = ${rs2(f.costPerOrderHandled)} per order handled`,
-      `× ${fmt(model.partnerMarginMultiplier)} partner margin = ${rs2(f.feePerOrderHandled)} ÷ ${fmt3(1 - model.blendedRtoRate)} (${pct(model.blendedRtoRate)} RTO) = ${rs(Math.round(f.feePerDeliveredOrderExact * 10) / 10)}`,
-      `→ ${rs(f.feePerDeliveredOrder)} per delivered order at ${fmt(base)} makers (${others.map((n) => `${rs(packPointFee(n).feePerDeliveredOrder)} at ${n}`).join(', ')})`,
+      `${MEESHO_VIEW} (the seller sees only “${rs(f.feePerDeliveredOrder)} per delivered order”)`,
+      `${rs(Math.round(f.monthlyCost))} a month ÷ ${fmt(f.ordersPerMonth)} orders = ${rs2(f.costPerOrderHandled)} per order handled → × ${fmt(model.partnerMarginMultiplier)} (+ ${marginPct}% partner margin, 3PL norm ${fmt(norm.low * 100)}–${fmt(norm.high * 100)}%) = ${rs2(f.feePerOrderHandled)} → ÷ (1 − ${fmt3(model.blendedRtoRate)}) = ÷ ${fmt3(1 - model.blendedRtoRate)} (${pct(model.blendedRtoRate)} RTO) = ${rs(Math.round(f.feePerDeliveredOrderExact * 10) / 10)} → ${rs(f.feePerDeliveredOrder)} per delivered order at ${fmt(base)} makers`,
+      MEESHO_VIEW_LADDER(false),
+      MEESHO_VIEW_SIGNUPS(false),
     ];
   },
 

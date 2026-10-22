@@ -56,7 +56,7 @@ export function useBotModel() {
   const price = numberIn(row.meeshoPrice);
   // Factory Launch status: rationed "Check price" for a typed price, free for the bot's own price (launchCheck.ts).
   const priceChecks = usePriceCheckEntry(type);
-  const launch = launchCheckView({ type, price, stack, entry: priceChecks.entry, day: priceChecks.day });
+  const launch = launchCheckView({ type, price, stack, entry: priceChecks.entry, day: priceChecks.day, botOwned: filled.has('meeshoPrice') });
   /** "Check price": uses one of today's checks on the price on screen (refused when none is left). */
   const checkPrice = () => (launch.canCheck && price && stack ? priceChecks.check(price, stack.breakEven) : false);
   const inventory = numberIn(row.inventory);

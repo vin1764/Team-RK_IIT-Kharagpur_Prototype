@@ -12,6 +12,7 @@
   "equipment": { "cost": 250000, "months": 36 },
   "utilitiesPerMonth": 8000,
   "partnerMarginMultiplier": 1.18,
+  "partnerMarginNorm": { "low": 0.15, "high": 0.2, "_source": "deck appendix assumption: partner margin 18% (3PL norm 15–20%); the 18% is the partner's margin, not GST" },
   "blendedRtoRate": 0.178,
   "densityFloorMakers": 40,
   "storage": {

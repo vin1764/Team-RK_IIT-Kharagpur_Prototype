@@ -3,10 +3,11 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { paths } from '../../../app/paths';
 import { notInPrototype } from '../../../components/Toast';
-import { cx } from '../../../components/ui';
+import { Pill, cx } from '../../../components/ui';
 import { tEn } from '../../../i18n';
 import { PinkTag } from '../catalog/BulkTemplatePanel';
 import { BOT_QUERY } from '../catalog/bot';
+import { C2M } from '../../onboarding/stepper/copy';
 import type { QcStatus, UploadRow } from './data';
 
 const BTN =
@@ -359,10 +360,19 @@ export function UploadsTable({ rows, kind }: { rows: UploadRow[]; kind: 'bulk' |
       (r) => (
         <>
           <p className={CELL_TEXT}>{r.created}</p>
-          {r.confirmed && (
-            <p className="m-0 mt-1 p-0 font-body text-base leading-4 text-secondary-text" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="reviewedAt">
-              {r.confirmed}
-            </p>
+          {r.shipReview ? (
+            <div className="mt-1 flex flex-col items-start gap-1" data-c2m="PP-3" data-c2m-id="PP-3" data-testid="shipReview">
+              <Pill tone="warning" bordered>
+                {C2M.ppNeedsReview}
+              </Pill>
+              <p className="m-0 p-0 font-body text-base leading-4 text-secondary-text">{r.shipReview}</p>
+            </div>
+          ) : (
+            r.confirmed && (
+              <p className="m-0 mt-1 p-0 font-body text-base leading-4 text-secondary-text" data-c2m="LB-4" data-c2m-id="LB-4" data-testid="reviewedAt">
+                {r.confirmed}
+              </p>
+            )
           )}
         </>
       ),
