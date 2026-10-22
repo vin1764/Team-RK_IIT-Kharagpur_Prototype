@@ -294,8 +294,8 @@
   "gl.otherRanges": "Other date ranges",
   "gl.perf.product": "Product",
   "pi.tab": "Price position",
-  "pi.scope": "Factory Launch listings only · compared with the same material, size and type, per unit",
-  "pi.weekly": "Price changes allowed once a week",
+  "pi.scope": "Compared with Factory Launch listings of the same material, size and type, per unit",
+  "pi.weekly": "You can change this price once a week",
   "pi.listing": "Factory Launch listing",
   "pi.catalogId": "Catalog ID {id}",
   "pi.yourPrice": "Your price",
@@ -421,5 +421,6 @@
   "gl.plan.edit": "Edit plan",
   "gl.plan.planned": "Batch planned",
   "gl.plan.plannedDetail": "{n} units · starts {start} · lands {lands}",
-  "gl.plan.plannedAtPackPoint": "at the {city} Pack Point"
+  "gl.plan.plannedAtPackPoint": "at the {city} Pack Point",
+  "pi.nextChange": "Next change allowed on {date}"
 }

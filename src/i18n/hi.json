@@ -277,8 +277,8 @@
   "gl.otherRanges": "दूसरी तारीखें",
   "gl.perf.product": "प्रोडक्ट",
   "pi.tab": "प्राइस पोज़िशन",
-  "pi.scope": "सिर्फ़ Factory Launch लिस्टिंग · एक जैसे मटीरियल, साइज़ और टाइप से तुलना, प्रति यूनिट",
-  "pi.weekly": "कीमत हफ़्ते में एक बार बदल सकते हैं",
+  "pi.scope": "एक जैसे मटीरियल, साइज़ और टाइप वाली फ़ैक्टरी लॉन्च लिस्टिंग से, प्रति यूनिट तुलना",
+  "pi.weekly": "आप यह कीमत हफ़्ते में एक बार बदल सकते हैं",
   "pi.listing": "Factory Launch लिस्टिंग",
   "pi.catalogId": "कैटलॉग ID {id}",
   "pi.yourPrice": "आपकी कीमत",
@@ -404,5 +404,6 @@
   "gl.plan.edit": "प्लान बदलें",
   "gl.plan.planned": "बैच प्लान हो गया",
   "gl.plan.plannedDetail": "{n} यूनिट · {start} को शुरू · {lands} को पहुंचेगा",
-  "gl.plan.plannedAtPackPoint": "{city} पैक पॉइंट पर"
+  "gl.plan.plannedAtPackPoint": "{city} पैक पॉइंट पर",
+  "pi.nextChange": "अगला बदलाव {date} से"
 }

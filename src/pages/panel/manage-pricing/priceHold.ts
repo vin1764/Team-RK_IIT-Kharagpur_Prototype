@@ -106,3 +106,12 @@ export function usePriceHold(): PriceHoldView | null {
     return priceHoldView(listing, hasCommit, effectivePriceEdit(real, day, persona));
   }, [c2m, listing, commit, real, day, persona, record]);
 }
+
+/** The weekly limit (doc PI-2: "price changes allowed once a week"): after a change on day d, the next change is
+ *  allowed from day d + 7. Null when the price can be changed today. */
+export const PRICE_CHANGE_GAP_DAYS = 7;
+export function nextPriceChangeDay(edit: { day: number } | null, day: number): number | null {
+  if (!edit || edit.day > day) return null;
+  const next = edit.day + PRICE_CHANGE_GAP_DAYS;
+  return day < next ? next : null;
+}

@@ -88,3 +88,15 @@ describe('Samar guards (no self-ship packaging)', () => {
     expect([20, 40, 60, 80].map((n) => packPointFee(n).feePerDeliveredOrder)).toEqual([44, 30, 26, 23]);
   });
 });
+
+// Weekly limit (team): shown where the price is edited; after a change, next change from day + 7
+import { nextPriceChangeDay } from './priceHold';
+describe('price change once a week', () => {
+  it('no edit → can change', () => expect(nextPriceChangeDay(null, 40)).toBeNull());
+  it('edited D40 → locked D40–D46, next change D47 (10 Dec)', () => {
+    expect(nextPriceChangeDay({ day: 40 }, 40)).toBe(47);
+    expect(nextPriceChangeDay({ day: 40 }, 46)).toBe(47);
+    expect(nextPriceChangeDay({ day: 40 }, 47)).toBeNull();
+  });
+  it('an edit dated later than today doesn’t lock', () => expect(nextPriceChangeDay({ day: 45 }, 40)).toBeNull());
+});

@@ -255,8 +255,8 @@
       "title": "Price position tab",
       "tag": "EXTENDED",
       "part": "price",
-      "what": "A new Manage Pricing tab: for each SKU, whether the price qualifies and which third of similar listings it sits in.",
-      "why": "Makers see where they stand without seeing the cut-off, so it can’t be gamed.",
+      "what": "A Price position tab on Manage Pricing: Qualifies / Doesn’t qualify and which third of similar listings the price sits in (Low / Mid / High), never the cut-off. Two rules sit where they apply: the (i) next to “Price position” says the comparison is like-for-like (Factory Launch listings of the same material, size and type, per unit), and under the price field “You can change this price once a week” — after a change the field is locked with “Next change allowed on <date>”.",
+      "why": "Like-for-like keeps the comparison fair (a 1 L steel bottle against 1 L steel bottles, per unit). The weekly limit stops a maker probing for the hidden price cap by trying price after price and watching Qualifies flip.",
       "behind": "pricePosition"
     },
     {

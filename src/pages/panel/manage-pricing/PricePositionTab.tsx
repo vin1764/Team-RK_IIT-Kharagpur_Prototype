@@ -10,7 +10,7 @@ import { useDemo } from '../../../store/demo';
 import { usePriceEdits } from '../../../store/priceEdits';
 import { THUMBS, Thumb } from '../growth-loop/parts';
 import { T } from './crystal';
-import type { PriceHoldView } from './priceHold';
+import { nextPriceChangeDay, type PriceHoldView } from './priceHold';
 
 const THIRDS: PricePosition[] = ['low', 'mid', 'high'];
 
@@ -79,6 +79,9 @@ function EditPrice({ current, onSave, onCancel, t }: { current: number; onSave: 
         </Button>
       </div>
       {!ok && <p className={cx(T.bodyXs, 'text-danger-secondary')}>{t('pi.invalid')}</p>}
+      <p className={cx(T.bodyXs, 'text-neutral-secondary')} data-weekly="open">
+        {t('pi.weekly')}
+      </p>
     </form>
   );
 }
@@ -116,14 +119,11 @@ export function PricePositionTab({ v }: { v: PriceHoldView }) {
   const setPrice = usePriceEdits((s) => s.setPrice);
   const [editing, setEditing] = useState(false);
   const chip = statusChip(v, t);
+  // Weekly limit (PI-2): shown where the price is edited; after a change this week the field is locked.
+  const next = nextPriceChangeDay(v.edit, day);
+  const locked = next !== null;
   return (
     <div className="px-4 pb-6 pt-3 bg-neutral-base flex flex-col gap-3" data-c2m="PI-2" data-c2m-id="PI-2" data-price-position>
-      <Banner tone="info">
-        {t('pi.scope')}
-        <br />
-        <span className="text-secondary-text">{t('pi.weekly')}</span>
-      </Banner>
-
       <div className="rounded-8 border border-solid border-neutral-light bg-neutral-base p-4" data-listing={v.typeId}>
         <div className="flex items-start gap-4">
           <Thumb src={THUMB_BY_TYPE[v.typeId]} />
@@ -134,7 +134,7 @@ export function PricePositionTab({ v }: { v: PriceHoldView }) {
           </div>
           <div className="w-56 shrink-0 flex flex-col gap-1">
             <p className={cx(T.bodySm, 'text-neutral-secondary')}>{t('pi.yourPrice')}</p>
-            {editing ? (
+            {editing && !locked ? (
               <EditPrice
                 current={v.price}
                 t={t}
@@ -150,11 +150,14 @@ export function PricePositionTab({ v }: { v: PriceHoldView }) {
                   <h3 className={T.h3} data-price={v.price}>
                     ₹{fmt(v.price)}
                   </h3>
-                  <Button size="sm" variant="outline" onClick={() => setEditing(true)} data-edit-open>
+                  <Button size="sm" variant="outline" onClick={() => setEditing(true)} disabled={locked} data-edit-open>
                     {t('pi.edit')}
                   </Button>
                 </div>
                 <p className={cx(T.bodySm, 'text-neutral-secondary')}>{t('pi.breakEven', { v: fmt(v.breakEven) })}</p>
+                <p className={cx(T.bodyXs, 'text-neutral-secondary')} data-weekly={locked ? 'locked' : 'open'}>
+                  {locked ? t('pi.nextChange', { date: dayLabel(next!) }) : t('pi.weekly')}
+                </p>
                 {v.edit && v.edit.price !== v.originalPrice && (
                   <p className={cx(T.bodySm, 'text-neutral-secondary')} data-was>
                     {t('pi.was', { v: fmt(v.originalPrice), date: dayLabel(v.edit.day) })}
@@ -164,6 +167,10 @@ export function PricePositionTab({ v }: { v: PriceHoldView }) {
             )}
           </div>
           <div className="w-80 shrink-0 flex flex-col items-start gap-3">
+            <div className="flex items-center gap-1" data-position-heading>
+              <p className={cx(T.bodySm, 'text-neutral-secondary')}>{t('pi.tab')}</p>
+              <InfoTip text={t('pi.scope')} />
+            </div>
             <Pill tone={chip.tone} bordered className="!text-body-small whitespace-nowrap">
               <span data-status={v.slotRemoved ? 'slotRemoved' : v.status}>{chip.text}</span>
             </Pill>
