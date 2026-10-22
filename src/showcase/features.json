@@ -246,7 +246,7 @@
       "title": "What to make instead",
       "tag": "NEW",
       "part": "growth",
-      "what": "For a SKU marked Stop: open-demand products on the same production line.",
+      "what": "For a SKU marked Stop: open-demand products on the same production line. “Plan a lot” on each suggestion opens a panel: open demand and confidence, likely orders for him (20% of the gap), a suggested first lot of ≈ 2 weeks of those orders, what buyers pay, units and a start date → ready date from his lead time; “Save plan” marks the card “Lot planned · 80 units · ready 26 Nov”, and “List it with photos” starts Create from photos with that product type already chosen.",
       "why": "Factory time moves to products buyers are already asking for.",
       "behind": "switchTo"
     },
@@ -602,6 +602,20 @@
       "persona": "jasmeet",
       "day": 28,
       "route": "/panel/v3/new/services/demo/inventory?stock=all_stock"
+    },
+    {
+      "id": "gl-plan-lot",
+      "docId": "GL-6",
+      "title": "Plan a lot (what to make instead)",
+      "part": "growth",
+      "tag": "NEW",
+      "persona": "jasmeet",
+      "day": 28,
+      "route": "/panel/v3/new/services/demo/inventory?stock=all_stock&lot=steel-casserole-1-5l",
+      "selector": "[data-lot-panel]",
+      "prep": [
+        "clean"
+      ]
     },
     {
       "id": "gl-coach",

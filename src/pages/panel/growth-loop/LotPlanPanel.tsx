@@ -18,7 +18,7 @@ import { shortDate } from './useGrowth';
 export const CONFIDENCE_TONE = { High: 'success', Medium: 'warning', Low: 'error' } as const;
 
 /** "40" or "40–60": a weekly range as shown. */
-const span = (r: { low: number; high: number }) => (r.low === r.high ? fmt(r.low) : `${fmt(r.low)}–${fmt(r.high)}`);
+export const span = (r: { low: number; high: number }) => (r.low === r.high ? fmt(r.low) : `${fmt(r.low)}–${fmt(r.high)}`);
 
 export interface LotMaker {
   /** his own lead time and minimum run, from his live listing */

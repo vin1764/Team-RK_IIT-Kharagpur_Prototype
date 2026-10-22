@@ -82,6 +82,7 @@ describe('features (the jump list)', () => {
     'fo-outreach': 'outreach',
     'pp-drawer': 'pickup-address',
     'gl-plan-batch': 'inventory',
+    'gl-plan-lot': 'inventory',
     'fo-checks-maker': 'business-details',
     'fo-checks-reseller': 'business-details',
     'fo-ship-choice': 'pickup-address',
