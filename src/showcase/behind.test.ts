@@ -140,12 +140,28 @@ describe('Behind it: hero numbers (plan §8b)', () => {
     expect(hold).toContain('Position Low → Mid');
   });
 
-  it('Pack Point fee: ₹1,26,444 ÷ 6,000 = ₹21.07 → ₹24.87 → ₹30.3 → ₹30 at 40 makers', () => {
-    const t = text('packPointFee', 'samar', J.packPointLot);
+  it('Pack Point fee (Meesho’s view only): ₹1,26,444 ÷ 6,000 = ₹21.07 → × 1.18 partner margin = ₹24.87 → ÷ 0.822 = ₹30.3 → ₹30', () => {
+    const lines = BEHIND.packPointFee!(at('samar', J.packPointLot));
+    expect(lines[0]).toMatch(/^Meesho’s view, not shown to sellers/);
+    const t = lines.join('\n');
     expect(t).toContain('₹1,26,444 a month ÷ 6,000 orders = ₹21.07');
-    expect(t).toContain('₹24.87 ÷ 0.822');
-    expect(t).toContain('= ₹30.3');
-    expect(t).toContain('₹30 per delivered order at 40 makers (₹44 at 20, ₹26 at 60, ₹23 at 80)');
+    expect(t).toContain('× 1.18 (+ 18% partner margin, 3PL norm 15–20%) = ₹24.87');
+    expect(t).not.toMatch(/GST/);
+    expect(t).toContain('÷ 0.822');
+    expect(t).toContain('= ₹30.3 → ₹30 per delivered order at 40 makers');
+    expect(t).toContain('₹44 at 20 · ₹30 at 40 · ₹26 at 60 · ₹23 at 80 makers; a Pack Point opens only at 40 makers');
+    expect(t).toContain('Moradabad: 32/40 makers signed up');
+  });
+
+  it('Pack Point at Pickup Address: what the seller sees vs Meesho’s view', () => {
+    const lines = BEHIND.fulfilment!(at('samar', J.onboarding));
+    expect(lines[0]).toBe('Seller sees: Agra in your district · Open, ₹30; Moradabad 200 km · Opening soon; Rajkot 910 km · Open, ₹30 (city-centre distances, rounded to 10 km)');
+    // every economics line is labelled
+    for (const l of lines.slice(1)) expect(l).toMatch(/^Meesho’s view, not shown to sellers: /);
+    expect(lines.join('\n')).toContain('Moradabad: 32/40 makers signed up');
+    expect(lines.join('\n')).toContain('₹44 at 20 · ₹30 at 40 · ₹26 at 60 · ₹23 at 80 makers');
+    const pp = BEHIND.packPointProgram!(at('samar', J.packPointLot));
+    expect(pp.at(-1)).toMatch(/^Meesho’s view, not shown to sellers: Agra pools 40 makers; a Pack Point opens only at 40\./);
   });
 
   it('Samar’s lot at D50: 90 received, 617.5–682.5 g, free to D80 then ₹26.10 a day', () => {

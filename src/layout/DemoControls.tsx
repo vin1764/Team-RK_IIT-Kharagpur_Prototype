@@ -12,6 +12,7 @@ import { resetPriceChecks } from '../store/priceChecks';
 import { resetLaunchBanner } from '../store/launchBanner';
 import { resetRestockPlans } from '../store/restockPlan';
 import { resetLotPlans } from '../store/lotPlans';
+import { resetShipSwitch } from '../store/fulfilmentSwitch';
 import { resetMakerProduct } from '../store/makerProduct';
 import { DemoGuide, takePendingJump } from './DemoGuide';
 import { DEMO_GUIDE } from './demoGuide';
@@ -159,7 +160,7 @@ function DemoControlsPanel() {
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => { s.reset(); useOnboarding.getState().reset(); resetCatalog(); resetDraft(); resetLaunch(); resetPriceEdits(); resetPriceChecks(); resetMakerProduct(); resetLaunchBanner(); resetRestockPlans(); resetLotPlans(); setActiveStep(null); }} className="rounded-sm border border-solid border-white/30 bg-transparent text-white px-2 py-0.5 text-sm cursor-pointer">
+            <button type="button" onClick={() => { s.reset(); useOnboarding.getState().reset(); resetCatalog(); resetDraft(); resetLaunch(); resetPriceEdits(); resetPriceChecks(); resetMakerProduct(); resetLaunchBanner(); resetRestockPlans(); resetLotPlans(); resetShipSwitch(); setActiveStep(null); }} className="rounded-sm border border-solid border-white/30 bg-transparent text-white px-2 py-0.5 text-sm cursor-pointer">
               Reset demo
             </button>
           </div>
