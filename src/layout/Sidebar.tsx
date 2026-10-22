@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router';
-import { paths } from '../app/paths';
+import { paths, pathOnly } from '../app/paths';
 import { notInPrototype } from '../components/Toast';
+import { PinkTag } from '../pages/panel/catalog/BulkTemplatePanel';
+import { FL } from '../pages/panel/factory-launch/copy';
+import { useFlEligible } from '../pages/panel/factory-launch/useLaunchEntry';
 import { isGroup, matches, SIDEBAR, type SidebarGroup, type SidebarLeaf } from './sidebarItems';
 
 // Ported class-for-class from reference/html nav#app-sidebar.
 
-function Leaf({ item, active, onNavigate }: { item: SidebarLeaf; active: boolean; onNavigate?: () => void }) {
+function Leaf({ item, active, onNavigate, badge, c2m }: { item: SidebarLeaf; active: boolean; onNavigate?: () => void; badge?: ReactNode; c2m?: string }) {
   return (
-    <div className="flex data-[active=true]:bg-[var(--color-secondary-text)]" data-active={active}>
+    <div className="flex data-[active=true]:bg-[var(--color-secondary-text)]" data-active={active} data-c2m={c2m} data-c2m-id={c2m}>
       {active && <div className="bg-[var(--color-tertiary-text)] w-1 rounded-tr-sm rounded-br-sm" />}
       <Link
         to={item.to}
@@ -23,14 +26,15 @@ function Leaf({ item, active, onNavigate }: { item: SidebarLeaf; active: boolean
           ) : (
             <p className="m-0 p-0 font-normal font-body text-lg leading-5 text-tertiary-border">{item.label}</p>
           )}
+          {badge}
         </div>
       </Link>
     </div>
   );
 }
 
-function Group({ item, pathname, onNavigate }: { item: SidebarGroup; pathname: string; onNavigate?: () => void }) {
-  const active = matches(pathname, item.match[0]!, item.match);
+function Group({ item, pathname, onNavigate, inactive }: { item: SidebarGroup; pathname: string; onNavigate?: () => void; inactive?: boolean }) {
+  const active = !inactive && matches(pathname, item.match[0]!, item.match);
   const [open, setOpen] = useState(active);
   return (
     <div className="cursor-pointer border-l-4 border-solid border-l-transparent data-[active=true]:border-l-secondary-text" data-active={active}>
@@ -81,9 +85,18 @@ function Group({ item, pathname, onNavigate }: { item: SidebarGroup; pathname: s
   );
 }
 
+/** C2M LW-6: "Factory Launch" under Boost Sales, for makers who passed the checks; Promotions → Factory Launch tab. */
+const FL_LEAF: SidebarLeaf = { label: FL.sidebar, icon: '/brand/msa/merlin/filled/promotions-v2.svg', to: paths.factoryLaunch };
+
 export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const noticesActive = matches(pathname, paths.notices);
+  // LW-6: eligible makers also get the pinned Factory Launch notice, counted in "Notices (n)", and the sidebar item.
+  const flEligible = useFlEligible();
+  const noticeCount = 1 + (flEligible ? 1 : 0);
+  const flActive =
+    flEligible &&
+    ((pathname === pathOnly(paths.factoryLaunch) && new URLSearchParams(search).get('tab') === 'FACTORY_LAUNCH') || matches(pathname, paths.factoryLaunchLive.replace(/\/flw-1\/live$/, '')));
   return (
     <div className="flex flex-col w-full relative h-full bg-primary-text">
       <div className="flex justify-between items-center py-5 min-h-20 box-border">
@@ -108,7 +121,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
               className="flex items-center justify-center pt-3 pb-3 flex-1 cursor-pointer hover:bg-secondary-text border-r border-solid border-r-secondary-text gap-1.5 no-underline"
             >
               <img src="/brand/msa/merlin/filled/notification-active.svg" alt="" width="16" height="16" />
-              <p className={`m-0 p-0 font-body text-lg leading-5 ${noticesActive ? 'font-semibold text-white' : 'font-normal text-secondary-border'}`}>Notices (1)</p>
+              <p className={`m-0 p-0 font-body text-lg leading-5 ${noticesActive ? 'font-semibold text-white' : 'font-normal text-secondary-border'}`}>Notices ({noticeCount})</p>
             </Link>
           </div>
           <div className="flex w-1/2">
@@ -131,9 +144,12 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
                     <p className="m-0 p-0 font-normal font-body text-base leading-4 mb-3 ml-3 mt-5 text-tertiary-text">{section.title}</p>
                   )}
                   <div>
+                    {flEligible && section.title === 'Boost Sales' && (
+                      <Leaf item={FL_LEAF} active={flActive} onNavigate={onNavigate} c2m="LW-6" badge={<span className="ml-1 inline-flex" data-fl-new><PinkTag>{FL.newTag}</PinkTag></span>} />
+                    )}
                     {section.items.map((item) =>
                       isGroup(item) ? (
-                        <Group key={item.label} item={item} pathname={pathname} onNavigate={onNavigate} />
+                        <Group key={item.label} item={item} pathname={pathname} onNavigate={onNavigate} inactive={flActive} />
                       ) : (
                         <Leaf key={item.label} item={item} active={matches(pathname, item.to, item.match)} onNavigate={onNavigate} />
                       ),

@@ -123,6 +123,8 @@ export const FL = {
     commitStock: 'Commit stock', // prompt
     closeBy: (date: string) => `Commitments close ${date}`, // prompt
     item: {
+      product: 'Tell us what you make', // prompt
+      productSub: 'Your category, or one product photo', // ours
       manufacturer: 'Manufacturer', // prompt
       manufacturerSub: 'GST nature of business + Udyam', // prompt
       records: 'Records agree', // prompt
@@ -137,6 +139,8 @@ export const FL = {
       stockClosed: (date: string) => `Commitments closed on ${date}`, // prompt
     },
     createFromPhotos: 'Create from photos', // existing LB-3 button
+    tellUs: 'Tell us', // ours
+    noBook: (type: string) => `No open order book for ${type} yet · we'll tell you when one opens`, // ours (prompt LW-4 "No open order book for your product type yet")
     toOrderBook: 'Go to order book', // prompt
     in: (name: string, stock: string, live: string) => `You're in ${name} · stock ready by ${stock} · live ${live}`, // prompt
     live: (today: number) => `Live now · ${s(today, 'order', 'orders')} today`, // prompt

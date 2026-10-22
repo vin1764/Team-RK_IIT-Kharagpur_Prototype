@@ -10,6 +10,8 @@ import { useDemo, type Persona } from '../store/demo';
 import { PERSONAS, useOnboarding } from '../store/onboarding';
 import { resetPriceEdits } from '../store/priceEdits';
 import { resetLaunch } from '../store/timeline';
+import { resetLaunchBanner } from '../store/launchBanner';
+import { resetMakerProduct } from '../store/makerProduct';
 import type { Prep } from '../showcase/types';
 
 /** Query param FactoryLaunchPanel reads to open the commit modal on the maker's own order-book row. */
@@ -22,6 +24,8 @@ export function resetInteractive() {
   resetDraft();
   resetLaunch();
   resetPriceEdits();
+  resetMakerProduct();
+  resetLaunchBanner();
 }
 
 /** Onboarding resets on a persona switch, so the fulfilment choice only carries over for the same persona. */

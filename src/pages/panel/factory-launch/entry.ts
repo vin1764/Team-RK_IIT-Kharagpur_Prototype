@@ -3,7 +3,7 @@
 // non-factory sellers see Meesho exactly as today. Pure model here; the hook reads the same data as the
 // Factory Launch tab (useLaunchView) and the price-hold (usePriceHold), so the banner never disagrees with it.
 import type { Eligibility, PriceStatus, ProductTypeId } from '../../../engine/ui';
-import type { LaunchPhase, SlotStatus } from './launch';
+import type { LaunchPhase } from './launch';
 
 /**
  *   choose      eligible, hasn't told us the product yet → category-level line, "Tell us what you make"
@@ -81,7 +81,8 @@ export function bannerModel(i: BannerInput): BannerModel | null {
   const make = (state: BannerState, hasChecklist: boolean): BannerModel => ({ ...base, state, hasChecklist, dismissible: i.committed || !open });
 
   if (!i.told) return open ? make('choose', true) : null;
-  if (!i.hasBook) return open ? make('noBook', false) : null;
+  // Nothing to commit to for this type, so the note can always be dismissed.
+  if (!i.hasBook) return open ? { ...make('noBook', false), dismissible: true } : null;
   if (i.committed && i.slotRemoved) return make('slotRemoved', false);
   if (i.committed && i.phase === 'live') return make('live', false);
   if (i.committed && i.phase === 'ended') return make('ended', false);
@@ -92,6 +93,3 @@ export function bannerModel(i: BannerInput): BannerModel | null {
 
 /** Whether a product type has an order book in the launch. */
 export const inLaunch = (types: ProductTypeId[], type: ProductTypeId | null) => type !== null && types.includes(type);
-
-/** "1 slot left" / "Full · crowded" for the slot line, from the order book row. */
-export type { SlotStatus };

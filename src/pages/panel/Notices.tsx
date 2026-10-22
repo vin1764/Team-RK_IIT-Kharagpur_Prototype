@@ -1,4 +1,6 @@
 // Notice board (growth/notices): reference/html/meesho-notices.html + reference/screens/notices-1..4.png.
+import { useFlEligible } from './factory-launch/useLaunchEntry';
+import { LaunchNotice } from './notices/LaunchNotice';
 import { LeaveRequest } from './notices/LeaveRequest';
 import { NOTICES, type Notice } from './notices/noticeList';
 
@@ -18,6 +20,8 @@ function NoticeCard({ title, date, body }: Notice) {
 }
 
 export default function Notices() {
+  // C2M LW-6: a pinned Factory Launch notice on top, for makers who passed the checks.
+  const pinned = useFlEligible();
   return (
     <div>
       {/* Sticky under the concept strip (the live panel sticks it at top: 0). */}
@@ -32,6 +36,7 @@ export default function Notices() {
       </div>
       <div className="flex w-full px-4 gap-x-4 mx-auto">
         <div className="flex flex-col box-border flex-1 min-w-0">
+          {pinned && <LaunchNotice />}
           {NOTICES.map((n) => (
             <NoticeCard key={`${n.title}|${n.date}`} {...n} />
           ))}

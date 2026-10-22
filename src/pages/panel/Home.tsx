@@ -2,12 +2,14 @@
 //   default    → reference/screens/home.png: step 1 "Upload catalogs to get started"
 //   ?state=qc  → reference/html/meesho-home.html: step 2 with the QC status table
 //   live       → (C2M, LB-8) after "Go live" from photos: step 2 shows the live catalog
+// C2M LW-6: the Factory Launch banner sits above "Welcome…" for makers who passed the checks.
 // Later phases will pick the state from the demo day instead of the query string.
 import { useSearchParams } from 'react-router';
 import { notInPrototype } from '../../components/Toast';
 import { useDemo } from '../../store/demo';
 import { useScriptedListing } from '../../store/timeline';
 import { LAUNCH } from './factory-launch/launch';
+import { LaunchBanner } from './factory-launch/LaunchBanner';
 import { HomeRail } from './home/HomeRail';
 import { HomeSteps, type HomeState } from './home/HomeSteps';
 
@@ -37,6 +39,7 @@ function WelcomeHeader() {
 export function HomeView({ state }: { state: HomeState }) {
   return (
     <>
+      <LaunchBanner />
       <WelcomeHeader />
       <div className="flex justify-between m-3 max-[767px]:flex-col max-[767px]:gap-3">
         <HomeSteps key={state} state={state} />

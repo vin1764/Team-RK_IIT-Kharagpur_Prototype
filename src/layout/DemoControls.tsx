@@ -8,6 +8,8 @@ import { resetDraft } from '../pages/panel/catalog/draftStore';
 import { useOnboarding } from '../store/onboarding';
 import { resetLaunch } from '../store/timeline';
 import { resetPriceEdits } from '../store/priceEdits';
+import { resetLaunchBanner } from '../store/launchBanner';
+import { resetMakerProduct } from '../store/makerProduct';
 import { DemoGuide, takePendingJump } from './DemoGuide';
 import { DEMO_GUIDE } from './demoGuide';
 import { FrameBridge } from '../embed/FrameBridge';
@@ -154,7 +156,7 @@ function DemoControlsPanel() {
                 </button>
               ))}
             </div>
-            <button type="button" onClick={() => { s.reset(); useOnboarding.getState().reset(); resetCatalog(); resetDraft(); resetLaunch(); resetPriceEdits(); setActiveStep(null); }} className="rounded-sm border border-solid border-white/30 bg-transparent text-white px-2 py-0.5 text-sm cursor-pointer">
+            <button type="button" onClick={() => { s.reset(); useOnboarding.getState().reset(); resetCatalog(); resetDraft(); resetLaunch(); resetPriceEdits(); resetMakerProduct(); resetLaunchBanner(); setActiveStep(null); }} className="rounded-sm border border-solid border-white/30 bg-transparent text-white px-2 py-0.5 text-sm cursor-pointer">
               Reset demo
             </button>
           </div>

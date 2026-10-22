@@ -4,7 +4,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { notInPrototype } from '../../../components/Toast';
 
-const CTA_STYLE: CSSProperties = {
+export const CTA_STYLE: CSSProperties = {
   display: 'inline-block',
   marginTop: '12px',
   padding: '12px 24px',
