@@ -3,6 +3,7 @@
 //   → parent: 'ready' once, then 'state' (route, persona, day, lang, c2m, visible doc IDs) whenever one changes.
 //   ← parent: navigate (with prep + focus), demo, c2m, highlight, pulse.
 // Jumps reuse the Demo guide's mechanism (startJump → DemoUrlSync adopts persona/day/lang once the route is current).
+import { appPathname } from '../app/base';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { clearPendingJump, startJump } from '../layout/DemoGuide';
@@ -76,7 +77,7 @@ export function FrameBridge() {
     const msg: FrameMsg = {
       rk: 'showcase',
       type: 'state',
-      route: window.location.pathname + window.location.search,
+      route: appPathname() + window.location.search,
       persona: s.persona,
       day: s.day,
       lang: s.lang,
@@ -114,7 +115,7 @@ export function FrameBridge() {
     const tick = () => {
       if (run !== focusRun.current) return;
       const now = performance.now();
-      const el = window.location.pathname === path ? findFocus(focus) : null;
+      const el = appPathname() === path ? findFocus(focus) : null;
       if (el) {
         if (!seenAt) seenAt = now;
         else if (now - seenAt >= FOCUS_SETTLE_MS) {
@@ -135,7 +136,7 @@ export function FrameBridge() {
       const [path, query = ''] = to.split('?') as [string, string?];
       return { path, href: `${path}${withDemoParams(query, { persona: m.persona, day: m.day, lang, c2m: s.c2m })}` };
     };
-    const here = window.location.pathname + window.location.search;
+    const here = appPathname() + window.location.search;
     // The prep may clear the draft under the current page: hold its redirect until the jump lands.
     if (m.prep?.length && hrefFor(m.to).href !== here) draftJump.pending = true;
     const to = runPrep(m.prep, m.persona, m.to);
@@ -156,7 +157,7 @@ export function FrameBridge() {
       const start = performance.now();
       const land = () => {
         if (run !== navRun.current) return;
-        const current = window.location.pathname + window.location.search === href;
+        const current = appPathname() + window.location.search === href;
         if (!current && performance.now() - start < LAND_MS) {
           window.setTimeout(land, LAND_POLL_MS);
           return;

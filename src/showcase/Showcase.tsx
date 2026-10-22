@@ -1,6 +1,7 @@
 // The showcase page at "/": the prototype in a laptop frame (left) + the showcase sidebar (right).
 // The frame is a same-origin iframe at a fixed 1366×768 scaled to fit; it talks to this page through
 // the postMessage protocol in ./types.ts (src/embed/FrameBridge.tsx is the other end).
+import { withBase } from '../app/base';
 import './showcase.css';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Navigate } from 'react-router';
@@ -134,7 +135,7 @@ function ShowcasePage() {
       if (st) go({ type: 'navigate', to: st.jump.path, persona: st.jump.persona, day: st.jump.day, lang: 'en' });
     },
     fullScreen: () => {
-      window.open(routeWithDemo(route, shown), '_blank', 'noopener');
+      window.open(withBase(routeWithDemo(route, shown)), '_blank', 'noopener');
     },
   };
 
@@ -142,7 +143,7 @@ function ShowcasePage() {
   const at = state ? routeWithDemo(state.route, state) : initial.at;
   useEffect(() => {
     const t = window.setTimeout(() => {
-      const next = `/${serializeShowcaseUrl({ f: activeF, at, hl, c2m: shown.c2m, sb, zoom })}`;
+      const next = withBase(`/${serializeShowcaseUrl({ f: activeF, at, hl, c2m: shown.c2m, sb, zoom })}`);
       if (`${window.location.pathname}${window.location.search}` !== next) window.history.replaceState(window.history.state, '', next);
     }, URL_DEBOUNCE_MS);
     return () => window.clearTimeout(t);
@@ -205,7 +206,7 @@ function ShowcasePage() {
               <div className="sc-screen" style={{ width: screenW, height: screenH }}>
                 <iframe
                   ref={iframe}
-                  src={src}
+                  src={withBase(src)}
                   title="Supplier Hub prototype"
                   width={FRAME_W}
                   height={FRAME_H}

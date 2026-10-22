@@ -3,6 +3,7 @@
 import { Component, type ReactNode } from 'react';
 import { useLocation } from 'react-router';
 import { resetDraft } from '../pages/panel/catalog/draftStore';
+import { withBase } from '../app/base';
 
 interface State {
   error: Error | null;
@@ -40,7 +41,7 @@ class Boundary extends Component<{ children: ReactNode; resetKey: string }, Stat
               className="h-9 cursor-pointer rounded-sm border-0 bg-brand-primary-bg px-4 font-button font-semibold text-lg text-white"
               onClick={() => {
                 resetDraft();
-                window.location.assign(home);
+                window.location.assign(withBase(home));
               }}
             >
               Start the listing again
