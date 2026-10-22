@@ -22,6 +22,7 @@
   },
   "costStackInPackPointMode": {
     "_source": "team answer, 21 Oct 2026: packaging removed (the node packs, it's inside the fee); Pack Point fee added (GST included); shipping + fixed, returns buffer and GST unchanged",
+    "_gstNote": "The 18% inside the fee is the partner's margin (deck appendix: fee per order handled = cost × 1.18, partner margin 18%, 3PL norm 15–20%), not GST. GST on the Pack Point service isn't modelled (open question). The seller sees just '₹30 per delivered order'.",
     "removes": ["packaging"],
     "adds": "packPointFee"
   },

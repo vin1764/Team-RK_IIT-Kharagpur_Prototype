@@ -12,6 +12,7 @@ import { resetPriceChecks } from '../store/priceChecks';
 import { resetPriceEdits } from '../store/priceEdits';
 import { resetRestockPlans } from '../store/restockPlan';
 import { resetLotPlans } from '../store/lotPlans';
+import { resetShipSwitch } from '../store/fulfilmentSwitch';
 import { resetLaunch } from '../store/timeline';
 import { LAUNCH } from '../pages/panel/factory-launch/launch';
 import { resetLaunchBanner } from '../store/launchBanner';
@@ -33,6 +34,7 @@ export function resetInteractive() {
   resetLotPlans();
   resetMakerProduct();
   resetLaunchBanner();
+  resetShipSwitch();
 }
 
 /** Onboarding resets on a persona switch, so the fulfilment choice only carries over for the same persona. */

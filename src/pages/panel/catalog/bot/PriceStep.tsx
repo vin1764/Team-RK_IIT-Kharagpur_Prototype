@@ -149,7 +149,7 @@ function FulfilmentChoice({ m }: { m: BotModel }) {
         </div>
         {!live && (
           <span className="font-body text-base leading-4 text-tertiary-text" data-testid="ppOpensAt">
-            {t('fulfil.opensAt', { n: fmt(opt.opensAtMakers) })}
+            {t('fulfil.openingSoon')}
           </span>
         )}
       </div>
@@ -166,7 +166,15 @@ function FulfilmentChoice({ m }: { m: BotModel }) {
         {t('fulfil.scope', { mode: t(`fulfil.${m.defaultMode}`) })}
       </p>
       {retail}
-      <PackPointDrawer open={drawer} onClose={() => setDrawer(false)} pincode={m.pincode} onChoose={live && m.mode !== 'packPoint' ? () => m.setMode('packPoint') : undefined} />
+      <PackPointDrawer
+        open={drawer}
+        onClose={() => setDrawer(false)}
+        pincode={m.pincode}
+        context="price"
+        current={live && m.mode === 'packPoint' ? opt.city : null}
+        onChoose={live && m.mode !== 'packPoint' ? () => m.setMode('packPoint') : undefined}
+        onSwitchBack={live && m.mode === 'packPoint' ? () => m.setMode('selfShip') : undefined}
+      />
     </div>
   );
 }

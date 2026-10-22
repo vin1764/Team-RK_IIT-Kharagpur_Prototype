@@ -171,7 +171,7 @@ export function PackPointDrawer({ open, onClose, pincode, context, onUse, onSwit
               }
               onWaitlist={onWaitlist}
             />
-            <p className="m-0 mt-2 text-base leading-4 font-body text-secondary-text">{C2M.ppNothingAtSignup}</p>
+            {own && <p className="m-0 mt-1 text-base leading-4 font-body text-secondary-text">{C2M.ppNothingAtSignup}</p>}
           </Section>
 
           {/* PP-10: providers serving the maker's pincode (doc p.20 mock-up) */}

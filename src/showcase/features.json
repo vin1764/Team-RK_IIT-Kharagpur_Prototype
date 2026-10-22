@@ -76,7 +76,7 @@
       "title": "Pack Point or self-ship",
       "tag": "EXTENDED",
       "part": "onboarding",
-      "what": "Once the pickup address saves: a generic “Send one lot a week to a Pack Point” option with its status from the pincode (available / opening soon, 32 of 40 makers), and “See details & rate cards” opening a drawer: how it works, the cluster, providers and rate cards, the fee by cluster size, other charges, self-ship vs Pack Point in words. No product prices until the maker tells us what he makes.",
+      "what": "Once the pickup address saves: a generic “Send one lot a week to a Pack Point” option with its status from the pincode (available / opening soon, no counts), and “See details & rate cards” opening a drawer: Pack Points near you sorted by distance, each with “₹30 per delivered order”, storage and services, and “Use this Pack Point” (picks the option on this step, with that location) or “Join waitlist” for one opening soon; then providers and rate cards. None nearby: “No Pack Point near you yet”. No product prices until the maker tells us what he makes.",
       "why": "Many offline makers can’t pack and ship single orders; the Pack Point does it for the whole cluster.",
       "behind": "fulfilment"
     },
@@ -273,17 +273,17 @@
       "title": "Cluster Pack Point program",
       "tag": "EXTENDED",
       "part": "packpoint",
-      "what": "A second program card on Warehouse: one lot a week, the partner packs, ships and takes returns; self-ship stays available.",
+      "what": "A second program card on Warehouse: one lot a week, the partner packs, ships and takes returns. “Use this Pack Point” opens a confirm panel in place: apply to all or chosen live products, each with its new take-home and launch status, what changes, Confirm / Cancel. After it: “You’re on Pack Point · <city> · first lot not sent yet” with “Plan first lot”, and the switched listings go back to “Needs your review” (Packer changed). “Switch back to self-ship” opens the reverse panel.",
       "why": "Meesho Warehouse serves top sellers in three cities; makers in clusters need a shared node.",
       "behind": "packPointProgram"
     },
     {
       "docId": "PP-4",
-      "title": "Pack Point fee card",
+      "title": "Pack Points near you and the maker’s cost",
       "tag": "NEW",
       "part": "packpoint",
-      "what": "The fee per delivered order and how it’s built, the maker’s own cost stack with it, and which clusters are live.",
-      "why": "The fee only works with enough makers per node, so the card shows the density gate.",
+      "what": "Pack Points near the maker with his fee at each (₹30 per delivered order, storage, services), beside his own cost stack. No fee build-up, pool size or sign-up count on the maker’s screen.",
+      "why": "The maker needs what he pays, not how it’s built; the fee build-up and the 40-maker density gate are Meesho’s view (Behind it).",
       "behind": "packPointFee"
     },
     {
@@ -300,7 +300,7 @@
       "title": "Pack Point providers near the maker",
       "tag": "NEW",
       "part": "packpoint",
-      "what": "In the Pack Point drawer: the fulfilment providers serving the maker’s pincode (WareIQ, Prozo, Eshopbox, Shiprocket Fulfillment), each with services (bulk in · pack · returns) and a rate card (Shiprocket ₹24 per order; others on request), next to the cluster fee by size.",
+      "what": "In the Pack Point drawer: the fulfilment providers serving the maker’s pincode (WareIQ, Prozo, Eshopbox, Shiprocket Fulfillment), each with services (bulk in · pack · returns) and a rate card (Shiprocket ₹24 per order; others on request), under the Pack Points near him.",
       "why": "A maker compares the shared Pack Point with the providers already serving his area before choosing; rates are shown as published, with nothing invented.",
       "behind": "packPointFee"
     }
@@ -345,6 +345,17 @@
       "persona": "samar",
       "day": 1,
       "route": "/onboarding/pickup-address?state=saved"
+    },
+    {
+      "id": "pp-use-onboarding",
+      "docId": "FO-8",
+      "title": "Use this Pack Point, without leaving onboarding",
+      "part": "onboarding",
+      "tag": "EXTENDED",
+      "persona": "samar",
+      "day": 1,
+      "route": "/onboarding/pickup-address?state=saved&drawer=packpoint",
+      "selector": "[data-testid=pp-nodes]"
     },
     {
       "id": "fo-finish-pick",
@@ -450,6 +461,21 @@
       "persona": "jasmeet",
       "day": 3,
       "route": "/panel/v3/new/cataloging/demo/catalogs/single/add-product-details?mode=photos&step=price",
+      "prep": [
+        "clean",
+        "botFilled"
+      ]
+    },
+    {
+      "id": "lb-price-packpoint",
+      "docId": "LB-6",
+      "title": "Price: Pack Point for this product",
+      "part": "listing",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 3,
+      "route": "/panel/v3/new/cataloging/demo/catalogs/single/add-product-details?mode=photos&step=price",
+      "selector": "[data-testid=fulfilment]",
       "prep": [
         "clean",
         "botFilled"
@@ -687,6 +713,20 @@
       "persona": "jasmeet",
       "day": 28,
       "route": "/panel/v3/new/fulfillment/demo/warehouse"
+    },
+    {
+      "id": "pp-switch-confirm",
+      "docId": "PP-3",
+      "title": "Switch to Pack Point in place (Jasmeet)",
+      "part": "packpoint",
+      "tag": "EXTENDED",
+      "persona": "jasmeet",
+      "day": 28,
+      "route": "/panel/v3/new/fulfillment/demo/warehouse?pp=confirm",
+      "selector": "[data-pp-confirm]",
+      "prep": [
+        "clean"
+      ]
     }
   ],
   "pages": [
