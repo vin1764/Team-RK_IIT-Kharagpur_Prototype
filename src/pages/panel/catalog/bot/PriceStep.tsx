@@ -150,10 +150,12 @@ function FulfilmentChoice({ m }: { m: BotModel }) {
       </div>
       <p className="m-0 mt-2.5 font-body text-lg leading-5 text-secondary-text" data-testid="fulfilCompare">
         {extra !== null ? t('fulfil.compare', { extra: fmt(extra) }) : t('fulfil.compareNoExtra')}{' '}
-        ·{' '}
-        <LinkButton onClick={() => setDrawer(true)} className="font-body" testId="seeRateCards">
-          {t('fulfil.rateCards')}
-        </LinkButton>
+        <span className="whitespace-nowrap">
+          ·{' '}
+          <LinkButton onClick={() => setDrawer(true)} className="font-body" testId="seeRateCards">
+            {t('fulfil.rateCards')}
+          </LinkButton>
+        </span>
       </p>
       <p className="m-0 mt-1 font-body text-base leading-4 text-tertiary-text" data-testid="fulfilScope">
         {t('fulfil.scope', { mode: t(`fulfil.${m.defaultMode}`) })}
