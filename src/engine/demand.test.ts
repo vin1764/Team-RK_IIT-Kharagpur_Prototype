@@ -30,8 +30,10 @@ describe('slots — 1 L steel bottle', () => {
 
 // plan §8 suggestedLot · §8b Suggested lot
 describe('suggestedLot — 1 L steel bottle at ₹80', () => {
-  it('~11 a day × 14 = 154 → 150 units, ₹12,000 at cost', () => {
-    expect(suggestedLot('steel-bottle-1l', 80)).toEqual({ perDay: { low: 9, high: 13 }, dailyRunRate: 11, days: 14, twoWeeks: 150, units: 150, raisedToMinRun: false, atCost: 12000 });
+  it('60–90 a week ÷ 7 → midpoint 10.7 a day × 14 = 150 units, ₹12,000 at cost', () => {
+    const l = suggestedLot('steel-bottle-1l', 80);
+    expect(l).toMatchObject({ perDay: { low: 9, high: 13 }, days: 14, twoWeeks: 150, units: 150, raisedToMinRun: false, atCost: 12000 });
+    expect(l.dailyRunRate).toBeCloseTo(75 / 7, 6);
   });
 });
 
@@ -59,4 +61,22 @@ describe('suggestedLot — follows the maker', () => {
     expect(suggestedLot('steel-bottle-1l', 80).perDay).toEqual({ low: 9, high: 13 });
     expect(suggestedLot('sneakers-slip-on-men', 200).units).toBe(90);
   });
+});
+
+// team (What to make instead → Plan a lot)
+describe('What to make instead — likely orders and first lot', () => {
+  it('1.5 L casserole: 200 a week × 20% = 40 a week = 5–6 a day → 5.7 × 14 = 80 units', () => {
+    expect(likelyShare('steel-casserole-1-5l').ordersPerWeek).toEqual({ low: 40, high: 40 });
+    expect(likelyShare('steel-casserole-1-5l').ordersPerDay).toEqual({ low: 5, high: 6 });
+    expect(suggestedLot('steel-casserole-1-5l', 220)).toMatchObject({ units: 80, atCost: 17600 });
+  });
+  it('500 ml flask: 120 a week × 20% = 24 a week = 3–4 a day → 3.4 × 14 = 48 → 50 units', () => {
+    expect(likelyShare('steel-flask-500ml').ordersPerDay).toEqual({ low: 3, high: 4 });
+    expect(suggestedLot('steel-flask-500ml', 100)).toMatchObject({ units: 50, atCost: 5000 });
+  });
+  it('buyers pay ₹340–400 and ₹170–200', () => {
+    expect(demandForType('steel-casserole-1-5l').priceBand).toEqual({ low: 340, high: 400 });
+    expect(demandForType('steel-flask-500ml').priceBand).toEqual({ low: 170, high: 200 });
+  });
+  it('Samar unchanged: 5–8 a day → 6.5 × 14 = 91 → 90', () => expect(suggestedLot('sneakers-slip-on-men', 200).units).toBe(90));
 });

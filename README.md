@@ -122,7 +122,7 @@ Key: **plan** = `maker-app-build-plan.md` · **doc** = `reference/C2M-solution-d
 | Cost before GST 80 + 6 + 32 + 8 = ₹126 → **break-even ⌈126 × 1.05⌉ = ₹133** | plan §8b, Q18 | `costStack.ts` | `costStack.test.ts` |
 | **Take-home** 17.5% × ₹80 = **₹14** | plan §8b | `costStack.ts` | `costStack.test.ts` |
 | **List price** (126 + 14) × 1.05 = **₹147** | plan §8b, Q18 | `costStack.ts` | `costStack.test.ts`, `demoGuide.test.ts` |
-| Via Pack Point instead: no packaging, + ₹30 fee → break-even **₹158**, list **₹173** (doesn't qualify, so she self-ships) | Q3, Q18 | `costStack.ts` | `costStack.test.ts`, `ui.test.ts`, `warehouse/offer.test.ts` |
+| Via Pack Point instead: no packaging, + ₹30 fee → break-even **₹158**, list **₹172** (172.2 rounds to the nearest rupee; doesn't qualify, so she self-ships) | Q3, Q18 | `costStack.ts` | `costStack.test.ts`, `ui.test.ts`, `warehouse/offer.test.ts` |
 
 ### Hidden benchmark B (bottle)
 | Value | Source | Computed in | Test |

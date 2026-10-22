@@ -36,6 +36,8 @@ export type TypeFees = { packaging: number | null; shippingAndFixed: number; ret
 const round2 = (x: number) => Math.round(x * 100) / 100;
 /** ceil that ignores floating-point dust (140 × 1.05 = 147.00000000000003 → 147). */
 const ceilRupee = (x: number) => Math.ceil(x - 1e-6);
+/** nearest rupee, ignoring floating-point dust (team rule: list price rounds to the nearest rupee). */
+const roundRupee = (x: number) => Math.round(x + 1e-9);
 
 /** Seed fees for a product type, or MissingPlanValue if the plan has none. */
 export function typeFees(type: ProductTypeId): TypeFees {
@@ -70,7 +72,9 @@ export function costStack(
     makingCost + (handling.packaging ?? 0) + (handling.packPointFee ?? 0) + t.shippingAndFixed + t.returnsBuffer;
   const breakEven = ceilRupee(costBeforeGst * (1 + t.gstRate));
   const takeHome = Math.round((makingCost * marginPct) / 100);
-  const listPrice = ceilRupee((costBeforeGst + takeHome) * (1 + t.gstRate));
+  // Rounding rule (team, same for every product): break-even rounds UP (never below cost); the list price rounds
+  // to the NEAREST rupee (₹172.2 → ₹172, ₹326.55 → ₹327, ₹169.05 → ₹169).
+  const listPrice = roundRupee((costBeforeGst + takeHome) * (1 + t.gstRate));
   const fees: Fees = {
     ...handling,
     shippingAndFixed: t.shippingAndFixed,

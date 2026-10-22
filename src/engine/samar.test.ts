@@ -83,3 +83,14 @@ describe('Pack Point cluster by pickup pincode (team, Phase 6 review)', () => {
   it('a Moradabad pincode → opening cluster', () => expect(clusterForPincode(nodes.nodes, '244001')).toMatchObject({ status: 'opening' }));
   it('outside every cluster → null', () => expect(clusterForPincode(nodes.nodes, '110001')).toBeNull());
 });
+
+// Hidden B for the switch products (team): never shown; ₹327 and ₹169 qualify
+import { benchmarkB as bB, priceCheck as pC } from './benchmark';
+describe('What to make instead — price checks (hidden B)', () => {
+  for (const [t, list, be] of [['steel-casserole-1-5l', 327, 292], ['steel-flask-500ml', 169, 154]] as const) {
+    it(`${t}: ₹${list} qualifies`, () => {
+      const b = types[t].benchmark;
+      expect(pC(list, be, bB(b.comparables, b.minDeliveredOrders))).toBe('qualifies');
+    });
+  }
+});

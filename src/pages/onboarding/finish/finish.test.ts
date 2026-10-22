@@ -41,6 +41,6 @@ describe('finish screen: teaser and cost check numbers', () => {
     expect(finishMode('selfShip', { fulfilment: 'packPoint' }, 'sneakers-slip-on-men')).toBe('packPoint');
     const s = costStack('sneakers-slip-on-men', 200, 15, 'packPoint');
     expect([s.breakEven, s.listPrice]).toEqual([305, 336]);
-    expect(hasFeeCard('steel-casserole-1-5l')).toBe(false);
+    expect(hasFeeCard('steel-casserole-1-5l')).toBe(true); // seeded for What to make instead (team)
   });
 });

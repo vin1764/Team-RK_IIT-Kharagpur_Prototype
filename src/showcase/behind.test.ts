@@ -62,7 +62,7 @@ describe('Behind it: hero numbers (plan §8b)', () => {
     expect(t).toContain('60–90 a week');
     expect(t).toContain('9–13 a day');
     expect(t).toContain('= 5');
-    expect(t).toContain('11 a day × 14 days = 154 → 150 (₹12,000 at cost)');
+    expect(t).toContain('10.7 a day × 14 days = 150 → 150 (₹12,000 at cost)');
   });
 
   it('order book: 600 committed = 4 slots taken → 1 left', () => {

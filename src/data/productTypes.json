@@ -120,30 +120,100 @@
     "name": "1.5 L steel casserole",
     "line": "steel-kitchenware",
     "demand": {
-      "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~200/wk, High)",
+      "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~200/wk, High); buyers pay ₹340–400 (team)",
       "gapPerWeek": {
         "low": 200,
         "high": 200,
         "approx": true
       },
-      "priceBand": null,
+      "priceBand": {
+        "low": 340,
+        "high": 400
+      },
       "confidence": "High",
       "committedUnits": 0
+    },
+    "fees": {
+      "_source": "team (What to make instead → Plan a lot spec): fees; GST 5% included in the price",
+      "packaging": 8,
+      "shippingAndFixed": 40,
+      "returnsBuffer": 10,
+      "gstRate": 0.05
+    },
+    "likelyShare": {
+      "_source": "team (What to make instead → Plan a lot spec): likely share 20% of the gap",
+      "share": 0.2
+    },
+    "benchmark": {
+      "_source": "team (What to make instead → Plan a lot spec): hidden B ₹360 (never shown). Seeded as one comparable group at ₹360 with the minimum 30 delivered orders so benchmarkB() returns it; the order spread was not given.",
+      "minDeliveredOrders": 30,
+      "comparables": [
+        {
+          "id": "X",
+          "price": {
+            "from": 360,
+            "to": 360
+          },
+          "deliveredOrders": 30,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        }
+      ]
+    },
+    "demo": {
+      "_source": "team (What to make instead → Plan a lot spec): demo values for Create from photos",
+      "makingCost": 220,
+      "marginPct": 15
     }
   },
   "steel-flask-500ml": {
     "name": "500 ml steel flask",
     "line": "steel-kitchenware",
     "demand": {
-      "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~120/wk, Medium)",
+      "_source": "plan §8 switchSuggestions / doc DE-3 mock-up (~120/wk, Medium); buyers pay ₹170–200 (team)",
       "gapPerWeek": {
         "low": 120,
         "high": 120,
         "approx": true
       },
-      "priceBand": null,
+      "priceBand": {
+        "low": 170,
+        "high": 200
+      },
       "confidence": "Medium",
       "committedUnits": 0
+    },
+    "fees": {
+      "_source": "team (What to make instead → Plan a lot spec): fees; GST 5% included in the price",
+      "packaging": 6,
+      "shippingAndFixed": 32,
+      "returnsBuffer": 8,
+      "gstRate": 0.05
+    },
+    "likelyShare": {
+      "_source": "team (What to make instead → Plan a lot spec): likely share 20% of the gap",
+      "share": 0.2
+    },
+    "benchmark": {
+      "_source": "team (What to make instead → Plan a lot spec): hidden B ₹185 (never shown). Seeded as one comparable group at ₹185 with the minimum 30 delivered orders so benchmarkB() returns it; the order spread was not given.",
+      "minDeliveredOrders": 30,
+      "comparables": [
+        {
+          "id": "X",
+          "price": {
+            "from": 185,
+            "to": 185
+          },
+          "deliveredOrders": 30,
+          "aboveQualityFloor": true,
+          "ownedByMaker": false
+        }
+      ]
+    },
+    "demo": {
+      "_source": "team (What to make instead → Plan a lot spec): demo values for Create from photos",
+      "makingCost": 100,
+      "marginPct": 15
     }
   },
   "sneakers-slip-on-men": {

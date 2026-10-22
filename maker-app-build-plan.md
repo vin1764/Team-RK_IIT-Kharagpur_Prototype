@@ -148,7 +148,7 @@ The day drives what each page shows (empty states before go-live, launch view du
 
 | Function | Input → output | Hero check |
 | --- | --- | --- |
-| `costStack(type, makingCost, marginPct, mode)` | fees + break-even + list price + take-home | packaging ₹6, shipping + fixed ₹32, returns ₹8, GST ₹7 → break-even ₹133; margin 17.5% of making cost → take-home ₹14 → list ₹147 |
+| `costStack(type, makingCost, marginPct, mode)` | fees + break-even (rounds up) + list price (rounds to the nearest rupee; team rule) + take-home | packaging ₹6, shipping + fixed ₹32, returns ₹8, GST ₹7 → break-even ₹133; margin 17.5% of making cost → take-home ₹14 → list ₹147 |
 | `slots(type)` | open gap ÷ expected orders per listing | 300–450 ÷ 60–90 a week = 5 |
 | `priceCheck(price, breakEven, B)` | `qualifies` / `aboveCap` / `belowCost`; B never returned to UI | ₹147 qualifies; ₹165 doesn't |
 | `pricePosition(price, comparables)` | `low` / `mid` / `high` third | ₹147 → low; ₹165 → mid |
@@ -185,6 +185,7 @@ The day drives what each page shows (empty states before go-live, launch view du
 | Pack Point fee | (monthly cost ÷ orders) × 1.18 ÷ (1 − 0.178): ₹1,26,444 ÷ 6,000 = ₹21.07 → ₹24.87 → ₹30.3 | ₹30 at 40 makers (₹44 at 20, ₹26 at 60, ₹23 at 80) |
 | Samar (sneakers, Agra Pack Point; team Q4) | 200 making + 30 fee + 40 shipping and fixed + 20 returns = 290; × 1.05 = 304.5; take-home 15% × 200 = 30; (290 + 30) × 1.05 | break-even ₹305 · list ₹336 · GST ₹16 |
 | Samar vs B (hidden ₹370) | 370 − 336 = 34 = 9.2% of B | qualifies; drop ₹34 |
+| What to make instead (team) | casserole 200/wk × 20% = 40/wk = 5–6 a day → 5.7 × 14 = 80 units; ₹220 + 8 + 40 + 10 = 278 → ₹292 / list (278 + 33) × 1.05 = 326.55 → ₹327. Flask 120/wk → 24/wk = 3–4 a day → 3.4 × 14 = 48 → 50; ₹100 + 6 + 32 + 8 = 146 → ₹154 / list 169.05 → ₹169 | both qualify (B hidden) |
 | Samar demand | 175–280 a week unserved at ₹350–400, Medium, 0 committed; 20% → 35–56 a week = 5–8 a day; 175 ÷ 35 = 280 ÷ 56 | 5 slots |
 | Samar first lot | (5 + 8) ÷ 2 = 6.5 a day × 14 = 91 → 90; sizes 6–10 = 10/20/25/20/15 | 90 pairs, ₹18,000 at cost |
 | Samar D50 inbound (Agra) | 90 expected, 90 received; 650 g ± 5%; storage free 30 days, then 90 × ₹0.29 | 617.5–682.5 g · free to D80 · ₹26.10 a day after |

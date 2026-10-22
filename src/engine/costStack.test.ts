@@ -52,12 +52,37 @@ describe('costStack — 1 L steel bottle, Pack Point (why Jasmeet self-ships)', 
     expect(p().breakEven).toBe(158);
   });
 
-  it('same ₹14 take-home → list (150 + 14) × 1.05 = 172.2 → ₹173', () => {
+  // team rounding rule: list price rounds to the NEAREST rupee (break-even still rounds up)
+  it('same ₹14 take-home → list (150 + 14) × 1.05 = 172.2 → ₹172', () => {
     expect(p().takeHome).toBe(14);
-    expect(p().listPrice).toBe(173);
+    expect(p().listPrice).toBe(172);
   });
 
   it('the fee follows the pool size: 60 makers → ₹26 → (80+26+32+8) × 1.05 = 153.3 → ₹154', () => {
     expect(costStack('steel-bottle-1l', 80, 17.5, 'packPoint', 60).breakEven).toBe(154);
+  });
+});
+
+// team (What to make instead → Plan a lot): demo values, same rounding rule for every product
+describe('costStack — 1.5 L steel casserole (₹220, 15%, self-ship)', () => {
+  const c = costStack('steel-casserole-1-5l', 220, 15, 'selfShip');
+  it('220 + 8 + 40 + 10 = 278 → × 1.05 = 291.9 → break-even ₹292', () => {
+    expect(c.costBeforeGst).toBe(278);
+    expect(c.breakEven).toBe(292);
+  });
+  it('take-home 15% × 220 = ₹33 → list (278 + 33) × 1.05 = 326.55 → ₹327', () => {
+    expect(c.takeHome).toBe(33);
+    expect(c.listPrice).toBe(327);
+  });
+});
+describe('costStack — 500 ml steel flask (₹100, 15%, self-ship)', () => {
+  const c = costStack('steel-flask-500ml', 100, 15, 'selfShip');
+  it('100 + 6 + 32 + 8 = 146 → × 1.05 = 153.3 → break-even ₹154', () => {
+    expect(c.costBeforeGst).toBe(146);
+    expect(c.breakEven).toBe(154);
+  });
+  it('take-home ₹15 → list (146 + 15) × 1.05 = 169.05 → ₹169', () => {
+    expect(c.takeHome).toBe(15);
+    expect(c.listPrice).toBe(169);
   });
 });

@@ -78,11 +78,14 @@ export function likelyShare(type: ProductTypeId): LikelyShare {
   if (!t.demand) throw new MissingPlanValue(`demand gap for ${type}`);
   const g = t.demand.gapPerWeek;
   const ordersPerWeek = { low: g.low * share, high: g.high * share };
-  return {
-    share,
-    ordersPerWeek,
-    ordersPerDay: { low: Math.round(ordersPerWeek.low / 7), high: Math.round(ordersPerWeek.high / 7) },
-  };
+  const day = { low: ordersPerWeek.low / 7, high: ordersPerWeek.high / 7 };
+  // Shown as whole orders: a range rounds each end (8.6–12.9 → 9–13); a single value shows the whole numbers
+  // either side of it (5.7 → 5–6, 3.4 → 3–4), as the team specified for the casserole and flask.
+  const ordersPerDay =
+    Math.abs(day.low - day.high) < 1e-9 && !Number.isInteger(day.low)
+      ? { low: Math.floor(day.low), high: Math.ceil(day.low) }
+      : { low: Math.round(day.low), high: Math.round(day.high) };
+  return { share, ordersPerWeek, ordersPerDay };
 }
 
 /** Launch slots = open gap ÷ expected orders per listing (low ÷ low; must equal high ÷ high). */
@@ -101,10 +104,20 @@ export function likelyOrdersPerDay(type: ProductTypeId): Range {
   return direct ? { low: direct.low, high: direct.high } : likelyShare(type).ordersPerDay;
 }
 
+/** Likely orders a day, unrounded midpoint (seeded directly, or from the share of the gap). */
+function exactDailyRate(type: ProductTypeId): number {
+  const direct = record(type).likelyOrdersPerDay;
+  if (direct) return (direct.low + direct.high) / 2;
+  const w = likelyShare(type).ordersPerWeek;
+  return (w.low + w.high) / 2 / 7;
+}
+
 /** First lot ≈ 14 days of expected sales, in units, never below the maker's minimum run (when given). */
 export function suggestedLot(type: ProductTypeId, makingCost: number, minRun?: number | null): SuggestedLot {
   const perDay = likelyOrdersPerDay(type);
-  const dailyRunRate = (perDay.low + perDay.high) / 2;
+  // Run-rate = the midpoint of the likely orders a day before rounding for display (10.7 for the bottle,
+  // 5.7 casserole, 3.4 flask; Samar 6.5), so 3.4 × 14 = 48 → 50 rather than 3 × 14 = 42 → 40.
+  const dailyRunRate = exactDailyRate(type);
   const twoWeeks = Math.round((dailyRunRate * 14) / 10) * 10;
   const raisedToMinRun = !!minRun && minRun > twoWeeks;
   const units = raisedToMinRun ? minRun! : twoWeeks;

@@ -34,9 +34,9 @@ describe('Cluster Pack Point card: who sees it (Phase 6 review)', () => {
     expect(o.node).toMatchObject({ city: 'Moradabad', status: 'opening', opensAtMakers: 40 });
     expect(o.node.makersPooled).toBeUndefined();
   });
-  it("Jasmeet's Pack Point stack ₹158 / ₹173 vs self-ship ₹133 / ₹147", () => {
+  it("Jasmeet's Pack Point stack ₹158 / ₹172 vs self-ship ₹133 / ₹147", () => {
     const pp = costStack('steel-bottle-1l', 80, 17.5, 'packPoint', 40);
     const ss = costStack('steel-bottle-1l', 80, 17.5, 'selfShip');
-    expect([pp.breakEven, pp.listPrice, ss.breakEven, ss.listPrice]).toEqual([158, 173, 133, 147]);
+    expect([pp.breakEven, pp.listPrice, ss.breakEven, ss.listPrice]).toEqual([158, 172, 133, 147]);
   });
 });

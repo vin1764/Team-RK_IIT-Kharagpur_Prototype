@@ -224,7 +224,7 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     return [
       `Open gap ${range(d.gapPerWeek)} a week × ${pct(s.share)} likely share = ${range(s.ordersPerWeek)} a week = ${one(s.ordersPerWeek.low / 7)}–${one(s.ordersPerWeek.high / 7)} → ${range(day)} a day`,
       `Slots: ${fmt(d.gapPerWeek.low)} ÷ ${fmt(s.ordersPerWeek.low)} = ${fmt(d.gapPerWeek.high)} ÷ ${fmt(s.ordersPerWeek.high)} = ${fmt(slots(prod.type))}`,
-      `First lot ≈ ${fmt(lot.dailyRunRate)} a day × ${lot.days} days = ${fmt(lot.dailyRunRate * lot.days)} → ${fmt(lot.units)} (${rs(lot.atCost)} at cost)`,
+      `First lot ≈ ${fmt(Math.round(lot.dailyRunRate * 10) / 10)} a day × ${lot.days} days = ${fmt(Math.round(lot.dailyRunRate * lot.days))} → ${fmt(lot.units)} (${rs(lot.atCost)} at cost)`,
     ];
   },
 
@@ -468,7 +468,7 @@ export const BEHIND: Record<string, (ctx: BehindCtx) => string[]> = {
     const lot = suggestedLot(prod.type, prod.makingCost);
     const perDay = likelyOrdersPerDay(prod.type);
     const lines = [
-      `First lot = ${lot.days} days of expected sales: (${fmt(perDay.low)} + ${fmt(perDay.high)}) ÷ 2 = ${fmt(lot.dailyRunRate)} a day × ${lot.days} = ${fmt(lot.dailyRunRate * lot.days)} → ${fmt(lot.units)} (${rs(lot.atCost)} at cost)`,
+      `First lot = ${lot.days} days of expected sales: (${fmt(perDay.low)} + ${fmt(perDay.high)}) ÷ 2 = ${fmt(Math.round(lot.dailyRunRate * 10) / 10)} a day × ${lot.days} = ${fmt(Math.round(lot.dailyRunRate * lot.days))} → ${fmt(lot.units)} (${rs(lot.atCost)} at cost)`,
     ];
     if (prod.type !== lotSeed.productType) return lines;
     if (day < lotSeed.day) return [...lines, `Inbound at ${lotSeed.node} on D${lotSeed.day} (${short(lotSeed.day)})`];
