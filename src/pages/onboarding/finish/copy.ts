@@ -33,23 +33,14 @@ export const FIN = {
   launchLine: 'Factory Launch Week · manufacturers only', // doc
   forecast: 'Expected orders are a forecast, not a guarantee', // doc
   noDemand: 'No demand data for this product type yet', // prompt
-  // FO-5 cost check
+  // FO-5 cost check (the new copy, from the earning input to the Factory Launch status, is in src/i18n: cost.*)
   costTitle: 'See your take-home in 5 minutes', // doc
   costSub: (mode: 'selfShip' | 'packPoint') => `Cost check · ${mode === 'packPoint' ? 'shipping through the Pack Point' : 'shipping from your factory'}`, // ours (FO-8 choice)
   makingCost: 'Making cost per unit', // doc
   feeStack: 'Fee stack per order', // ours
   breakEven: 'Break-even', // ours
-  takeHomeTitle: 'Take-home at every price', // ours
-  takeHomeAt: (price: number, takeHome: number) => `At ₹${fmt(price)} you take home ₹${fmt(takeHome)} per unit`, // ours
-  qualifies: '✓ A qualifying price exists for this product', // doc
-  noQualifying: 'No qualifying price at this making cost', // ours
-  enterCost: 'Enter your making cost to see your take-home.', // ours
   noFeeCard: 'The cost check needs this product type’s fee card, which isn’t in this prototype yet.', // ours
-  feesNote: (mode: 'selfShip' | 'packPoint') =>
-    mode === 'packPoint'
-      ? "Fees are Meesho's fee card for this product type, with the Pack Point fee; storage isn't included."
-      : "Fees are Meesho's fee card for this product type; storage and Pack Point fees aren't included.", // ours
-  demo: 'Use demo product and making cost', // ours (prototype helper)
+  demo: 'Use demo product and costs', // ours (prototype helper)
   // Footer
   check: 'Check my eligibility', // prompt
   skip: 'Skip for now', // prompt

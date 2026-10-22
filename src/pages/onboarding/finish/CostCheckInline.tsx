@@ -1,16 +1,20 @@
 // FO-5 · the 5-minute cost check, inline on the onboarding finish screen (it used to be its own page reached
-// from the outreach link). The product type is the one the maker just told us; the fulfilment is their
-// Pickup Address choice (FO-8). Making cost in → fee stack, break-even, take-home at every price, and one
-// verdict: "a qualifying price exists" (yes/no only — Benchmark B never shown).
-import { useState } from 'react';
-import { Card } from '../../../components/ui';
-import { costStack, gstAt, qualifyingPriceExists, takeHomeAt, typeFees, type ProductTypeId } from '../../../engine/ui';
+// from the outreach link). The maker decides his own take-home: making cost per unit and what he wants to earn per
+// unit (₹, or % of making cost), both empty until he types. Then the fee stack with his shipping choice from Pickup
+// Address (FO-8) → break-even, and "Your price ₹X · you earn ₹Y per unit". Whether that price qualifies for Factory
+// Launch comes only from "Check price": the bot's rationed check (3 a day per product, shared with the bot's Price
+// screen through store/priceChecks.ts; rules in panel/catalog/launchCheck.ts). Benchmark B is never shown.
+// The arithmetic: ./costCheck.ts → engine costStackAtTakeHome.
+import { Banner, Button, Card, cx } from '../../../components/ui';
+import { fmt, tEn as t } from '../../../i18n';
+import { typeFees, type ProductTypeId } from '../../../engine/ui';
+import { usePriceCheckEntry } from '../../../store/priceChecks';
 import type { PersonaRecord } from '../../../store/onboarding';
-import { demandOrNull } from '../signup/guards';
+import { launchCheckView } from '../../panel/catalog/launchCheck';
 import { Field } from '../signup/Field';
+import { DemoFill } from '../stepper/fields';
 import { FIN } from './copy';
-
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+import { cleanPct, cleanRupees, costCheckResult, switchUnit, type EarnUnit } from './costCheck';
 
 /** Fee stack mode: the maker's Pickup Address choice (else their record); Pack Point for a type with no self-ship packaging value. */
 export function finishMode(choice: 'selfShip' | 'packPoint' | 'waitlist' | null, persona: Pick<PersonaRecord, 'fulfilment'>, type: ProductTypeId): 'selfShip' | 'packPoint' {
@@ -32,63 +36,91 @@ function Row({ label, value, strong }: { label: string; value: number; strong?: 
   return (
     <div className={strong ? 'flex justify-between font-heading text-xl leading-6' : 'flex justify-between text-lg leading-5'}>
       <span className={strong ? undefined : 'text-secondary-text'}>{label}</span>
-      <span>₹{value}</span>
+      <span>₹{fmt(value)}</span>
     </div>
   );
+}
+
+/** The ₹ / % switch, in the bot's EN / हिंदी pill style. */
+function UnitSwitch({ unit, onUnit }: { unit: EarnUnit; onUnit: (u: EarnUnit) => void }) {
+  return (
+    <div className="flex shrink-0 items-center rounded-full border border-solid border-secondary-border bg-white p-0.5" role="group" aria-label={t('cost.unit')} data-earn-unit={unit}>
+      {(['rupee', 'pct'] as const).map((u) => (
+        <button
+          key={u}
+          type="button"
+          aria-pressed={unit === u}
+          onClick={() => onUnit(u)}
+          className={cx('cursor-pointer rounded-full border-0 px-3 py-1 font-button text-lg leading-5', unit === u ? 'bg-brand-secondary-bg text-brand-primary-text' : 'bg-transparent text-secondary-text')}
+          data-unit={u}
+        >
+          {u === 'rupee' ? '₹' : '%'}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export interface CostInputs {
+  making: string;
+  earning: string;
+  unit: EarnUnit;
 }
 
 export function CostCheckInline({
   type,
   mode,
-  marginPct,
-  making,
-  onMaking,
+  value,
+  onChange,
+  onDemoFill,
 }: {
   type: ProductTypeId;
   mode: 'selfShip' | 'packPoint';
-  /** the maker's margin when the type is their own product (persona record), else 0 */
-  marginPct: number;
-  making: string;
-  onMaking: (v: string) => void;
+  value: CostInputs;
+  onChange: (v: CostInputs) => void;
+  /** "Fill demo values" (the persona's own product only) */
+  onDemoFill?: () => void;
 }) {
-  const [picked, setPicked] = useState<number | null>(null);
-  const makingCost = Number(making);
-  const ready = making !== '' && makingCost > 0;
+  const { making, earning, unit } = value;
+  const result = costCheckResult({ type, mode, making, earning, unit });
+  const { entry, day, check } = usePriceCheckEntry(type);
+  const v = launchCheckView({ type, price: result?.price ?? null, stack: result?.stack ?? null, entry, day, botOwned: false });
 
-  let result = null;
-  if (ready) {
-    const stack = costStack(type, makingCost, marginPct, mode);
-    // A type with no price band seeded: the slider then runs to the list price.
-    const band = demandOrNull(type)?.priceBand ?? null;
-    const min = stack.breakEven;
-    const max = Math.max(min, band?.high ?? min, marginPct > 0 ? stack.listPrice : min);
-    // Default: the list price at the maker's margin; without a margin, the low end of the buyers' price band.
-    const fallback = marginPct > 0 ? stack.listPrice : (band?.low ?? min);
-    const price = clamp(picked ?? fallback, min, max);
-    const f = stack.fees;
-    result = {
-      stack,
-      min,
-      max,
-      price,
-      qualifies: qualifyingPriceExists(type, stack.breakEven),
-      rows: [
-        { label: 'Making cost', value: stack.makingCost },
-        f.packPointFee !== undefined ? { label: 'Pack Point fee', value: f.packPointFee } : { label: 'Packaging', value: f.packaging ?? 0 },
-        { label: 'Shipping + fixed fee', value: f.shippingAndFixed },
-        { label: 'Returns & refusal buffer', value: f.returnsBuffer },
-        // Q18: GST is 5% of the selling price, included in it, so this row follows the slider.
-        { label: `GST (${Math.round(stack.gstRate * 100)}% of ₹${price})`, value: gstAt(price, stack) },
-      ],
-    };
-  }
+  const s = result?.stack;
+  const rate = s ? fmt(Math.round(s.gstRate * 100)) : '';
+  const rows = s
+    ? [
+        { label: t('cost.row.making'), value: s.makingCost },
+        s.fees.packPointFee !== undefined ? { label: t('cost.row.packPointFee'), value: s.fees.packPointFee } : { label: t('cost.row.packaging'), value: s.fees.packaging ?? 0 },
+        { label: t('cost.row.shipping'), value: s.fees.shippingAndFixed },
+        { label: t('cost.row.returns'), value: s.fees.returnsBuffer },
+        // Q18: GST is 5% of the selling price, included in it: the GST inside his price.
+        { label: t('cost.row.gst', { rate, price: fmt(s.listPrice) }), value: s.fees.gst },
+      ]
+    : [];
+
+  const left = v.checksLeft === 0 ? t('launch.none') : v.checksLeft === 1 ? t('launch.leftOne') : t('launch.left', { n: fmt(v.checksLeft) });
+  let status;
+  if (v.state === 'qualifies') status = <Banner tone="success">{t('cost.launch.qualifies')}</Banner>;
+  else if (v.state === 'aboveCap') status = <Banner tone="info">{t('cost.launch.notEligible')}</Banner>;
+  else if (v.state === 'belowCost') status = <Banner tone="error">{t('launch.loss', { loss: fmt(v.loss ?? 0) })}</Banner>;
+  else
+    status = (
+      <div className="flex items-center gap-2.5 rounded-lg bg-secondary-bg px-3 py-2.5">
+        <img src="/brand/msa/merlin/lined/info-grey.svg" alt="" width="20" height="20" className="size-5 shrink-0" />
+        <p className="m-0 flex-1 font-body text-lg leading-5 text-primary-text">{t('cost.launch.stale')}</p>
+        <Button size="sm" variant="outline" className="shrink-0" disabled={!v.canCheck} onClick={() => result && check(result.price, result.stack.breakEven)} data-cost-check-price>
+          {t('launch.check')}
+        </Button>
+      </div>
+    );
 
   return (
-    <section className="rounded bg-white p-6" data-c2m="FO-5" data-c2m-id="FO-5" data-cost-check>
+    <section className="rounded bg-white p-6" data-c2m="FO-5" data-c2m-id="FO-5" data-cost-check data-cost-state={result ? 'filled' : 'empty'}>
       <h2 className="m-0 font-heading text-2xl leading-6 text-primary-text">{FIN.costTitle}</h2>
       <p className="m-0 mt-1 text-lg leading-5 text-secondary-text">{FIN.costSub(mode)}</p>
-      <div className="mt-5 grid grid-cols-[260px_1fr_1fr] items-start gap-4 max-[1023px]:grid-cols-1">
-        <div>
+      <div className="mt-5 grid grid-cols-[300px_1fr_1fr] items-start gap-4 max-[1023px]:grid-cols-1">
+        <div className="flex flex-col gap-4">
           <Field
             label={FIN.makingCost}
             labelBg="bg-white"
@@ -96,54 +128,62 @@ export function CostCheckInline({
             inputMode="numeric"
             autoComplete="off"
             value={making}
-            onChange={(e) => {
-              onMaking(e.target.value.replace(/\D/g, '').slice(0, 6));
-              setPicked(null);
-            }}
+            onChange={(e) => onChange({ ...value, making: cleanRupees(e.target.value) })}
             data-making-cost
           />
-          <p className="m-0 mt-3 text-sm leading-4 text-tertiary-text">{FIN.feesNote(mode)}</p>
+          <div className="flex items-center gap-2">
+            <Field
+              className="min-w-0 flex-1"
+              label={t('cost.earning')}
+              labelBg="bg-white"
+              alwaysFloat
+              prefix={unit === 'rupee' && earning !== '' ? '₹' : undefined}
+              placeholder={t(unit === 'rupee' ? 'cost.earning.placeholder.rupee' : 'cost.earning.placeholder.pct')}
+              inputMode={unit === 'rupee' ? 'numeric' : 'decimal'}
+              autoComplete="off"
+              value={earning}
+              onChange={(e) => onChange({ ...value, earning: unit === 'rupee' ? cleanRupees(e.target.value) : cleanPct(e.target.value) })}
+              data-earning
+            />
+            {unit === 'pct' && earning !== '' && <span className="text-xl text-primary-text">%</span>}
+            <UnitSwitch unit={unit} onUnit={(u) => u !== unit && onChange({ making, unit: u, earning: switchUnit(making, earning, u) })} />
+          </div>
+          <p className="m-0 text-sm leading-4 text-tertiary-text" data-fees-note={mode}>
+            {t(mode === 'packPoint' ? 'cost.feesNote.packPoint' : 'cost.feesNote.selfShip')}
+          </p>
+          {onDemoFill && <DemoFill onClick={onDemoFill}>{t('bot.fillDemo')}</DemoFill>}
         </div>
-        {!result ? (
-          <Card className="col-span-2 border border-solid border-tertiary-border text-lg leading-5 text-secondary-text max-[1023px]:col-span-1">{FIN.enterCost}</Card>
+        {!result || !s ? (
+          <Card className="col-span-2 border border-solid border-tertiary-border text-lg leading-5 text-secondary-text max-[1023px]:col-span-1">{t('cost.enter')}</Card>
         ) : (
           <>
             <Card className="border border-solid border-tertiary-border">
               <h3 className="m-0 font-heading text-xl leading-6">{FIN.feeStack}</h3>
-              <div className="mt-3 flex flex-col gap-2">
-                {result.rows.map((r) => (
+              <div className="mt-3 flex flex-col gap-2" data-fee-stack>
+                {rows.map((r) => (
                   <Row key={r.label} {...r} />
                 ))}
               </div>
               <hr className="m-0 my-3 border-0 border-t border-solid border-tertiary-border" />
-              <Row label={FIN.breakEven} value={result.stack.breakEven} strong />
-            </Card>
-            <div className="flex flex-col gap-4">
-              <Card className="border border-solid border-tertiary-border">
-                <h3 className="m-0 font-heading text-xl leading-6">{FIN.takeHomeTitle}</h3>
-                <input
-                  type="range"
-                  aria-label="Price"
-                  min={result.min}
-                  max={result.max}
-                  step={1}
-                  value={result.price}
-                  disabled={result.min === result.max}
-                  onChange={(e) => setPicked(Number(e.target.value))}
-                  className="mt-4 block w-full cursor-pointer accent-brand-primary-bg"
-                />
-                <div className="mt-1 flex justify-between text-base leading-4 text-tertiary-text">
-                  <span>₹{result.min}</span>
-                  <span>₹{result.max}</span>
-                </div>
-                <p className="m-0 mt-3 font-heading text-xl leading-6" data-take-home>
-                  {FIN.takeHomeAt(result.price, takeHomeAt(result.price, result.stack))}
-                </p>
-              </Card>
-              <div className={`rounded-lg border border-solid px-4 py-3 ${result.qualifies ? 'border-success-border bg-success-bg' : 'border-tertiary-border bg-white'}`} data-verdict={result.qualifies ? 'qualifies' : 'no'}>
-                <p className={`m-0 font-button text-lg leading-5 ${result.qualifies ? 'text-success-text' : 'text-secondary-text'}`}>{result.qualifies ? FIN.qualifies : FIN.noQualifying}</p>
+              <div data-break-even={s.breakEven}>
+                <Row label={FIN.breakEven} value={s.breakEven} strong />
               </div>
-            </div>
+            </Card>
+            <Card className="border border-solid border-tertiary-border">
+              <h3 className="m-0 font-heading text-xl leading-6">{t('cost.priceTitle')}</h3>
+              <p className="m-0 mt-3 font-heading text-xl leading-6 text-primary-text" data-your-price={result.price} data-earn={result.takeHome}>
+                {t('cost.yourPrice', { price: fmt(result.price), take: fmt(result.takeHome) })}
+              </p>
+              <p className="m-0 mt-1 text-base leading-4 text-tertiary-text">{t('cost.priceHow', { rate })}</p>
+              <div className="mt-4" data-cost-launch={v.state}>
+                {status}
+                {v.state !== 'belowCost' && (
+                  <p className="m-0 mt-1.5 font-body text-base leading-4 text-secondary-text" data-checks-left={v.checksLeft}>
+                    {left}
+                  </p>
+                )}
+              </div>
+            </Card>
           </>
         )}
       </div>
